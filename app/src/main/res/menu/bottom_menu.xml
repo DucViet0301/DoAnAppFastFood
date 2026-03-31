@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:title="Trang chủ"
+        android:icon="@drawable/logo"/>
+    <item
+        android:id="@+id/history"
+        android:title="Lịch sử"
+        android:icon="@drawable/history"/>
+
+    <item
+        android:id="@+id/store"
+        android:title="Cửa hàng"
+        android:enabled="true" />
+
+    <item
+        android:id="@+id/notification"
+        android:title="Thông báo"
+        android:icon="@drawable/notifaction"/>
+    <item
+        android:id="@+id/profile"
+        android:title="Tài khoản"
+        android:icon="@drawable/user"/>
+</menu>

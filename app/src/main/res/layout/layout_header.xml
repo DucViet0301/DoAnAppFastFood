@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="85dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/do_tuoi"
+    android:paddingTop="30dp"
+    android:clipChildren="false">
+
+<ImageView
+    android:id="@+id/ImgLogo"
+    android:layout_width="wrap_content"
+    android:layout_height="45dp"
+    android:src="@drawable/lotteria_logo"
+    android:layout_marginStart="16dp"
+    app:tint="@color/white"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    android:translationX="-20dp"/>
+
+<ImageView
+    android:id="@+id/ic_shoppingcart"
+    android:layout_width="30dp"
+    android:layout_height="30dp"
+    android:src="@drawable/bag"
+    android:layout_marginEnd="16dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:tint="@color/white" />
+
+<TextView
+    android:id="@+id/tvquantity"
+    android:layout_width="22dp"
+    android:layout_height="22dp"
+    android:background="@drawable/circle_border"
+    android:gravity="center"
+    android:text="4"
+    android:textColor="@color/do_tuoi"
+    android:textSize="12sp"
+    android:textStyle="bold"
+    app:layout_constraintEnd_toEndOf="@id/ic_shoppingcart"
+    app:layout_constraintTop_toTopOf="@id/ic_shoppingcart"
+    android:translationX="8dp"
+    android:translationY="-5dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

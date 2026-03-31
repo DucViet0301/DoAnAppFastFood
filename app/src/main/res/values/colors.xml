@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="lavender">#8692f7</color>
+    <color name="do_tuoi">#E60012</color>
+    <color name="vang">#FFD200</color>
+    <color name="cam_nhat">#FFA500</color>
+    <color name="nau_ga_ran">#8B4513</color>
+    <color name="xam_nhat">#F2F2F2</color>
+    <color name="menu">#fcfcff</color>
+    <color name="do_nhat">#ff5a6a</color>
+
+</resources>
