@@ -1,16 +1,13 @@
 package com.example.doanappfood.activity;
 
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -22,6 +19,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.doanappfood.R;
 import com.example.doanappfood.Utlis.BottomMenuManager;
 import com.example.doanappfood.databinding.ActivityMainBinding;
+import com.example.doanappfood.fragment.CartFragment;
 import com.example.doanappfood.fragment.HistoryFragment;
 import com.example.doanappfood.fragment.HomeFragment;
 import com.example.doanappfood.fragment.NotifactionFragment;
@@ -36,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton fab;
     ActivityMainBinding binding;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,35 +46,76 @@ public class MainActivity extends AppCompatActivity {
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window w = getWindow();
-            // Cho phép layout tràn ra ngoài các giới hạn của màn hình (phủ lên status bar)
             w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
+
         bottomNav = findViewById(R.id.bottomNavigationView);
         fab = findViewById(R.id.fab);
         new BottomMenuManager(this, bottomNav, fab);
         binding.bottomNavigationView.setBackground(null);
+
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.home) {
-                replaceFragment(new HomeFragment());
-            } else if (itemId == R.id.history) {
-                replaceFragment(new HistoryFragment());
-            } else if (itemId == R.id.store) {
-                replaceFragment(new StoreFragment());
-            } else if (itemId == R.id.notification) {
-                replaceFragment(new NotifactionFragment());
-            } else if (itemId == R.id.profile) {
-                replaceFragment(new ProfileFragment());
-            }
-
+            if (itemId == R.id.home) replaceFragment(new HomeFragment());
+            else if (itemId == R.id.history) replaceFragment(new HistoryFragment());
+            else if (itemId == R.id.store) replaceFragment(new StoreFragment());
+            else if (itemId == R.id.notification) replaceFragment(new NotifactionFragment());
+            else if (itemId == R.id.profile) replaceFragment(new ProfileFragment());
             return true;
         });
+
+        ImageView btnCart = findViewById(R.id.ic_shoppingcart);
+        TextView tvQuantity = findViewById(R.id.tvquantity);
+        View.OnClickListener openCartListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new CartFragment())
+                        .addToBackStack(null)
+                        .commit();
+            }
+        };
+
+        if (btnCart != null) btnCart.setOnClickListener(openCartListener);
+        if (tvQuantity != null) tvQuantity.setOnClickListener(openCartListener);
+
         if(savedInstanceState == null){
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
             bottomNav.setSelectedItemId(R.id.home);
         }
+
+        // ====================================================================
+        // ĐOẠN PHÉP THUẬT: ẨN MENU + ẨN HEADER + CO DÃN KHOẢNG TRẮNG
+        // ====================================================================
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                View fragmentContainer = findViewById(R.id.fragment_container);
+                View headerLayout = findViewById(R.id.layout_header); // Lấy thanh header Lotteria
+
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    // Ẩn Menu và Ẩn Header
+                    findViewById(R.id.bottomAppBar).setVisibility(View.GONE);
+                    fab.setVisibility(View.GONE);
+                    if (headerLayout != null) headerLayout.setVisibility(View.GONE);
+
+                    if (fragmentContainer != null) fragmentContainer.setPadding(0, 0, 0, 0);
+                } else {
+                    // Hiện lại Menu và Hiện lại Header
+                    findViewById(R.id.bottomAppBar).setVisibility(View.VISIBLE);
+                    fab.setVisibility(View.VISIBLE);
+                    if (headerLayout != null) headerLayout.setVisibility(View.VISIBLE);
+
+                    if (fragmentContainer != null) {
+                        int padding80dp = (int) (80 * getResources().getDisplayMetrics().density);
+                        fragmentContainer.setPadding(0, 0, 0, padding80dp);
+                    }
+                }
+            }
+        });
     }
+
     public void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
