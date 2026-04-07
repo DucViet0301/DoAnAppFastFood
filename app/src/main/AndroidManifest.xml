@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
 
     <application
         android:allowBackup="true"
@@ -11,11 +15,23 @@
         android:icon="@drawable/kfc"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.DoAnAppFood">
+        android:theme="@style/Theme.DoAnAppFood"
+        android:usesCleartextTraffic="true">
+
+        <meta-data
+            android:name="com.here.sdk.access_key_id"
+            android:value="86UUaXapz8SedNZWO3d5g" />
+        <meta-data
+            android:name="com.here.sdk.access_key_secret"
+            android:value="KiLwYV_7e733QIA8D8eCifir9A5kgmNMao2ZXioFv5ueKs_pTHMJw6cKnzE_rMUUeqzJ2zMfOlm8l4AyamLxEw" />
+
+        <activity
+            android:name=".activity.CategoryActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

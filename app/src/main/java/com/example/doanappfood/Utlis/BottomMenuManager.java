@@ -20,7 +20,6 @@ public class BottomMenuManager {
     private final MainActivity activity; // Đổi thành MainActivity để gọi được hàm replaceFragment
     private final BottomNavigationView bottomNav;
     private final FloatingActionButton fab;
-
     public BottomMenuManager(MainActivity activity, BottomNavigationView bottomNav, FloatingActionButton fab) {
         this.activity = activity;
         this.bottomNav = bottomNav;
@@ -44,20 +43,17 @@ public class BottomMenuManager {
             } else if (itemId == R.id.history) {
                 selectedFragment = new HistoryFragment();
             } else if (itemId == R.id.store) {
-                fab.setImageTintList(ColorStateList.valueOf(Color.RED));
                 selectedFragment = new StoreFragment();
             } else if (itemId == R.id.notification) {
                 selectedFragment = new NotifactionFragment();
             } else if (itemId == R.id.profile) {
                 selectedFragment = new ProfileFragment();
             }
-
-            if (selectedFragment != null) {
-                activity.replaceFragment(selectedFragment);
+            if(selectedFragment != null){
+                activity.replaceFragment(selectedFragment, itemId);
                 return true;
             }
-
-            return false;
+            return true;
         });
     }
 }

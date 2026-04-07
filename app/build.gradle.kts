@@ -65,4 +65,11 @@ dependencies {
 
     implementation("com.google.android.material:material:1.12.0")
 
+    // OSMDroid
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
+
+    // Location
+    implementation("com.google.android.gms:play-services-location:21.1.0")
+
+
 }
