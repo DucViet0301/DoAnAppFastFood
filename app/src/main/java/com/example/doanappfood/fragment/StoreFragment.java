@@ -1,5 +1,6 @@
 package com.example.doanappfood.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -16,6 +17,7 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.activity.ProductDetailActivity;
 import com.example.doanappfood.adapter.CategoryAdapter;
 import com.example.doanappfood.adapter.ProductAdapter;
 import com.example.doanappfood.viewmodel.CategoryViewModel;
@@ -91,9 +93,9 @@ public class StoreFragment extends Fragment {
         productAdapter = new ProductAdapter(new ArrayList<>(), requireContext());
         recyclerViewProduct.setAdapter(productAdapter);
         productAdapter.setOnProductClickListener((productModel, position) -> {
-            String message = "ID" + productModel.getId() + "\nTen " + productModel.getName();
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-
+            Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
+            intent.putExtra("product_id", productModel.getId());
+            startActivity(intent);
         });
     }
 

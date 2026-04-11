@@ -4,7 +4,16 @@ public class ProductModel {
     int id;
     String image, name;
     double list_price, sale_price;
+    int quantity;
     public ProductModel() {}
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
     public ProductModel(int id, String image, String name, double list_price, double sale_price) {
         this.id = id;

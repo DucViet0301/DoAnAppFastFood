@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
+    <color name="xam">#505050</color>
     <color name="white">#FFFFFFFF</color>
     <color name="lavender">#8692f7</color>
     <color name="do_tuoi">#E60012</color>
@@ -10,6 +11,7 @@
     <color name="xam_nhat">#F2F2F2</color>
     <color name="menu">#fcfcff</color>
     <color name="do_nhat">#ff5a6a</color>
+    <color name="back_detail">#F5F5F5</color>
     <color name="xanh_ngoc">#c7efee</color>
 
 </resources>

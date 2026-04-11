@@ -11,6 +11,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.activity.ProductDetailActivity;
 import com.example.doanappfood.Utlis.SlideEffect;
 import com.example.doanappfood.adapter.BannerAdapter;
 import com.example.doanappfood.adapter.ComboAdapter;
@@ -177,9 +179,10 @@ public class HomeFragment extends Fragment {
         );
         newAdapter = new NewAdapter(new ArrayList<>(), requireContext());
         recyclerViewNew.setAdapter(newAdapter);
-        comboAdapter.setOnComboClickListener((ComboModel, position) -> {
-            String message = "ID" + ComboModel.getId() + "\nTen " + ComboModel.getName();
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+        comboAdapter.setOnComboClickListener((comboModel, position) -> {
+            Intent intent = new Intent(getActivity(), ProductDetailActivity.class);
+            intent.putExtra("product_id", comboModel.getId());
+            startActivity(intent);
         });
     }
     @Override
