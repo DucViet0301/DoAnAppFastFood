@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@android:color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <ImageView
+            android:id="@+id/imgProductCart"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvProductNameCart"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Tiện Lợi 1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/imgProductCart"
+            app:layout_constraintTop_toTopOf="@id/imgProductCart"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tvProductDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="1 x Tiện Lợi 1 (gà thường)\n1 x Pepsi (S)"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="@id/tvProductNameCart"
+            app:layout_constraintTop_toBottomOf="@id/tvProductNameCart"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/layoutQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            app:layout_constraintStart_toStartOf="@id/tvProductNameCart"
+            app:layout_constraintTop_toBottomOf="@id/tvProductDesc"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/btnMinus"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:text="-"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="#FF8A80" />
+
+            <TextView
+                android:id="@+id/tvQuantity"
+                android:layout_width="32dp"
+                android:layout_height="28dp"
+                android:text="1"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="#FFF0F0"
+                android:layout_marginHorizontal="4dp"/>
+
+            <TextView
+                android:id="@+id/btnPlus"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:text="+"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="#FF8A80" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvProductPriceCart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="53.000 đ"
+            android:textColor="#E53935"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/layoutQuantity" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
