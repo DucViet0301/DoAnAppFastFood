@@ -23,4 +23,5 @@ public class ProductViewModel extends AndroidViewModel {
 
             return productRepository.getProduct(idCate);
     }
+
 }

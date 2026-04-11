@@ -5,6 +5,7 @@ import com.example.doanappfood.model.CategoryModel;
 import com.example.doanappfood.model.ComboModel;
 import com.example.doanappfood.model.DirectionModel;
 import com.example.doanappfood.model.NewModel;
+import com.example.doanappfood.model.ProductDetailModel;
 import com.example.doanappfood.model.ProductModel;
 import com.example.doanappfood.model.StoreModel;
 
@@ -32,7 +33,9 @@ public interface ApiApp {
     @FormUrlEncoded
     @POST("products")
     Call<List<ProductModel>> getProduct(@Field("idCate") int idCate);
-
+    @FormUrlEncoded
+    @POST("productdetails")
+    Call<List<ProductDetailModel>> getProductDetail(@Field("idProduct") int id);
     @GET("stores")
     Call<List<StoreModel>> getAllStores();
 
