@@ -4,8 +4,8 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.doanappfood.Utlis.ApiApp;
-import com.example.doanappfood.Utlis.RetrofitInstance;
+import com.example.doanappfood.network.ApiApp;
+import com.example.doanappfood.network.RetrofitInstance;
 import com.example.doanappfood.model.BannerModel;
 
 import java.util.List;

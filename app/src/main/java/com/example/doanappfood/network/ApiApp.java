@@ -1,4 +1,4 @@
-package com.example.doanappfood.Utlis;
+package com.example.doanappfood.network;
 
 import com.example.doanappfood.model.BannerModel;
 
