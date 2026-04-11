@@ -150,7 +150,7 @@
                                 android:layout_height="70dp"
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
-                                android:src="@drawable/placeholder" />
+                                android:src="@drawable/ic_marker" />
                         </RelativeLayout>
                     </androidx.cardview.widget.CardView>
                 </RelativeLayout>
