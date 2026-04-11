@@ -16,7 +16,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DoAnAppFood"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".activity.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.RegisterActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true" >
