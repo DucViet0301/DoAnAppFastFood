@@ -1,6 +1,5 @@
 package com.example.doanappfood.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.cardview.widget.CardView;
@@ -19,11 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.Utlis.SlideEffect;
 import com.example.doanappfood.adapter.BannerAdapter;
 import com.example.doanappfood.adapter.ComboAdapter;
 import com.example.doanappfood.adapter.NewAdapter;
 import com.example.doanappfood.adapter.ProductAdapter;
-import com.example.doanappfood.model.ComboModel;
 import com.example.doanappfood.repository.BannerRepository;
 import com.example.doanappfood.viewmodel.BannerViewModel;
 import com.example.doanappfood.viewmodel.ComboViewModel;
@@ -88,22 +87,10 @@ public class HomeFragment extends Fragment {
         CardViewLocationStore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment mapFragment = new MapFragment();
-
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(
-                                R.anim.slide_in_right,
-                                R.anim.slide_out_left,
-                                R.anim.slide_in_left,
-                                R.anim.slide_out_right
-                        )
-                        .replace(R.id.fragment_container, mapFragment)
-                        .addToBackStack(null)
-                        .commit();
-
+                SlideEffect.changeFragment(requireActivity(), new MapFragment());
             }
         });
+
 
 
         return  view;
@@ -121,17 +108,9 @@ public class HomeFragment extends Fragment {
                 Fragment storeFragment = new StoreFragment();
                 storeFragment.setArguments(bundle);
 
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(
-                                R.anim.slide_in_right,
-                                R.anim.slide_out_left,
-                                R.anim.slide_in_left,
-                                R.anim.slide_out_right
-                        )
-                        .replace(R.id.fragment_container, storeFragment)
-                        .addToBackStack(null)
-                        .commit();
+                //Animamtion
+                SlideEffect.changeFragment(requireActivity(), storeFragment);
+
             }
         });
     }
