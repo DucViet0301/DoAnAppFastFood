@@ -20,9 +20,6 @@ import com.example.doanappfood.R;
 import com.example.doanappfood.activity.ProductDetailActivity;
 import com.example.doanappfood.adapter.CategoryAdapter;
 import com.example.doanappfood.adapter.ProductAdapter;
-import com.example.doanappfood.model.CategoryModel;
-import com.example.doanappfood.repository.CategoryRepository;
-import com.example.doanappfood.repository.ProductRepository;
 import com.example.doanappfood.viewmodel.CategoryViewModel;
 import com.example.doanappfood.viewmodel.ProductViewModel;
 

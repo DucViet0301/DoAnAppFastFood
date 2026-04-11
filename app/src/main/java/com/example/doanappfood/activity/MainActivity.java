@@ -3,26 +3,19 @@ package com.example.doanappfood.activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.doanappfood.R;
 import com.example.doanappfood.Utlis.BottomMenuManager;
+import com.example.doanappfood.data.CartDAO;
 import com.example.doanappfood.databinding.ActivityMainBinding;
-import com.example.doanappfood.fragment.HistoryFragment;
-import com.example.doanappfood.fragment.HomeFragment;
-//import com.example.doanappfood.fragment.MapFragment;
-import com.example.doanappfood.fragment.MapFragment;
-import com.example.doanappfood.fragment.NotifactionFragment;
-import com.example.doanappfood.fragment.ProfileFragment;
-import com.example.doanappfood.fragment.StoreFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -32,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private FloatingActionButton fab;
     private  int currentId = -1;
+    TextView badgecount;
 
 
     @Override
@@ -39,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        CartDAO cartDAO = new CartDAO(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window w = getWindow();
@@ -48,16 +44,26 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
 
+        int count = cartDAO.getCount();
+        if( count > 0){
+            badgecount.setVisibility(View.VISIBLE);
+            badgecount.setText(String.valueOf(count));
+        }
+        else{
+            badgecount.setVisibility(View.GONE);
+        }
+
         if (savedInstanceState == null) {
             handleIntent(getIntent());
         }
     }
 
     private void initViews() {
+        badgecount = binding.layoutHeader.badgeCount;
         bottomNav = binding.bottomNavigationView;
         fab = binding.fab;
 
-        new BottomMenuManager(this, bottomNav, fab);
+        new BottomMenuManager(this,binding,  bottomNav, fab);
         bottomNav.setBackground(null);
     }
 
@@ -80,28 +86,27 @@ public class MainActivity extends AppCompatActivity {
 
     public void replaceFragment(Fragment fragment, int nextId) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        if (isLeftToRight(currentId, nextId)){
-            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+        int currentPos = getPosition(currentId);
+        int nextPos = getPosition(nextId);
+
+        if (currentPos != nextPos) {
+            if (nextPos > currentPos) {
+                transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+            } else {
+                transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
         }
-        else{
-            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-        }
+
         currentId = nextId;
         transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
     }
-    private  boolean isLeftToRight(int current, int next){
-        int currentPosition = getPosition(current);
-        int nextPosition = getPosition(next);
-        return nextPosition > currentPosition;
-    }
     private int getPosition(int id){
-        if(id == R.id.home) return 1;
+        if(id == R.id.home || id == R.id.maps) return 1;
         if(id == R.id.history) return 2;
         if(id == R.id.store) return 3;
         if(id == R.id.notification) return 4;
         if(id == R.id.profile) return 5;
-        if (id == R.id.maps) return 6;
         return 0;
     }
 }

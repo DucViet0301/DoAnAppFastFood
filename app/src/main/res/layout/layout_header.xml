@@ -2,10 +2,12 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="85dp"
+    android:layout_height="90dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/do_tuoi"
     android:paddingTop="30dp"
+    android:id="@+id/headerLayout"
+    android:paddingBottom="12dp"
     android:clipChildren="false">
 
 <ImageView
@@ -32,7 +34,7 @@
     app:tint="@color/white" />
 
 <TextView
-    android:id="@+id/tvquantity"
+    android:id="@+id/badge_count"
     android:layout_width="22dp"
     android:layout_height="22dp"
     android:background="@drawable/circle_border"
@@ -43,7 +45,7 @@
     android:textStyle="bold"
     app:layout_constraintEnd_toEndOf="@id/ic_shoppingcart"
     app:layout_constraintTop_toTopOf="@id/ic_shoppingcart"
-    android:translationX="8dp"
-    android:translationY="-5dp"/>
+    android:translationX="10dp"
+    android:translationY="-8dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
