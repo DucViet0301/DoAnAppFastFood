@@ -19,7 +19,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.doanappfood.R;
 import com.example.doanappfood.Utlis.BottomMenuManager;
 import com.example.doanappfood.databinding.ActivityMainBinding;
-import com.example.doanappfood.fragment.CartFragment;
 import com.example.doanappfood.fragment.HistoryFragment;
 import com.example.doanappfood.fragment.HomeFragment;
 import com.example.doanappfood.fragment.NotifactionFragment;
@@ -65,15 +64,15 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
+        // Bấm vào Giỏ hàng
         ImageView btnCart = findViewById(R.id.ic_shoppingcart);
         TextView tvQuantity = findViewById(R.id.tvquantity);
         View.OnClickListener openCartListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new CartFragment())
-                        .addToBackStack(null)
-                        .commit();
+                // ĐÃ SỬA: Đổi lệnh mở Fragment thành lệnh mở Activity (Dùng Intent)
+                android.content.Intent intent = new android.content.Intent(MainActivity.this, CartActivity.class);
+                startActivity(intent);
             }
         };
 
