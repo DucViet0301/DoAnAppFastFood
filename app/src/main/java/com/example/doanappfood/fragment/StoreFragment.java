@@ -18,9 +18,6 @@ import android.widget.Toast;
 import com.example.doanappfood.R;
 import com.example.doanappfood.adapter.CategoryAdapter;
 import com.example.doanappfood.adapter.ProductAdapter;
-import com.example.doanappfood.model.CategoryModel;
-import com.example.doanappfood.repository.CategoryRepository;
-import com.example.doanappfood.repository.ProductRepository;
 import com.example.doanappfood.viewmodel.CategoryViewModel;
 import com.example.doanappfood.viewmodel.ProductViewModel;
 
@@ -96,6 +93,7 @@ public class StoreFragment extends Fragment {
         productAdapter.setOnProductClickListener((productModel, position) -> {
             String message = "ID" + productModel.getId() + "\nTen " + productModel.getName();
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+
         });
     }
 

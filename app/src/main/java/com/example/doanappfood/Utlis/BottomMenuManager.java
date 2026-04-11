@@ -2,11 +2,17 @@ package com.example.doanappfood.Utlis;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.doanappfood.R;
 import com.example.doanappfood.activity.MainActivity;
+import com.example.doanappfood.databinding.ActivityMainBinding;
 import com.example.doanappfood.fragment.HistoryFragment;
 import com.example.doanappfood.fragment.HomeFragment;
 import com.example.doanappfood.fragment.NotifactionFragment;
@@ -20,14 +26,25 @@ public class BottomMenuManager {
     private final MainActivity activity; // Đổi thành MainActivity để gọi được hàm replaceFragment
     private final BottomNavigationView bottomNav;
     private final FloatingActionButton fab;
-    public BottomMenuManager(MainActivity activity, BottomNavigationView bottomNav, FloatingActionButton fab) {
+    private final ActivityMainBinding binding;
+    private ImageView shoppingcart;
+    private ConstraintLayout headerLayout;
+    private  TextView badge_count;
+
+    public BottomMenuManager(MainActivity activity, ActivityMainBinding binding, BottomNavigationView bottomNav, FloatingActionButton fab) {
         this.activity = activity;
+        this.binding = binding;
         this.bottomNav = bottomNav;
         this.fab = fab;
         setup();
     }
 
     private void setup() {
+        shoppingcart = binding.layoutHeader.icShoppingcart;
+        headerLayout = binding.layoutHeader.headerLayout;
+        badge_count = binding.layoutHeader.badgeCount;
+
+
         fab.setOnClickListener(v -> {
             bottomNav.setSelectedItemId(R.id.store);
         });
@@ -36,9 +53,18 @@ public class BottomMenuManager {
             int itemId = item.getItemId();
             fab.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
+            shoppingcart.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+            headerLayout.setBackgroundResource(R.color.do_tuoi);
+            badge_count.setBackgroundResource(R.drawable.circle_border);
+            badge_count.setTextColor(ContextCompat.getColor(activity, R.color.do_nhat));
+
             Fragment selectedFragment = null;
 
             if (itemId == R.id.home) {
+                shoppingcart.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+                headerLayout.setBackgroundResource(R.color.xanh_ngoc);
+                badge_count.setBackgroundResource(R.drawable.circle_border_v1);
+                badge_count.setTextColor(ContextCompat.getColor(activity, R.color.white));
                 selectedFragment = new HomeFragment();
             } else if (itemId == R.id.history) {
                 selectedFragment = new HistoryFragment();
