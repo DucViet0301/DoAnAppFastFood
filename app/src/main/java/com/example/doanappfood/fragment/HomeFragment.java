@@ -2,47 +2,122 @@ package com.example.doanappfood.fragment;
 
 import android.os.Bundle;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.activity.ProductDetailActivity;
+import com.example.doanappfood.Utlis.SlideEffect;
 import com.example.doanappfood.adapter.BannerAdapter;
+import com.example.doanappfood.adapter.ComboAdapter;
+import com.example.doanappfood.adapter.NewAdapter;
+import com.example.doanappfood.adapter.ProductAdapter;
 import com.example.doanappfood.repository.BannerRepository;
 import com.example.doanappfood.viewmodel.BannerViewModel;
+import com.example.doanappfood.viewmodel.ComboViewModel;
+import com.example.doanappfood.viewmodel.NewViewModel;
+import com.example.doanappfood.viewmodel.ProductViewModel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
     //Banner
     ViewPager2 viewPager2;
+    RecyclerView recyclerViewCombo, recyclerViewNew;
+
+    //Adapter
     private BannerAdapter bannerAdapter;
+    private ComboAdapter comboAdapter;
+    private NewAdapter newAdapter;
+    private ProductAdapter productAdapter;
+
+
+    //ViewModel
     private BannerViewModel bannerViewModel;
+    private ComboViewModel comboViewModel;
+    private NewViewModel newViewModel;
+    ProductViewModel productViewModel;
     //Auto-scroll
     private Handler autoScrollHandler;
     private  Runnable autoScrollRunnable;
     private  static  final  long Auto_Scroll_Delay = 3000L;
+    TextView SeeAllProduct;
+    CardView CardViewGiftBox, CardViewBestSeller, CardViewChicken, CardViewLocationStore;
 
     BannerRepository bannerRepository;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
+
         //Banner
-        initView(view);
-        initViewModel();
-        setAutoScroll();
+        initViewBanner(view);
+        initViewModelBanner();
+        setAutoScrollBanner();
+
+        //Combo
+        initViewCombo(view);
+        initViewModelCombo();
+
+        //New
+        initViewNew(view);
+        initViewModelNew();
+
+        SeeAllProduct = view.findViewById(R.id.tvSeeALLUD);
+        CardViewGiftBox = view.findViewById(R.id.CardViewGiftBox);
+        CardViewBestSeller = view.findViewById(R.id.CardViewBestSeller);
+        CardViewChicken = view.findViewById(R.id.CardViewChicken);
+        CardViewLocationStore= view.findViewById(R.id.CardViewLoactionStore);
+
+        setCardView(SeeAllProduct, 2);
+        setCardView(CardViewBestSeller, 1);
+        setCardView(CardViewChicken , 9);
+        CardViewLocationStore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SlideEffect.changeFragment(requireActivity(), new MapFragment());
+            }
+        });
+
+
 
         return  view;
     }
+    private  void setCardView(View view , int categoryId){
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView);
+                bottomNavigationView.setSelectedItemId(R.id.store);
 
-    private void setAutoScroll() {
+                Bundle bundle = new Bundle();
+                bundle.putInt("IdCate", categoryId);
+
+                Fragment storeFragment = new StoreFragment();
+                storeFragment.setArguments(bundle);
+
+                //Animamtion
+                SlideEffect.changeFragment(requireActivity(), storeFragment);
+
+            }
+        });
+    }
+
+    private void setAutoScrollBanner() {
         autoScrollHandler = new Handler(Looper.getMainLooper());
         autoScrollRunnable = new Runnable() {
             @Override
@@ -57,20 +132,65 @@ public class HomeFragment extends Fragment {
         autoScrollHandler.postDelayed(autoScrollRunnable, Auto_Scroll_Delay);
     }
 
-    private void initViewModel() {
+    private void initViewModelBanner() {
         bannerViewModel = new ViewModelProvider(this).get(BannerViewModel.class);
         bannerViewModel.getBannerList().observe(getViewLifecycleOwner(),bannerModels ->{
             if (bannerModels != null){
                 bannerAdapter.updateList(bannerModels);
             }
         });
+    }
+    private void initViewModelCombo() {
+        comboViewModel = new ViewModelProvider(this).get(ComboViewModel.class);
 
+        comboViewModel.getComboList().observe(getViewLifecycleOwner(), comboModels -> {
+            if (comboModels != null) {
+                comboAdapter.setData(comboModels);
+            }
+        });
+    }
+    private void initViewModelNew() {
+        newViewModel = new ViewModelProvider(this).get(NewViewModel.class);
+
+        newViewModel.getNewList().observe(getViewLifecycleOwner(), newModels -> {
+            if (newModels != null) {
+                newAdapter.setData(newModels);
+            }
+        });
     }
 
-    private void  initView(View view){
+    private void  initViewBanner(View view){
         viewPager2 = view.findViewById(R.id.viewPager2);
         bannerAdapter = new BannerAdapter(new ArrayList<>(), requireContext());
         viewPager2.setAdapter(bannerAdapter);
+    }
+    private void initViewCombo(View view){
+        recyclerViewCombo = view.findViewById(R.id.RecyclerViewCombo);
+        recyclerViewCombo.setLayoutManager(
+                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false)
+        );
+        comboAdapter = new ComboAdapter(new ArrayList<>(), requireContext());
+        recyclerViewCombo.setAdapter(comboAdapter);
+    }
+    private void initViewNew(View view){
+        recyclerViewNew = view.findViewById(R.id.RecyclerViewNew);
+        recyclerViewNew.setLayoutManager(
+                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false)
+        );
+        newAdapter = new NewAdapter(new ArrayList<>(), requireContext());
+        recyclerViewNew.setAdapter(newAdapter);
+        comboAdapter.setOnComboClickListener((comboModel, position) -> {
+            Intent intent = new Intent(getActivity(), ProductDetailActivity.class);
+            intent.putExtra("product_id", comboModel.getId());
+            startActivity(intent);
+        });
+    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (autoScrollHandler != null && autoScrollRunnable != null) {
+            autoScrollHandler.removeCallbacks(autoScrollRunnable);
+        }
     }
 
 }
