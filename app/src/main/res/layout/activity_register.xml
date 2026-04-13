@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:id="@+id/main"
-    android:layout_margin="8dp">
+    android:padding="8dp">
 
     <!-- Nút Close/Back -->
     <ImageView
         android:id="@+id/btnBack"
         android:layout_width="28dp"
         android:layout_height="28dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="36dp"
         android:src="@android:drawable/ic_menu_close_clear_cancel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -170,7 +171,6 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/button_background_gray"
-                android:enabled="false"
                 android:text="Đăng ký"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
