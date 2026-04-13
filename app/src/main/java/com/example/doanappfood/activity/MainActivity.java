@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private FloatingActionButton fab;
     private  int currentId = -1;
-    TextView badgecount;
+    private  TextView badgecount;
+    private ImageView btnShoppingacrat;
 
 
     @Override
@@ -43,6 +45,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         initViews();
+        btnShoppingacrat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,CartActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+        });
 
         int count = cartDAO.getCount();
         if( count > 0){
@@ -58,9 +68,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private void initViews() {
         badgecount = binding.layoutHeader.badgeCount;
         bottomNav = binding.bottomNavigationView;
+        btnShoppingacrat = binding.layoutHeader.icShoppingcart;
+
         fab = binding.fab;
 
         new BottomMenuManager(this,binding,  bottomNav, fab);
