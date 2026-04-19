@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="6dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="3dp"
+        app:cardBackgroundColor="#FFFFFF">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="top">
+
+            <!-- Ảnh sản phẩm — load bằng Glide từ product.imageUrl -->
+
+            <!-- Thông tin sản phẩm -->
+            <ImageView
+                android:id="@+id/ivProductImage"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_marginEnd="14dp"
+                android:background="@drawable/bg_product_image_rounded"
+                android:scaleType="centerCrop"
+                tools:src="@tools:sample/backgrounds/scenic" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- Tên combo/sản phẩm — set từ product.name -->
+                <TextView
+                    android:id="@+id/tvProductName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#1A1A2E"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:lineSpacingExtra="2dp"
+                    tools:text="Tiện Lợi 2" />
+
+                <!-- Danh sách món trong combo — set động từ product.subItems -->
+                <LinearLayout
+                    android:id="@+id/llSubItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="6dp" />
+
+                <TextView
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#565656"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="2dp"
+                    android:layout_marginBottom="2dp"
+                    tools:text="1 x Pepsi (S)" />
+
+                <!-- Giá — set từ product.price, căn phải -->
+                <TextView
+                    android:id="@+id/tvProductPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/do_tuoi"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:gravity="end"
+                    tools:text="59.000 đ" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
