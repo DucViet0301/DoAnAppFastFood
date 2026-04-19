@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setSelectedItemId(targetId);
     }
 
+
+
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);

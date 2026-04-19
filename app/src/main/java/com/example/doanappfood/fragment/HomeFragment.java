@@ -12,25 +12,26 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.doanappfood.R;
 import com.example.doanappfood.activity.ProductDetailActivity;
 import com.example.doanappfood.Utlis.SlideEffect;
+import com.example.doanappfood.activity.PromotionNewsActivity;
 import com.example.doanappfood.adapter.BannerAdapter;
 import com.example.doanappfood.adapter.ComboAdapter;
 import com.example.doanappfood.adapter.NewAdapter;
 import com.example.doanappfood.adapter.ProductAdapter;
+import com.example.doanappfood.adapter.PromotionNewsAdapter;
 import com.example.doanappfood.repository.BannerRepository;
 import com.example.doanappfood.viewmodel.BannerViewModel;
 import com.example.doanappfood.viewmodel.ComboViewModel;
 import com.example.doanappfood.viewmodel.NewViewModel;
 import com.example.doanappfood.viewmodel.ProductViewModel;
+import com.example.doanappfood.viewmodel.PromotionNewsViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class HomeFragment extends Fragment {
     private BannerAdapter bannerAdapter;
     private ComboAdapter comboAdapter;
     private NewAdapter newAdapter;
+    private PromotionNewsAdapter promotionNewsAdapter;
     private ProductAdapter productAdapter;
 
 
@@ -51,6 +53,7 @@ public class HomeFragment extends Fragment {
     private BannerViewModel bannerViewModel;
     private ComboViewModel comboViewModel;
     private NewViewModel newViewModel;
+    private PromotionNewsViewModel promotionNewsViewModel;
     ProductViewModel productViewModel;
     //Auto-scroll
     private Handler autoScrollHandler;
@@ -78,6 +81,8 @@ public class HomeFragment extends Fragment {
         initViewNew(view);
         initViewModelNew();
 
+
+
         SeeAllProduct = view.findViewById(R.id.tvSeeALLUD);
         CardViewGiftBox = view.findViewById(R.id.CardViewGiftBox);
         CardViewBestSeller = view.findViewById(R.id.CardViewBestSeller);
@@ -93,9 +98,14 @@ public class HomeFragment extends Fragment {
                 SlideEffect.changeFragment(requireActivity(), new MapFragment());
             }
         });
-
-
-
+        CardViewGiftBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(requireActivity(), PromotionNewsActivity.class);
+                startActivity(intent);
+            }
+        });
+        
         return  view;
     }
     private  void setCardView(View view , int categoryId){
@@ -160,6 +170,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
+
     private void  initViewBanner(View view){
         viewPager2 = view.findViewById(R.id.viewPager2);
         bannerAdapter = new BannerAdapter(new ArrayList<>(), requireContext());
@@ -186,6 +197,7 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
