@@ -3,6 +3,10 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+    <style name="CircleShapeAppearance" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 
     <style name="Theme.DoAnAppFood" parent="Base.Theme.DoAnAppFood" />
 

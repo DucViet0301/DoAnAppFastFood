@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.activity.AllNewsActivity;
+import com.example.doanappfood.activity.NewDetailActivity;
 import com.example.doanappfood.activity.ProductDetailActivity;
 import com.example.doanappfood.Utlis.SlideEffect;
 import com.example.doanappfood.activity.PromotionNewsActivity;
@@ -48,25 +50,28 @@ public class HomeFragment extends Fragment {
     private PromotionNewsAdapter promotionNewsAdapter;
     private ProductAdapter productAdapter;
 
-
     //ViewModel
     private BannerViewModel bannerViewModel;
     private ComboViewModel comboViewModel;
     private NewViewModel newViewModel;
     private PromotionNewsViewModel promotionNewsViewModel;
     ProductViewModel productViewModel;
+
     //Auto-scroll
     private Handler autoScrollHandler;
-    private  Runnable autoScrollRunnable;
-    private  static  final  long Auto_Scroll_Delay = 3000L;
-    TextView SeeAllProduct;
+    private Runnable autoScrollRunnable;
+    private static final long Auto_Scroll_Delay = 3000L;
+
+    // ĐÃ SỬA Ở ĐÂY: Khai báo thêm tvSeeAllNews ngay cạnh SeeAllProduct
+    TextView SeeAllProduct, tvSeeAllNews;
     CardView CardViewGiftBox, CardViewBestSeller, CardViewChicken, CardViewLocationStore;
 
     BannerRepository bannerRepository;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         //Banner
         initViewBanner(view);
@@ -87,14 +92,29 @@ public class HomeFragment extends Fragment {
         CardViewGiftBox = view.findViewById(R.id.CardViewGiftBox);
         CardViewBestSeller = view.findViewById(R.id.CardViewBestSeller);
         CardViewChicken = view.findViewById(R.id.CardViewChicken);
-        CardViewLocationStore= view.findViewById(R.id.CardViewLoactionStore);
+        CardViewLocationStore = view.findViewById(R.id.CardViewLoactionStore);
+
+
+        tvSeeAllNews = view.findViewById(R.id.tvSeeALLNEW);
+        if (tvSeeAllNews != null) {
+            tvSeeAllNews.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), AllNewsActivity.class);
+                    startActivity(intent);
+                    requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
+            });
+        }
 
         setCardView(SeeAllProduct, 2);
         setCardView(CardViewBestSeller, 1);
-        setCardView(CardViewChicken , 9);
+        setCardView(CardViewChicken, 9);
         CardViewLocationStore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((MainActivity)getActivity()).findViewById(R.id.fab_chatbox)
+                        .setVisibility(View.GONE);
                 SlideEffect.changeFragment(requireActivity(), new MapFragment());
             }
         });
@@ -108,7 +128,8 @@ public class HomeFragment extends Fragment {
         
         return  view;
     }
-    private  void setCardView(View view , int categoryId){
+
+    private void setCardView(View view, int categoryId) {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,7 +144,6 @@ public class HomeFragment extends Fragment {
 
                 //Animamtion
                 SlideEffect.changeFragment(requireActivity(), storeFragment);
-
             }
         });
     }
@@ -145,24 +165,24 @@ public class HomeFragment extends Fragment {
 
     private void initViewModelBanner() {
         bannerViewModel = new ViewModelProvider(this).get(BannerViewModel.class);
-        bannerViewModel.getBannerList().observe(getViewLifecycleOwner(),bannerModels ->{
-            if (bannerModels != null){
+        bannerViewModel.getBannerList().observe(getViewLifecycleOwner(), bannerModels -> {
+            if (bannerModels != null) {
                 bannerAdapter.updateList(bannerModels);
             }
         });
     }
+
     private void initViewModelCombo() {
         comboViewModel = new ViewModelProvider(this).get(ComboViewModel.class);
-
         comboViewModel.getComboList().observe(getViewLifecycleOwner(), comboModels -> {
             if (comboModels != null) {
                 comboAdapter.setData(comboModels);
             }
         });
     }
+
     private void initViewModelNew() {
         newViewModel = new ViewModelProvider(this).get(NewViewModel.class);
-
         newViewModel.getNewList().observe(getViewLifecycleOwner(), newModels -> {
             if (newModels != null) {
                 newAdapter.setData(newModels);
@@ -170,13 +190,13 @@ public class HomeFragment extends Fragment {
         });
     }
 
-
-    private void  initViewBanner(View view){
+    private void initViewBanner(View view) {
         viewPager2 = view.findViewById(R.id.viewPager2);
         bannerAdapter = new BannerAdapter(new ArrayList<>(), requireContext());
         viewPager2.setAdapter(bannerAdapter);
     }
-    private void initViewCombo(View view){
+
+    private void initViewCombo(View view) {
         recyclerViewCombo = view.findViewById(R.id.RecyclerViewCombo);
         recyclerViewCombo.setLayoutManager(
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -184,17 +204,23 @@ public class HomeFragment extends Fragment {
         comboAdapter = new ComboAdapter(new ArrayList<>(), requireContext());
         recyclerViewCombo.setAdapter(comboAdapter);
     }
-    private void initViewNew(View view){
+
+    private void initViewNew(View view) {
         recyclerViewNew = view.findViewById(R.id.RecyclerViewNew);
         recyclerViewNew.setLayoutManager(
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false)
         );
         newAdapter = new NewAdapter(new ArrayList<>(), requireContext());
         recyclerViewNew.setAdapter(newAdapter);
-        comboAdapter.setOnComboClickListener((comboModel, position) -> {
-            Intent intent = new Intent(getActivity(), ProductDetailActivity.class);
-            intent.putExtra("product_id", comboModel.getId());
+
+        newAdapter.setOnNewClickListener((newModel, position) -> {
+            Intent intent = new Intent(getActivity(), NewDetailActivity.class);
+            intent.putExtra("new_id", newModel.getId());
+            intent.putExtra("title", newModel.getTitle());
+            intent.putExtra("description", newModel.getDescription());
+            intent.putExtra("image", newModel.getImage());
             startActivity(intent);
+            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
     }
 
@@ -204,6 +230,13 @@ public class HomeFragment extends Fragment {
         if (autoScrollHandler != null && autoScrollRunnable != null) {
             autoScrollHandler.removeCallbacks(autoScrollRunnable);
         }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ((MainActivity)getActivity()).findViewById(R.id.fab_chatbox)
+                .setVisibility(View.VISIBLE);
     }
 
 }

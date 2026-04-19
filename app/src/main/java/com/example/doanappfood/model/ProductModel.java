@@ -5,6 +5,8 @@ public class ProductModel {
     String image, name;
     double list_price, sale_price;
     int quantity;
+
+
     public ProductModel() {}
 
     public int getQuantity() {

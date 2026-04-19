@@ -21,6 +21,10 @@
             android:exported="false" />
         <activity
             android:name=".activity.PromotionNewsActivity"
+            android:name=".activity.AllNewsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.NewDetailActivity"
             android:exported="false" />
         <activity
             android:name=".activity.CheckOutActivity"

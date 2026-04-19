@@ -96,6 +96,7 @@ public class StoreFragment extends Fragment {
             Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
             intent.putExtra("product_id", productModel.getId());
             startActivity(intent);
+            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
     }
 

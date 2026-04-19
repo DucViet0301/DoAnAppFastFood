@@ -3,6 +3,7 @@ package com.example.doanappfood.activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -16,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.Utlis.Keyboard;
 
 import org.w3c.dom.Text;
 
@@ -45,5 +47,10 @@ public class RegisterActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        Keyboard.hideKeyboardOnTouchOutside(this, event);
+        return super.dispatchTouchEvent(event);
     }
 }
