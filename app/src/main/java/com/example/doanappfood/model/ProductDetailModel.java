@@ -13,6 +13,17 @@ public class ProductDetailModel {
     @SerializedName("item_product")
     List<ProductModel> productModels;
 
+    @SerializedName("is_combo")
+    private int is_combo;
+
+    public boolean isIs_combo() {
+        return is_combo == 1;
+    }
+    public void setIs_combo(int is_combo) {
+        this.is_combo = is_combo;
+    }
+
+
     public List<ProductModel> getProductModels() {
         return productModels;
     }

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.activity.MainActivity;
 import com.example.doanappfood.activity.ProductDetailActivity;
 import com.example.doanappfood.Utlis.SlideEffect;
 import com.example.doanappfood.adapter.BannerAdapter;
@@ -90,6 +91,8 @@ public class HomeFragment extends Fragment {
         CardViewLocationStore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((MainActivity)getActivity()).findViewById(R.id.fab_chatbox)
+                        .setVisibility(View.GONE);
                 SlideEffect.changeFragment(requireActivity(), new MapFragment());
             }
         });
@@ -184,6 +187,7 @@ public class HomeFragment extends Fragment {
             Intent intent = new Intent(getActivity(), ProductDetailActivity.class);
             intent.putExtra("product_id", comboModel.getId());
             startActivity(intent);
+            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
     }
     @Override
@@ -192,6 +196,13 @@ public class HomeFragment extends Fragment {
         if (autoScrollHandler != null && autoScrollRunnable != null) {
             autoScrollHandler.removeCallbacks(autoScrollRunnable);
         }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ((MainActivity)getActivity()).findViewById(R.id.fab_chatbox)
+                .setVisibility(View.VISIBLE);
     }
 
 }
