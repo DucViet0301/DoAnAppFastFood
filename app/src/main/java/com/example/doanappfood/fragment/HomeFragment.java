@@ -106,6 +106,8 @@ public class HomeFragment extends Fragment {
         CardViewLocationStore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((MainActivity)getActivity()).findViewById(R.id.fab_chatbox)
+                        .setVisibility(View.GONE);
                 SlideEffect.changeFragment(requireActivity(), new MapFragment());
             }
         });
@@ -215,4 +217,12 @@ public class HomeFragment extends Fragment {
             autoScrollHandler.removeCallbacks(autoScrollRunnable);
         }
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ((MainActivity)getActivity()).findViewById(R.id.fab_chatbox)
+                .setVisibility(View.VISIBLE);
+    }
+
 }

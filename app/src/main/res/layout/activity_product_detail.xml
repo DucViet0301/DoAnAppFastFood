@@ -58,6 +58,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
+                    android:layout_marginBottom="4dp"
                     android:orientation="horizontal">
 
                     <!-- Nút giảm -->
@@ -152,7 +153,6 @@
                         android:background="#FFFFFF"
                         tools:src="@tools:sample/backgrounds/scenic" />
 
-                    <!-- Nút X (back) - góc trên trái, đè lên ảnh -->
                     <ImageView
                         android:id="@+id/ivback"
                         android:layout_width="36dp"
@@ -306,11 +306,6 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- Spacer cuối -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:background="#F5F5F5" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
