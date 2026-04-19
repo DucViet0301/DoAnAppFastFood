@@ -5,11 +5,12 @@
     android:layout_height="match_parent"
     android:id="@+id/maps"
     tools:context=".fragment.HistoryFragment">
-    <TextView
-        android:text="history"
-        android:gravity="center"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvHistory"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </TextView>
+        android:layout_height="match_parent"
+        android:nestedScrollingEnabled="false">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </FrameLayout>
