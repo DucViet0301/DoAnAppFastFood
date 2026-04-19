@@ -3,6 +3,7 @@ package com.example.doanappfood.activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.Utlis.Keyboard;
 import com.example.doanappfood.fragment.HomeFragment;
 
 public class LoginActivity extends AppCompatActivity {
@@ -52,5 +54,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        Keyboard.hideKeyboardOnTouchOutside(this, event);
+        return super.dispatchTouchEvent(event);
     }
 }

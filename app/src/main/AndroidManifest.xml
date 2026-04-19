@@ -18,6 +18,14 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".activity.OrderDetailActivity"
+            android:name=".activity.PromotionNewsDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.PromotionNewsActivity"
+            android:name=".activity.AllNewsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.NewDetailActivity"
             android:exported="false" />
         <activity
             android:name=".activity.CheckOutActivity"
@@ -30,7 +38,7 @@
             android:exported="false" />
         <activity
             android:name=".activity.ProductDetailActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".activity.RegisterActivity"
             android:exported="false" />

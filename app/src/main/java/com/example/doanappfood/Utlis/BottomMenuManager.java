@@ -2,6 +2,7 @@ package com.example.doanappfood.Utlis;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,7 +24,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class BottomMenuManager {
 
-    private final MainActivity activity; // Đổi thành MainActivity để gọi được hàm replaceFragment
+    private final MainActivity activity;
+    private FloatingActionButton fab_chatbox;
     private final BottomNavigationView bottomNav;
     private final FloatingActionButton fab;
     private final ActivityMainBinding binding;
@@ -31,11 +33,12 @@ public class BottomMenuManager {
     private ConstraintLayout headerLayout;
     private  TextView badge_count;
 
-    public BottomMenuManager(MainActivity activity, ActivityMainBinding binding, BottomNavigationView bottomNav, FloatingActionButton fab) {
+    public BottomMenuManager(MainActivity activity, ActivityMainBinding binding, BottomNavigationView bottomNav, FloatingActionButton fab, FloatingActionButton fab_chatbox) {
         this.activity = activity;
         this.binding = binding;
         this.bottomNav = bottomNav;
         this.fab = fab;
+        this.fab_chatbox = fab_chatbox;
         setup();
     }
 
