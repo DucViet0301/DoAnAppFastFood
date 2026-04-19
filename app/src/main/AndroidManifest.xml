@@ -17,6 +17,10 @@
         android:theme="@style/Theme.DoAnAppFood"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.PromotionNewsDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.PromotionNewsActivity"
             android:name=".activity.AllNewsActivity"
             android:exported="false" />
         <activity

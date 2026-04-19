@@ -22,15 +22,18 @@ import com.example.doanappfood.activity.AllNewsActivity;
 import com.example.doanappfood.activity.NewDetailActivity;
 import com.example.doanappfood.activity.ProductDetailActivity;
 import com.example.doanappfood.Utlis.SlideEffect;
+import com.example.doanappfood.activity.PromotionNewsActivity;
 import com.example.doanappfood.adapter.BannerAdapter;
 import com.example.doanappfood.adapter.ComboAdapter;
 import com.example.doanappfood.adapter.NewAdapter;
 import com.example.doanappfood.adapter.ProductAdapter;
+import com.example.doanappfood.adapter.PromotionNewsAdapter;
 import com.example.doanappfood.repository.BannerRepository;
 import com.example.doanappfood.viewmodel.BannerViewModel;
 import com.example.doanappfood.viewmodel.ComboViewModel;
 import com.example.doanappfood.viewmodel.NewViewModel;
 import com.example.doanappfood.viewmodel.ProductViewModel;
+import com.example.doanappfood.viewmodel.PromotionNewsViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -44,12 +47,14 @@ public class HomeFragment extends Fragment {
     private BannerAdapter bannerAdapter;
     private ComboAdapter comboAdapter;
     private NewAdapter newAdapter;
+    private PromotionNewsAdapter promotionNewsAdapter;
     private ProductAdapter productAdapter;
 
     //ViewModel
     private BannerViewModel bannerViewModel;
     private ComboViewModel comboViewModel;
     private NewViewModel newViewModel;
+    private PromotionNewsViewModel promotionNewsViewModel;
     ProductViewModel productViewModel;
 
     //Auto-scroll
@@ -81,6 +86,8 @@ public class HomeFragment extends Fragment {
         initViewNew(view);
         initViewModelNew();
 
+
+
         SeeAllProduct = view.findViewById(R.id.tvSeeALLUD);
         CardViewGiftBox = view.findViewById(R.id.CardViewGiftBox);
         CardViewBestSeller = view.findViewById(R.id.CardViewBestSeller);
@@ -111,8 +118,15 @@ public class HomeFragment extends Fragment {
                 SlideEffect.changeFragment(requireActivity(), new MapFragment());
             }
         });
-
-        return view;
+        CardViewGiftBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(requireActivity(), PromotionNewsActivity.class);
+                startActivity(intent);
+            }
+        });
+        
+        return  view;
     }
 
     private void setCardView(View view, int categoryId) {

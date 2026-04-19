@@ -7,6 +7,7 @@ import com.example.doanappfood.model.DirectionModel;
 import com.example.doanappfood.model.NewModel;
 import com.example.doanappfood.model.ProductDetailModel;
 import com.example.doanappfood.model.ProductModel;
+import com.example.doanappfood.model.PromotionNewsModel;
 import com.example.doanappfood.model.StoreModel;
 
 import java.util.List;
@@ -26,6 +27,8 @@ public interface ApiApp {
     Call<List<ComboModel>> getCombos();
     @GET("news")
     Call<List<NewModel>> getNew();
+    @GET("promotionnews")
+    Call<List<PromotionNewsModel>> getPromotionNews();
 
     @GET("category")
     Call<List<CategoryModel>> getCategory();
