@@ -111,4 +111,10 @@ public class StoreFragment extends Fragment {
             }
         });
     }
+    public void loadCategoryFromHome(int categoryId) {
+        if (categoryAdapter != null) {
+            categoryAdapter.setSelectedCategory(categoryId);
+        }
+        loadProduct(categoryId);
+    }
 }

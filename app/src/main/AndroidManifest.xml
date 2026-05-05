@@ -17,11 +17,20 @@
         android:theme="@style/Theme.DoAnAppFood"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.ChatBotActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
+        <activity
             android:name=".activity.OrderDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.PromotionNewsDetailActivity"
             android:exported="false" />
         <activity
             android:name=".activity.PromotionNewsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.AllNewsActivity"
             android:exported="false" />
         <activity
@@ -47,7 +56,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

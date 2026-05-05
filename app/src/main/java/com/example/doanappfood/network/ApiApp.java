@@ -11,8 +11,10 @@ import com.example.doanappfood.model.PromotionNewsModel;
 import com.example.doanappfood.model.StoreModel;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -56,5 +58,7 @@ public interface ApiApp {
             @Query("toLng")   double toLng
     );
 
+    @POST("chatbot")
+    Call<Map<String, String>> sendMessage(@Body Map<String, String> body);
 
 }

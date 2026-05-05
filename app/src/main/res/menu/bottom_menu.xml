@@ -6,7 +6,7 @@
     <item
         android:id="@+id/history"
         android:title="Lịch sử"
-        android:icon="@drawable/history"/>
+        android:icon="@drawable/ic_history"/>
 
     <item
         android:id="@+id/store"
@@ -16,9 +16,9 @@
     <item
         android:id="@+id/notification"
         android:title="Thông báo"
-        android:icon="@drawable/notifaction"/>
+        android:icon="@drawable/notification_fill"/>
     <item
         android:id="@+id/profile"
         android:title="Tài khoản"
-        android:icon="@drawable/user"/>
+        android:icon="@drawable/ic_user"/>
 </menu>
