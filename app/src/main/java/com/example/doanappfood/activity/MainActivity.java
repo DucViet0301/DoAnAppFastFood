@@ -186,10 +186,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateBadge() {
         if (badgecount == null) return;
+
+        // Khởi tạo DAO
         CartDAO cartDAO = new CartDAO(this);
 
+        // Lấy ID từ sessionManager đã được khai báo ở đầu Class
+        int userId = sessionManager.getUserId();
 
-        int count = cartDAO.getCount(CURRENT_USER_ID);
+        // Nếu userId = -1 (chưa đăng nhập) thì ẩn badge, ngược lại lấy số lượng từ DB
+        int count = (userId != -1) ? cartDAO.getCount(userId) : 0;
+
         if (count > 0) {
             badgecount.setVisibility(View.VISIBLE);
             badgecount.setText(String.valueOf(count));

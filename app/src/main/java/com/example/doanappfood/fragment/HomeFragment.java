@@ -86,7 +86,7 @@ public class HomeFragment extends Fragment {
         initViewModelNew();
 
         SeeAllProduct = view.findViewById(R.id.tvSeeALLUD);
-        tvNamCustomer = view.findViewById(R.id.tvNamCustomer);
+        tvNamCustomer = view.findViewById(R.id.tvNameCustomer);
 
         // Hiển thị tên người dùng nếu đã đăng nhập
         if (sessionManager.isLoggedIn()) {

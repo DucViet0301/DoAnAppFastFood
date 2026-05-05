@@ -2,6 +2,7 @@ package com.example.doanappfood.Utlis;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
