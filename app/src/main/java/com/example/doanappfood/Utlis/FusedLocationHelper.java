@@ -1,6 +1,7 @@
 package com.example.doanappfood.Utlis;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,51 +18,62 @@ import retrofit2.Response;
 
 public class FusedLocationHelper {
     private ApiApp api;
-    public  interface  OnAddressCallback{
+
+    public interface OnAddressCallback {
         void onSuccess(String address);
         void onFailure(String errorMessage);
     }
+
     public interface OnLocationCallback {
         void onSuccess(double lat, double lng);
         void onFailure(String message);
     }
+
     public interface OnRouteCallback {
         void onSuccess(String storeName, String distance, String duration);
         void onFailure(String message);
     }
-    private  final AppCompatActivity activity;
-    private  final FusedLocationProviderClient fusedClient;
 
-    public  FusedLocationHelper(AppCompatActivity activity){
+    private final AppCompatActivity activity;
+    private final FusedLocationProviderClient fusedClient;
+
+    public FusedLocationHelper(AppCompatActivity activity) {
         this.activity = activity;
         this.fusedClient = LocationServices.getFusedLocationProviderClient(activity);
         this.api = RetrofitInstance.getRetrofit().create(ApiApp.class);
     }
-    @SuppressLint("MissingPermission")
-    public  void fetchAddress(OnAddressCallback callback){
-       fusedClient.getLastLocation().addOnSuccessListener(activity, location -> {
-           if(location != null){
-               LocationHelper.getAddressFromLatLng(
-                       activity,
-                       location.getLatitude(),
-                       location.getLongitude(),
-                       new LocationHelper.LocationCallback() {
-                           @Override
-                           public void onAddressRetrieved(String address) {
-                               callback.onSuccess(address);
-                           }
 
-                           @Override
-                           public void onError(String errorMessage) {
-                               callback.onFailure(errorMessage);
-                           }
-                       }
-               );
-           }else{
-               callback.onFailure("Không tìm thấy vị trí");
-           }
-       });
+    @SuppressLint("MissingPermission")
+    public void fetchAddress(OnAddressCallback callback) {
+        com.google.android.gms.location.CurrentLocationRequest locationRequest =
+                new com.google.android.gms.location.CurrentLocationRequest.Builder()
+                        .setPriority(com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY)
+                        .build();
+
+        fusedClient.getCurrentLocation(locationRequest, null).addOnSuccessListener(activity, location -> {
+            if (location != null) {
+                Log.d("LOCATION_DEBUG", "Lat: " + location.getLatitude() + " | Lng: " + location.getLongitude());
+                LocationHelper.getAddressFromApi(
+                        location.getLatitude(),
+                        location.getLongitude(),
+                        new LocationHelper.LocationCallback() {
+                            @Override
+                            public void onAddressRetrieved(String address) {
+                                callback.onSuccess(address);
+                            }
+
+                            @Override
+                            public void onError(String errorMessage) {
+                                callback.onFailure(errorMessage);
+                            }
+                        }
+                );
+            } else {
+                callback.onFailure("Không lấy được tọa độ mới nhất. Hãy kiểm tra GPS.");
+            }
+        });
     }
+
     @SuppressLint("MissingPermission")
     public void fetchLocation(OnLocationCallback callback) {
         fusedClient.getLastLocation().addOnSuccessListener(activity, location -> {
@@ -94,19 +106,21 @@ public class FusedLocationHelper {
                                 DirectionModel dir = response.body();
                                 callback.onSuccess(
                                         nearest.getName(),
-                                        dir.getDistanceText(), // lay quang duong
-                                        dir.getDurationText()  // lay thoi gian
+                                        dir.getDistanceText(),
+                                        dir.getDurationText()
                                 );
                             }
+
                             @Override
                             public void onFailure(Call<DirectionModel> call, Throwable t) {
-                                callback.onFailure("Lỗi mạng: " + t.getMessage());
+                                callback.onFailure("Lỗi kết nối Directions: " + t.getMessage());
                             }
                         });
             }
+
             @Override
             public void onFailure(Call<StoreModel> call, Throwable t) {
-                callback.onFailure("Lỗi mạng: " + t.getMessage());
+                callback.onFailure("Lỗi kết nối Store: " + t.getMessage());
             }
         });
     }
