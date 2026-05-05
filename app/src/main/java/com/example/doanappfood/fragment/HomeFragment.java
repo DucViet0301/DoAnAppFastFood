@@ -164,6 +164,12 @@ public class HomeFragment extends Fragment {
                 comboAdapter.setData(comboModels);
             }
         });
+        comboAdapter.setOnComboClickListener((comboModel, position) -> {
+            // Xóa Toast, thay bằng:
+            Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
+            intent.putExtra("product_id", comboModel.getId());
+            startActivity(intent);
+        });
     }
 
     private void initViewModelNew() {

@@ -69,10 +69,11 @@ dependencies {
 
     // Location
     implementation("com.google.android.gms:play-services-location:21.1.0")
-
-    // okhhtp3
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
-    implementation("com.google.code.gson:gson:2.10.1")
-
-
+    // json
+    implementation("com.google.code.gson:gson:2.13.2")
+    // momo
+    implementation("com.github.momo-wallet:mobile-sdk:1.0.6") {
+        exclude(group = "com.android.support")
+    }
 }

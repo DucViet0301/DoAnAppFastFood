@@ -4,6 +4,7 @@ import com.example.doanappfood.model.BannerModel;
 import com.example.doanappfood.model.CategoryModel;
 import com.example.doanappfood.model.ComboModel;
 import com.example.doanappfood.model.DirectionModel;
+import com.example.doanappfood.model.MessModel;
 import com.example.doanappfood.model.NewModel;
 import com.example.doanappfood.model.ProductDetailModel;
 import com.example.doanappfood.model.ProductModel;
@@ -57,6 +58,8 @@ public interface ApiApp {
             @Query("toLat")   double toLat,
             @Query("toLng")   double toLng
     );
+    @POST("orders")
+    Call<MessModel> postOrder(@Body okhttp3.RequestBody detail);
 
     @POST("chatbot")
     Call<Map<String, String>> sendMessage(@Body Map<String, String> body);

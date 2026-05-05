@@ -30,11 +30,14 @@ import com.example.doanappfood.data.CartDAO;
 import com.example.doanappfood.databinding.ActivityCartBinding;
 import com.example.doanappfood.model.CartItem;
 import com.example.doanappfood.model.CartSauceItem;
+import com.google.gson.Gson;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -44,7 +47,7 @@ public class CartActivity extends AppCompatActivity {
     private RecyclerView rvCart;
     private TextView tvTotalPrice, tvOldPrice;
     private CartAdapter adapter;
-    private static final int CURRENT_USER_ID = 1;
+    private static final int CURRENT_USER_ID = 2;
     private CartDAO  cartDAO;
     private List<CartItem> cartItemList = new ArrayList<>();
     private final NumberFormat fmt = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
@@ -68,14 +71,46 @@ public class CartActivity extends AppCompatActivity {
         loadCartData();
 
         btnBackCart.setOnClickListener(v -> finish());
-        btnCheckout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CartActivity.this, CheckOutActivity.class);
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_out_left, R.anim.slide_in_right);
+        btnCheckout.setOnClickListener(v -> {
+            // Tính lại tổng trước khi truyền
+            double saleTotal = 0, listTotal = 0;
+            int user=1;
+            for (CartItem item : cartItemList) {
+                user = item.getUserId();
+                int qty = item.getQuantity();
+                double sale = item.getSale_price();
+                double list = item.getList_price();
+                saleTotal += (sale > 0 && sale < list ? sale : list) * qty;
+                listTotal += list * qty;
             }
+            List<Map<String, Object>> items = new ArrayList<>();
+            for (CartItem item : cartItemList) {
+                List<Map<String, Object>> sauces = new ArrayList<>();
+                if (item.getSauces() != null) {
+                    for (CartSauceItem s : item.getSauces()) {
+                        Map<String, Object> sauce = new LinkedHashMap<>();
+                        sauce.put("name", s.getName());
+                        sauce.put("quantity",s.getQuantity());
+                        sauces.add(sauce);
+                    }
+                }
+
+                Map<String, Object> cartMap = new LinkedHashMap<>();
+                cartMap.put("product_id", item.getProductId());
+                cartMap.put("quantity", item.getQuantity());
+                cartMap.put("list_price", item.getList_price());
+                cartMap.put("sale_price", item.getSale_price());
+                cartMap.put("sauces", sauces);
+                items.add(cartMap);
+            }
+
+            Intent intent = new Intent(CartActivity.this, CheckOutActivity.class);
+            intent.putExtra("sale_total", saleTotal);
+            intent.putExtra("list_total", listTotal);
+            intent.putExtra("user_id", user);
+            intent.putExtra("cart_json", new Gson().toJson(items));
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_out_left, R.anim.slide_in_right);
         });
 
     }
