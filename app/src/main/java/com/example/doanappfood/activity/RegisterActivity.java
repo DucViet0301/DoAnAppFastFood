@@ -187,6 +187,4 @@ public class RegisterActivity extends AppCompatActivity {
         Keyboard.hideKeyboardOnTouchOutside(this, event);
         return super.dispatchTouchEvent(event);
     }
-
-
 }
