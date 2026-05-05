@@ -56,11 +56,11 @@ public class AuthViewModel extends AndroidViewModel {
     }
 
     // Đăng ký
-    public void register(String name, String phone, String email,
+    public void register(String name,String email, String phone,
                          String password, String address, String birthDate) {
         isLoading.setValue(true);
 
-        repository.register(name, phone, email, password, address, birthDate,
+        repository.register(name,email, phone, password, address, birthDate,
                 new AuthRepository.AuthCallback() {
                     @Override
                     public void onSuccess(AuthModel response) {
