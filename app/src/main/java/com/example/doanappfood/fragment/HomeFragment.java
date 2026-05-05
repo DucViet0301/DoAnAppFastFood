@@ -58,15 +58,19 @@ public class HomeFragment extends Fragment {
     private Handler autoScrollHandler;
     private Runnable autoScrollRunnable;
     private static final long Auto_Scroll_Delay = 3000L;
-    TextView SeeAllProduct, tvSeeAllNews;
+
+    // ĐÃ SỬA Ở ĐÂY: Khai báo thêm tvSeeAllNews ngay cạnh SeeAllProduct
+    TextView SeeAllProduct, tvSeeAllNews, tvNamCustomer;
     CardView CardViewGiftBox, CardViewBestSeller, CardViewChicken, CardViewLocationStore;
 
-    BannerRepository bannerRepository;
+    com.example.doanappfood.Utlis.SessionManager sessionManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        sessionManager = new com.example.doanappfood.Utlis.SessionManager(requireContext());
 
         //Banner
         initViewBanner(view);
@@ -82,6 +86,15 @@ public class HomeFragment extends Fragment {
         initViewModelNew();
 
         SeeAllProduct = view.findViewById(R.id.tvSeeALLUD);
+        tvNamCustomer = view.findViewById(R.id.tvNamCustomer);
+
+        // Hiển thị tên người dùng nếu đã đăng nhập
+        if (sessionManager.isLoggedIn()) {
+            tvNamCustomer.setText(sessionManager.getUserName());
+        } else {
+            tvNamCustomer.setText("Quý Khách");
+        }
+
         CardViewGiftBox = view.findViewById(R.id.CardViewGiftBox);
         CardViewBestSeller = view.findViewById(R.id.CardViewBestSeller);
         CardViewChicken = view.findViewById(R.id.CardViewChicken);
@@ -229,11 +242,12 @@ public class HomeFragment extends Fragment {
             autoScrollHandler.removeCallbacks(autoScrollRunnable);
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
 
-        ((MainActivity)getActivity()).findViewById(R.id.fab_chatbox)
+        ((MainActivity) getActivity()).findViewById(R.id.fab_chatbox)
                 .setVisibility(View.VISIBLE);
     }
 

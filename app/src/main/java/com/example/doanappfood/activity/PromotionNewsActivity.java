@@ -49,7 +49,7 @@ public class PromotionNewsActivity extends AppCompatActivity {
         adapter = new PromotionNewsAdapter(new ArrayList<>(), this);
         rvPromotionNewsItems.setAdapter(adapter);
 
-        // Bắt sự kiện click để mở chi tiết
+
         adapter.setOnPromotionNewsClickListener((promotionNewsModel, position) -> {
             android.content.Intent intent = new android.content.Intent(PromotionNewsActivity.this, com.example.doanappfood.activity.PromotionNewsDetailActivity.class);
             intent.putExtra("title", promotionNewsModel.getTitle());

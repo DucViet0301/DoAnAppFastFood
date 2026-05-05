@@ -27,11 +27,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    private static final int CURRENT_USER_ID = 2;
     private BottomNavigationView bottomNav;
     private FloatingActionButton fab, fab_chatbox;
+    private int currentId = -1;
     private TextView badgecount;
     private ImageView btnShoppingacart;
+    private com.example.doanappfood.Utlis.SessionManager sessionManager;
 
     private HomeFragment homeFragment;
     private StoreFragment storeFragment;
@@ -45,6 +46,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        sessionManager = new com.example.doanappfood.Utlis.SessionManager(this);
+        // Khởi tạo RetrofitInstance với context để kích hoạt Auto-Token & Refresh Token
+        com.example.doanappfood.network.RetrofitInstance.getRetrofit(this);
+
+        CartDAO cartDAO = new CartDAO(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window w = getWindow();
@@ -108,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
     }
+
     private void handleIntent(Intent intent) {
         if (intent == null) {
             bottomNav.setSelectedItemId(R.id.home);
@@ -175,7 +183,8 @@ public class MainActivity extends AppCompatActivity {
         updateBadge();
     }
 
-    private void updateBadge() {
+    public void updateBadge() {
+        if (badgecount == null) return;
         CartDAO cartDAO = new CartDAO(this);
         int count = cartDAO.getCount(CURRENT_USER_ID);
         if (count > 0) {

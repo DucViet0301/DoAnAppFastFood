@@ -84,10 +84,10 @@ public class CheckOutActivity extends AppCompatActivity {
     private boolean isLocationFetched = false;
     private double finalTimeDelivery = 30;
     private FusedLocationHelper locationHelper;
-    private  LinearLayout layoutCOD, layoutMoMo;
+    private LinearLayout layoutCOD, layoutMoMo;
     ConstraintLayout selectOptionPayment, footerCheckout;
     private LocationPermissionHelper permissionHelper;
-    private  boolean isAutoFillFromLocation = false;
+    private boolean isAutoFillFromLocation = false;
     private String selectedPayment = "Tiền mặt (COD)";
     private Switch switchUtensils, switchKetchup, switchChili;
     private double saleTotal = 0;
@@ -121,7 +121,7 @@ public class CheckOutActivity extends AppCompatActivity {
         permissionHelper = new LocationPermissionHelper(this);
         locationHelper = new FusedLocationHelper(this);
 
-        tvAddMore.setOnClickListener( v -> {
+        tvAddMore.setOnClickListener(v -> {
             Intent intent = new Intent(CheckOutActivity.this, MainActivity.class);
 
             intent.putExtra("open_tab", "store");
@@ -176,6 +176,7 @@ public class CheckOutActivity extends AppCompatActivity {
         edtNote = findViewById(R.id.edtNote);
         viewModel = new ViewModelProvider(this).get(OrderViewModel.class);
     }
+
     public void setupClick() {
         cardPaymentMethod.setOnClickListener(v -> showPaymentOptions());
         layoutCOD.setOnClickListener(v -> {
@@ -194,6 +195,7 @@ public class CheckOutActivity extends AppCompatActivity {
 
         dimOverlay.setOnClickListener(v -> hidePaymentOptions());
     }
+
     private void showPaymentOptions() {
         footerCheckout.setVisibility(View.GONE);
         dimOverlay.setVisibility(View.VISIBLE);
@@ -231,7 +233,7 @@ public class CheckOutActivity extends AppCompatActivity {
                 .start();
     }
 
-    private  void setupAddressWatcher(){
+    private void setupAddressWatcher() {
         editAddress.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
@@ -282,7 +284,7 @@ public class CheckOutActivity extends AppCompatActivity {
                 locationHelper.getNearStore(lat, lng, new FusedLocationHelper.OnRouteCallback() {
                     @Override
                     public void onSuccess(String storeName, String distance, String duration) {
-                        try{
+                        try {
                             String number = duration.replaceAll("[^0-9.]", "");
                             double routeMinute = Double.parseDouble(number);
                             finalTimeDelivery = routeMinute + 15;
@@ -313,6 +315,7 @@ public class CheckOutActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         Keyboard.hideKeyboardOnTouchOutside(this, event);

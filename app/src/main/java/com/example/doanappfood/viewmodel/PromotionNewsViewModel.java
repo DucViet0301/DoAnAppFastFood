@@ -20,13 +20,15 @@ public class PromotionNewsViewModel extends AndroidViewModel {
         super(application);
         newRepository = new PromotionNewsRepository();
     }
-    public MutableLiveData<List<PromotionNewsModel>> getPromotionNewsList(){
-        if (newList == null){
+
+    public MutableLiveData<List<PromotionNewsModel>> getPromotionNewsList() {
+        if (newList == null) {
             newList = newRepository.getPromotionNews();
         }
-        return  newList;
+        return newList;
     }
-    public  void refreshBanners(){
+
+    public void refreshBanners() {
         newList = newRepository.getPromotionNews();
     }
 

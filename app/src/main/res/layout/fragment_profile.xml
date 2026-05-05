@@ -94,7 +94,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/do_tuoi"
+                app:cardBackgroundColor="@color/do_nhat"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp">
 
@@ -112,15 +112,6 @@
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:text="Today is\nokay"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        android:alpha="0.8"
-                        android:gravity="end" />
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
@@ -139,18 +130,42 @@
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical">
 
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Họ tên: Ngô Trung Hiếu" android:textSize="13sp" android:textColor="#333333" />
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Ngày sinh: 22.01.2005" android:textSize="13sp" android:textColor="#333333" />
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="SĐT: 0386808551" android:textSize="13sp" android:textColor="#333333" />
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Email: hieu2212005@gmail.com" android:textSize="13sp" android:textColor="#333333" />
+                                <TextView
+                                    android:id="@+id/tvFullName"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Họ tên: "
+                                    android:textColor="#333333"
+                                    android:textSize="13sp" />
+
+                                <TextView
+                                    android:id="@+id/tvBirthDate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="Ngày sinh: "
+                                    android:textColor="#333333"
+                                    android:textSize="13sp" />
+
+                                <TextView
+                                    android:id="@+id/tvPhone"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="SĐT: "
+                                    android:textColor="#333333"
+                                    android:textSize="13sp" />
+
+                                <TextView
+                                    android:id="@+id/tvEmail"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="Email: "
+                                    android:textColor="#333333"
+                                    android:textSize="13sp" />
                             </LinearLayout>
 
-                            <ImageView
-                                android:layout_width="70dp"
-                                android:layout_height="70dp"
-                                android:layout_alignParentEnd="true"
-                                android:layout_centerVertical="true"
-                                android:src="@drawable/ic_marker" />
                         </RelativeLayout>
                     </androidx.cardview.widget.CardView>
                 </RelativeLayout>
@@ -164,8 +179,8 @@
                 android:layout_marginTop="8dp"
                 android:text="Đổi mật khẩu"
                 android:textColor="@color/do_tuoi"
-                android:textStyle="bold"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <!-- Menu List -->
@@ -183,61 +198,269 @@
                 android:orientation="vertical">
 
                 <!-- Các mục menu -->
-                <LinearLayout android:layout_width="match_parent" android:layout_height="52dp" android:gravity="center_vertical" android:paddingHorizontal="16dp">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_share" app:tint="#555555" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" android:text="Tài khoản mạng xã hội" android:textColor="#333333" />
-                    <ImageView android:layout_width="16dp" android:layout_height="16dp" android:rotation="-90" android:src="@android:drawable/arrow_down_float" app:tint="#888888" />
-                </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F0F0" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="52dp" android:gravity="center_vertical" android:paddingHorizontal="16dp">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_agenda" app:tint="#555555" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" android:text="Quản lý thẻ thanh toán" android:textColor="#333333" />
-                    <ImageView android:layout_width="16dp" android:layout_height="16dp" android:rotation="-90" android:src="@android:drawable/arrow_down_float" app:tint="#888888" />
-                </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F0F0" />
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_share"
+                        app:tint="#555555" />
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="52dp" android:gravity="center_vertical" android:paddingHorizontal="16dp">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_mylocation" app:tint="#555555" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" android:text="Địa chỉ giao hàng" android:textColor="#333333" />
-                    <ImageView android:layout_width="16dp" android:layout_height="16dp" android:rotation="-90" android:src="@android:drawable/arrow_down_float" app:tint="#888888" />
-                </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F0F0" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Tài khoản mạng xã hội"
+                        android:textColor="#333333" />
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="52dp" android:gravity="center_vertical" android:paddingHorizontal="16dp">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_history" app:tint="#555555" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" android:text="Lịch sử đơn hàng" android:textColor="#333333" />
-                    <ImageView android:layout_width="16dp" android:layout_height="16dp" android:rotation="-90" android:src="@android:drawable/arrow_down_float" app:tint="#888888" />
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:rotation="-90"
+                        android:src="@android:drawable/arrow_down_float"
+                        app:tint="#888888" />
                 </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F0F0" />
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="52dp" android:gravity="center_vertical" android:paddingHorizontal="16dp">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/giftbox" app:tint="#555555" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" android:text="Coupon của tôi" android:textColor="#333333" />
-                    <ImageView android:layout_width="16dp" android:layout_height="16dp" android:rotation="-90" android:src="@android:drawable/arrow_down_float" app:tint="#888888" />
-                </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F0F0" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F0F0F0" />
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="52dp" android:gravity="center_vertical" android:paddingHorizontal="16dp">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/btn_star_big_on" app:tint="@color/do_tuoi" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" android:text="Món yêu thích" android:textColor="#333333" />
-                    <ImageView android:layout_width="16dp" android:layout_height="16dp" android:rotation="-90" android:src="@android:drawable/arrow_down_float" app:tint="#888888" />
-                </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F0F0" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="52dp" android:gravity="center_vertical" android:paddingHorizontal="16dp">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_help" app:tint="#555555" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" android:text="Chính sách" android:textColor="#333333" />
-                    <ImageView android:layout_width="16dp" android:layout_height="16dp" android:rotation="-90" android:src="@android:drawable/arrow_down_float" app:tint="#888888" />
-                </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F0F0" />
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_agenda"
+                        app:tint="#555555" />
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="52dp" android:gravity="center_vertical" android:paddingHorizontal="16dp">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_send" app:tint="#555555" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" android:text="Ý kiến khách hàng" android:textColor="#333333" />
-                    <ImageView android:layout_width="16dp" android:layout_height="16dp" android:rotation="-90" android:src="@android:drawable/arrow_down_float" app:tint="#888888" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Quản lý thẻ thanh toán"
+                        android:textColor="#333333" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:rotation="-90"
+                        android:src="@android:drawable/arrow_down_float"
+                        app:tint="#888888" />
                 </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F0F0" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F0F0F0" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_mylocation"
+                        app:tint="#555555" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Địa chỉ giao hàng"
+                        android:textColor="#333333" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:rotation="-90"
+                        android:src="@android:drawable/arrow_down_float"
+                        app:tint="#888888" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F0F0F0" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_history"
+                        app:tint="#555555" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Lịch sử đơn hàng"
+                        android:textColor="#333333" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:rotation="-90"
+                        android:src="@android:drawable/arrow_down_float"
+                        app:tint="#888888" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F0F0F0" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/giftbox"
+                        app:tint="#555555" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Coupon của tôi"
+                        android:textColor="#333333" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:rotation="-90"
+                        android:src="@android:drawable/arrow_down_float"
+                        app:tint="#888888" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F0F0F0" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/btn_star_big_on"
+                        app:tint="@color/do_tuoi" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Món yêu thích"
+                        android:textColor="#333333" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:rotation="-90"
+                        android:src="@android:drawable/arrow_down_float"
+                        app:tint="#888888" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F0F0F0" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_help"
+                        app:tint="#555555" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Chính sách"
+                        android:textColor="#333333" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:rotation="-90"
+                        android:src="@android:drawable/arrow_down_float"
+                        app:tint="#888888" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F0F0F0" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_send"
+                        app:tint="#555555" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Ý kiến khách hàng"
+                        android:textColor="#333333" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:rotation="-90"
+                        android:src="@android:drawable/arrow_down_float"
+                        app:tint="#888888" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F0F0F0" />
 
                 <!-- Đăng xuất -->
                 <LinearLayout
@@ -246,8 +469,19 @@
                     android:layout_height="52dp"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="16dp">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_lock_power_off" app:tint="#555555" />
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:text="Đăng xuất" android:textColor="#333333" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_lock_power_off"
+                        app:tint="#555555" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="Đăng xuất"
+                        android:textColor="#333333" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

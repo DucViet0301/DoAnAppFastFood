@@ -17,7 +17,7 @@ import com.example.doanappfood.R;
 public class PromotionNewsDetailActivity extends AppCompatActivity {
 
     private ImageView imgDetail, btnBack;
-    private TextView tvTitleDetail, tvDescription, tvDateDetail;
+    private TextView tvTitleDetail, tvDescription;
     private Button btnBuy;
 
     @Override
@@ -45,7 +45,6 @@ public class PromotionNewsDetailActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> finish());
 
         btnBuy.setOnClickListener(v -> {
-            // Phải quay lại MainActivity để MainActivity điều hướng sang StoreFragment
             Intent intent = new Intent(PromotionNewsDetailActivity.this, MainActivity.class);
             intent.putExtra("open_tab", "store");
             intent.putExtra("IdCate", 1);
