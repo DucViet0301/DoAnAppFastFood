@@ -8,33 +8,31 @@ import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.doanappfood.R;
 import com.example.doanappfood.Utlis.Keyboard;
-import com.example.doanappfood.model.ResponseModel;
-import com.example.doanappfood.model.UserModel;
-import com.example.doanappfood.network.ApiApp;
-import com.example.doanappfood.network.RetrofitInstance;
+import com.example.doanappfood.viewmodel.AuthViewModel;
+import com.google.android.material.datepicker.MaterialDatePicker;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class RegisterActivity extends AppCompatActivity {
+
     private ImageView btnBack;
     private AppCompatButton btnRegister;
-    private EditText edtName, edtEmail, edtPhone, edtPassword, edtDob;
-    private CheckBox cbTerms;
-    private TextView tvLogin;
+    private EditText edtName, edtEmail, edtPhone, edtPassword, edtBirthdate, edtAddress;
+    private android.widget.CheckBox cbTerms;
+    private AuthViewModel authViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,80 +45,140 @@ public class RegisterActivity extends AppCompatActivity {
             w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
 
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+
+        initView();
+        observeViewModel();
+    }
+
+    private void initView() {
         btnBack = findViewById(R.id.btnBack);
         btnRegister = findViewById(R.id.btnRegister);
+        edtBirthdate = findViewById(R.id.edtBirthdate);
         edtName = findViewById(R.id.edtName);
         edtEmail = findViewById(R.id.edtEmail);
         edtPhone = findViewById(R.id.edtPhone);
         edtPassword = findViewById(R.id.edtPassword);
-        edtDob = findViewById(R.id.edtDob);
+        edtAddress = findViewById(R.id.edtAddress);
         cbTerms = findViewById(R.id.cbTerms);
-        tvLogin = findViewById(R.id.tvLogin);
-
-        checkInputs();
-
-        TextWatcher textWatcher = new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { checkInputs(); }
-            @Override public void afterTextChanged(Editable s) {}
-        };
-
-        edtName.addTextChangedListener(textWatcher);
-        edtEmail.addTextChangedListener(textWatcher);
-        edtPhone.addTextChangedListener(textWatcher);
-        edtPassword.addTextChangedListener(textWatcher);
-        edtDob.addTextChangedListener(textWatcher);
-
-        cbTerms.setOnCheckedChangeListener((buttonView, isChecked) -> checkInputs());
 
         btnBack.setOnClickListener(v -> finish());
 
-        tvLogin.setOnClickListener(v -> {
+        findViewById(R.id.tvLogin).setOnClickListener(v -> {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
 
+        cbTerms.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                btnRegister.setBackgroundResource(R.drawable.bg_button_login);
+            } else {
+                btnRegister.setBackgroundResource(R.drawable.button_background_gray);
+            }
+        });
+
+        edtBirthdate.setOnClickListener(v -> showDatePickerDialog());
+
         btnRegister.setOnClickListener(v -> {
+            if (!cbTerms.isChecked()) {
+                Toast.makeText(this, "Vui lòng đồng ý với các điều khoản để tiếp tục",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             String name = edtName.getText().toString().trim();
             String email = edtEmail.getText().toString().trim();
             String phone = edtPhone.getText().toString().trim();
             String password = edtPassword.getText().toString().trim();
-            String dob = edtDob.getText().toString().trim();
+            String birthdate = edtBirthdate.getText().toString().trim();
+            String address = edtAddress.getText().toString().trim();
 
-            registerApi(name, email, phone, password, dob);
+            boolean isValid = true;
+            if (name.isEmpty()) {
+                edtName.setError("Vui lòng nhập họ tên");
+                isValid = false;
+            }
+            if (email.isEmpty()) {
+                edtEmail.setError("Vui lòng nhập email");
+                isValid = false;
+            }
+            if (phone.isEmpty()) {
+                edtPhone.setError("Vui lòng nhập số điện thoại");
+                isValid = false;
+            }
+            if (address.isEmpty()) {
+                edtAddress.setError("Vui lòng nhập địa chỉ");
+                isValid = false;
+            }
+            if (password.isEmpty()) {
+                edtPassword.setError("Vui lòng nhập mật khẩu");
+                isValid = false;
+            }
+            if (birthdate.isEmpty()) {
+                edtBirthdate.setError("Vui lòng chọn ngày sinh");
+                isValid = false;
+            }
+            if (!isValid) return;
+
+            // Chuyển định dạng ngày cho API
+            String birthdateForApi = "";
+            try {
+                String[] parts = birthdate.split("/");
+                birthdateForApi = parts[2] + "-" + parts[1] + "-" + parts[0];
+            } catch (Exception e) {
+                birthdateForApi = birthdate;
+            }
+
+            authViewModel.register(name, phone, email, password, address, birthdateForApi);
         });
     }
 
-    private void registerApi(String name, String email, String phone, String password, String dob) {
-        Toast.makeText(this, "Đang gửi dữ liệu...", Toast.LENGTH_SHORT).show();
-        btnRegister.setEnabled(false);
-
-        ApiApp apiApp = RetrofitInstance.getRetrofit().create(ApiApp.class);
-
-        UserModel user = new UserModel(name, email, phone, password, dob);
-
-        apiApp.registerUser(user).enqueue(new Callback<ResponseModel>() {
-            @Override
-            public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    if (response.body().isSuccess()) {
-                        Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                        finish();
-                    } else {
-                        Toast.makeText(RegisterActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                        btnRegister.setEnabled(true);
-                    }
-                } else {
-                    Toast.makeText(RegisterActivity.this, "Lỗi Server rồi!", Toast.LENGTH_LONG).show();
-                    btnRegister.setEnabled(true);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseModel> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "Lỗi kết nối mạng", Toast.LENGTH_LONG).show();
+    private void observeViewModel() {
+        authViewModel.getIsLoading().observe(this, isLoading -> {
+            if (isLoading) {
+                btnRegister.setEnabled(false);
+                btnRegister.setText("Đang xử lý...");
+            } else {
                 btnRegister.setEnabled(true);
+                btnRegister.setText("Đăng ký");
             }
+        });
+
+        authViewModel.getAuthResult().observe(this, authResponse -> {
+            if (authResponse != null && authResponse.isSuccess()) {
+                Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+            }
+        });
+
+        authViewModel.getErrorMessage().observe(this, error -> {
+            if (error != null) {
+                Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showDatePickerDialog() {
+        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Chọn ngày sinh")
+                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                .build();
+
+        datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
+
+        datePicker.addOnPositiveButtonClickListener(selection -> {
+            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            calendar.setTimeInMillis(selection);
+
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            int month = calendar.get(Calendar.MONTH) + 1;
+            int year = calendar.get(Calendar.YEAR);
+
+            String selectedDate = String.format(Locale.getDefault(),
+                    "%02d/%02d/%d", day, month, year);
+            edtBirthdate.setText(selectedDate);
+            edtBirthdate.setError(null);
         });
     }
 

@@ -21,29 +21,13 @@ public class PromotionNewsAdapter extends RecyclerView.Adapter<PromotionNewsAdap
     private OnPromotionNewsClickListener listener;
     private Context context;
 
-    public interface OnPromotionNewsClickListener {
-        void OnClick(PromotionNewsModel promotionNewsModel, int position);
-    }
-
-    public void setOnPromotionNewsClickListener(OnPromotionNewsClickListener listener) {
-        this.listener = listener;
-    }
-
     public PromotionNewsAdapter(List<PromotionNewsModel> list, Context context) {
         this.list = list;
         this.context = context;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgNew;
-        TextView tvTitleNew, tvDateNew;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            imgNew = itemView.findViewById(R.id.imgPromotionNew);
-            tvTitleNew = itemView.findViewById(R.id.tvTitlePromotionNew);
-            tvDateNew = itemView.findViewById(R.id.tvDatePromotionNew);
-        }
+    public void setOnPromotionNewsClickListener(OnPromotionNewsClickListener listener) {
+        this.listener = listener;
     }
 
     public void setData(List<PromotionNewsModel> newList) {
@@ -63,7 +47,27 @@ public class PromotionNewsAdapter extends RecyclerView.Adapter<PromotionNewsAdap
         PromotionNewsModel item = list.get(position);
         if (item != null) {
             holder.tvTitleNew.setText(item.getTitle());
-            holder.tvDateNew.setText(item.getCreated_at());
+
+            // Xử lý định dạng ngày tháng (chỉ lấy ngày/tháng/năm)
+            String rawDate = item.getCreated_at();
+            String formattedDate = rawDate;
+            if (rawDate != null && !rawDate.isEmpty()) {
+                String dateOnly = rawDate;
+                if (rawDate.contains("T")) {
+                    dateOnly = rawDate.split("T")[0];
+                } else if (rawDate.contains(" ")) {
+                    dateOnly = rawDate.split(" ")[0];
+                }
+
+                if (dateOnly.contains("-")) {
+                    String[] parts = dateOnly.split("-");
+                    if (parts.length == 3) {
+                        formattedDate = parts[2] + "/" + parts[1] + "/" + parts[0];
+                    }
+                }
+            }
+            holder.tvDateNew.setText(formattedDate);
+
             Glide.with(context).load(item.getImage()).into(holder.imgNew);
 
             // Xử lý sự kiện Click
@@ -78,5 +82,21 @@ public class PromotionNewsAdapter extends RecyclerView.Adapter<PromotionNewsAdap
     @Override
     public int getItemCount() {
         return (list != null) ? list.size() : 0;
+    }
+
+    public interface OnPromotionNewsClickListener {
+        void OnClick(PromotionNewsModel promotionNewsModel, int position);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView imgNew;
+        TextView tvTitleNew, tvDateNew;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            imgNew = itemView.findViewById(R.id.imgPromotionNew);
+            tvTitleNew = itemView.findViewById(R.id.tvTitlePromotionNew);
+            tvDateNew = itemView.findViewById(R.id.tvDatePromotionNew);
+        }
     }
 }

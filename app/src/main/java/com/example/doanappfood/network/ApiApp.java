@@ -1,19 +1,24 @@
 package com.example.doanappfood.network;
 
+import com.example.doanappfood.model.AuthModel;
 import com.example.doanappfood.model.BannerModel;
 import com.example.doanappfood.model.CategoryModel;
 import com.example.doanappfood.model.ComboModel;
 import com.example.doanappfood.model.DirectionModel;
+import com.example.doanappfood.model.LoginModel;
+import com.example.doanappfood.model.MessModel;
 import com.example.doanappfood.model.NewModel;
 import com.example.doanappfood.model.ProductDetailModel;
 import com.example.doanappfood.model.ProductModel;
 import com.example.doanappfood.model.PromotionNewsModel;
+import com.example.doanappfood.model.RegisterModel;
 import com.example.doanappfood.model.StoreModel;
 import com.example.doanappfood.model.LoginRequest;
 import com.example.doanappfood.model.ResponseModel;
 import com.example.doanappfood.model.UserModel;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -64,13 +69,20 @@ public interface ApiApp {
             @Query("toLat") double toLat,
             @Query("toLng") double toLng
     );
+    @POST("orders")
+    Call<MessModel> postOrder(@Body okhttp3.RequestBody detail);
 
-    @POST("users/register")
-    Call<ResponseModel> registerUser(@Body UserModel user);
+    @POST("login")
+    Call<AuthModel> login(@Body LoginModel request);
 
-    @POST("users/login")
-    Call<ResponseModel> loginUser(@Body LoginRequest loginRequest);
+    @POST("register")
+    Call<AuthModel> register(@Body RegisterModel request);
+    @FormUrlEncoded
+    @POST("auth/refresh")
+    Call<AuthModel> refreshToken(@Field("refresh_token") String refreshToken);
 
+    @POST("chatbot")
+    Call<Map<String, String>> sendMessage(@Body Map<String, String> body);
 
     // THÊM 2 API MỚI CHO TÍNH NĂNG ĐỔI MẬT KHẨU
 

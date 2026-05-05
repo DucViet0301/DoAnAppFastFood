@@ -23,7 +23,7 @@ import java.util.Locale;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
     private List<ProductModel> list;
     private Context context;
-    private  OnProductClickListener listener;
+    private OnProductClickListener listener;
     private  int selectedPosition = 0;
 
     public  interface OnProductClickListener{

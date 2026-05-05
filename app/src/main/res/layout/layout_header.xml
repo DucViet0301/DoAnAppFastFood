@@ -24,10 +24,10 @@
 
 <ImageView
     android:id="@+id/ic_shoppingcart"
-    android:layout_width="30dp"
-    android:layout_height="30dp"
-    android:src="@drawable/bag"
-    android:layout_marginEnd="16dp"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:src="@drawable/ic_shopping_outline"
+    android:layout_marginEnd="8dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
@@ -45,7 +45,7 @@
     android:textStyle="bold"
     app:layout_constraintEnd_toEndOf="@id/ic_shoppingcart"
     app:layout_constraintTop_toTopOf="@id/ic_shoppingcart"
-    android:translationX="10dp"
-    android:translationY="-8dp"/>
+    android:translationX="8dp"
+    android:translationY="-3dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

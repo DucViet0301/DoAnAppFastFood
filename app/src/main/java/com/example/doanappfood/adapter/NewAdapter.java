@@ -28,6 +28,7 @@ public class NewAdapter extends RecyclerView.Adapter<NewAdapter.ViewHolder> {
     public void setOnNewClickListener(OnNewClickListener listener) {
         this.listener = listener;
     }
+
     private List<NewModel> list;
     private Context context;
 
@@ -43,16 +44,19 @@ public class NewAdapter extends RecyclerView.Adapter<NewAdapter.ViewHolder> {
         this.list = list;
         this.context = context;
     }
-    public  class  ViewHolder extends RecyclerView.ViewHolder{
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgNew;
         TextView tvTitleNew;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imgNew = itemView.findViewById(R.id.imgNew);
             tvTitleNew = itemView.findViewById(R.id.tvTitleNew);
         }
     }
-    public void setData(List<NewModel> newList){
+
+    public void setData(List<NewModel> newList) {
         this.list = newList;
         notifyDataSetChanged();
     }

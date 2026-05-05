@@ -19,13 +19,15 @@ public class NewViewModel extends AndroidViewModel {
         super(application);
         newRepository = new NewRepository();
     }
-    public MutableLiveData<List<NewModel>> getNewList(){
-        if (newList == null){
+
+    public MutableLiveData<List<NewModel>> getNewList() {
+        if (newList == null) {
             newList = newRepository.getNew();
         }
-        return  newList;
+        return newList;
     }
-    public  void refreshBanners(){
+
+    public void refreshBanners() {
         newList = newRepository.getNew();
     }
 }

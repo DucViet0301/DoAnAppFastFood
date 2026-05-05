@@ -16,23 +16,20 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.doanappfood.R;
 import com.example.doanappfood.Utlis.Keyboard;
-import com.example.doanappfood.model.LoginRequest;
-import com.example.doanappfood.model.ResponseModel;
-import com.example.doanappfood.network.ApiApp;
-import com.example.doanappfood.network.RetrofitInstance;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.example.doanappfood.Utlis.SessionManager;
+import com.example.doanappfood.viewmodel.AuthViewModel;
 
 public class LoginActivity extends AppCompatActivity {
+
     private ImageView btnClose;
     private AppCompatButton btnLogin;
-    private TextView tvCreateAccount, tvForgotPass;
-    private EditText edtAccount, edtPassword;
+    private TextView tvCreateAccount;
+    private EditText edtLogin, edtPassword;
+    private AuthViewModel authViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,107 +41,100 @@ public class LoginActivity extends AppCompatActivity {
             w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
 
-        btnClose = findViewById(R.id.btnCloseLogin);
-        btnLogin = findViewById(R.id.btnLogin);
-        tvCreateAccount = findViewById(R.id.tvCreateAccount);
-        tvForgotPass = findViewById(R.id.tvForgotPass);
-        edtAccount = findViewById(R.id.edtAccount);
-        edtPassword = findViewById(R.id.edtPassword);
+        // Khởi tạo ViewModel
+        authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
 
-        checkInputs();
-        TextWatcher textWatcher = new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                checkInputs();
-            }
-            @Override public void afterTextChanged(Editable s) {}
-        };
-        edtAccount.addTextChangedListener(textWatcher);
-        edtPassword.addTextChangedListener(textWatcher);
-
-        tvCreateAccount.setOnClickListener(v -> {
-            Intent intent = new Intent(this, RegisterActivity.class);
-            startActivity(intent);
-        });
-        tvForgotPass.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        });
-
-        btnLogin.setOnClickListener(v -> {
-            String email = edtAccount.getText().toString().trim();
-            String password = edtPassword.getText().toString().trim();
-
-            loginApi(email, password);
-        });
-
-        btnClose.setOnClickListener(v -> finish());
-    }
-
-    private void checkInputs() {
-        String email = edtAccount.getText().toString().trim();
-        String password = edtPassword.getText().toString().trim();
-
-        if (!email.isEmpty() && !password.isEmpty()) {
-            btnLogin.setEnabled(true);
-            btnLogin.setBackgroundResource(R.drawable.bg_button_login);
-        } else {
-            btnLogin.setEnabled(false);
-            btnLogin.setBackgroundResource(R.drawable.button_background_gray);
+        initView();
+        observeViewModel();
+        String expiredMsg = getIntent().getStringExtra("expired_message");
+        if (expiredMsg != null) {
+            Toast.makeText(this, expiredMsg, Toast.LENGTH_LONG).show();
         }
     }
 
-    private void loginApi(String email, String password) {
-        Toast.makeText(this, "Đang kiểm tra...", Toast.LENGTH_SHORT).show();
-        btnLogin.setEnabled(false);
-        ApiApp apiApp = RetrofitInstance.getRetrofit().create(ApiApp.class);
+    private void initView() {
+        btnClose = findViewById(R.id.btnCloseLogin);
+        btnLogin = findViewById(R.id.btnLogin);
+        tvCreateAccount = findViewById(R.id.tvCreateAccount);
+        edtLogin = findViewById(R.id.edtLogin);       // SĐT hoặc email
+        edtPassword = findViewById(R.id.edtPassword);    // Mật khẩu
 
-        LoginRequest request = new LoginRequest(email, password);
+        // Nút đóng
+        btnClose.setOnClickListener(v -> {
+            finish();
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        });
 
-        apiApp.loginUser(request).enqueue(new Callback<ResponseModel>() {
-            @Override
-            public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    if (response.body().isSuccess()) {
-                        Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+        // Chuyển sang màn hình đăng ký
+        tvCreateAccount.setOnClickListener(v -> {
+            startActivity(new Intent(this, RegisterActivity.class));
+        });
 
-                        SharedPreferences sharedPreferences = getSharedPreferences("USER_INFO", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putBoolean("isLoggedIn", true);
+        // Nút đăng nhập
+        btnLogin.setOnClickListener(v -> {
+            String login = edtLogin.getText().toString().trim();
+            String password = edtPassword.getText().toString().trim();
 
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-
-                        if (response.body().getUser() != null) {
-                            String fullName = response.body().getUser().getName();
-                            intent.putExtra("TEN_NGUOI_DUNG", fullName);
-
-                            editor.putString("userName", fullName);
-                            editor.putString("userEmail", response.body().getUser().getEmail());
-                            editor.putString("userPhone", response.body().getUser().getPhone());
-
-                            editor.putString("userDob", response.body().getUser().getDob());
-                        }
-
-                        editor.apply();
-
-                        startActivity(intent);
-                        finish();
-
-                    } else {
-                        Toast.makeText(LoginActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                        btnLogin.setEnabled(true);
-                    }
-                } else {
-                    Toast.makeText(LoginActivity.this, "Lỗi Server, vui lòng kiểm tra XAMPP!", Toast.LENGTH_SHORT).show();
-                    btnLogin.setEnabled(true);
-                }
+            // Validate
+            if (login.isEmpty()) {
+                edtLogin.setError("Vui lòng nhập số điện thoại hoặc email");
+                return;
+            }
+            if (password.isEmpty()) {
+                edtPassword.setError("Vui lòng nhập mật khẩu");
+                return;
             }
 
-            @Override
-            public void onFailure(Call<ResponseModel> call, Throwable t) {
-                Toast.makeText(LoginActivity.this, "Lỗi kết nối mạng!", Toast.LENGTH_SHORT).show();
+            // Gọi ViewModel
+            authViewModel.login(login, password);
+        });
+    }
+
+    private void observeViewModel() {
+        // Quan sát trạng thái loading
+        authViewModel.getIsLoading().observe(this, isLoading -> {
+            if (isLoading) {
+                btnLogin.setEnabled(false);
+                btnLogin.setText("Đang xử lý...");
+            } else {
                 btnLogin.setEnabled(true);
+                btnLogin.setText("Đăng nhập");
+            }
+        });
+
+        // Quan sát kết quả thành công
+        authViewModel.getAuthResult().observe(this, authResponse -> {
+            if (authResponse != null && authResponse.isSuccess()) {
+                // Lưu token + thông tin user vào SharedPreferences
+                SessionManager session = new SessionManager(this);
+                session.saveSession(
+                        authResponse.getToken(),
+                        authResponse.getRefreshToken(), // Lưu thêm Refresh Token ở đây
+                        authResponse.getUser().getId(),
+                        authResponse.getUser().getName(),
+                        authResponse.getUser().getPhone(),
+                        authResponse.getUser().getEmail(),
+                        authResponse.getUser().getAddress(),
+                        authResponse.getUser().getBirth_date()
+                );
+
+                Toast.makeText(this,
+                        "Chào mừng " + authResponse.getUser().getName(),
+                        Toast.LENGTH_SHORT).show();
+
+                // Chuyển sang MainActivity
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                finish();
+            }
+        });
+
+        // Quan sát lỗi
+        authViewModel.getErrorMessage().observe(this, error -> {
+            if (error != null) {
+                Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
             }
         });
     }

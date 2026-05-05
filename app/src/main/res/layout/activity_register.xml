@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:id="@+id/main"
     android:padding="8dp">
 
     <!-- Nút Close/Back -->
@@ -49,7 +48,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:text="Họ và tên"
                 android:textColor="#001F3F"
                 android:textStyle="bold" />
@@ -107,7 +106,6 @@
                     android:hint="Vui lòng nhập số điện thoại"
                     android:inputType="phone"
                     android:paddingHorizontal="16dp"
-                    android:paddingEnd="45dp"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -121,6 +119,47 @@
                     android:visibility="gone"
                     app:tint="#D3D3D3" />
             </RelativeLayout>
+
+            <!-- Ngày sinh -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Ngày sinh"
+                android:textColor="#001F3F"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edtBirthdate"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/edittext_border"
+                android:clickable="true"
+                android:focusable="false"
+                android:hint="Vui lòng chọn ngày sinh"
+                android:paddingHorizontal="16dp"
+                android:textSize="15sp" />
+
+            <!-- Địa chỉ -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Địa chỉ"
+                android:textColor="#001F3F"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edtAddress"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/edittext_border"
+                android:hint="Vui lòng nhập địa chỉ"
+                android:inputType="textPostalAddress"
+                android:paddingHorizontal="16dp"
+                android:textSize="15sp" />
 
             <!-- Mật khẩu -->
             <TextView
@@ -166,7 +205,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 

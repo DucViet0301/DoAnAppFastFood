@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.Utlis.SessionManager;
 import com.example.doanappfood.Utlis.SlideEffect;
 import com.example.doanappfood.activity.ChangePasswordActivity;
 import com.example.doanappfood.activity.LoginActivity;
@@ -25,16 +26,17 @@ public class ProfileFragment extends Fragment {
 
     private AppCompatButton btnLogin, btnRegister;
     private LinearLayout layoutNotLoggedIn, layoutLoggedIn, btnLogoutItem;
-    private TextView tvUserNameHeader, tvFullNameProfile, tvPhoneProfile, tvEmailProfile, tvDobProfile;
-    private TextView tvChangePassword;
+    private TextView tvUserNameHeader, tvFullName, tvBirthDate, tvPhone, tvEmail;
+    private SessionManager sessionManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        sessionManager = new SessionManager(requireContext());
         initView(view);
-        checkLoginStatus();
+        updateUI();
 
         btnLogin.setOnClickListener(v -> {
             Intent intent = new Intent(requireActivity(), LoginActivity.class);
@@ -42,87 +44,86 @@ public class ProfileFragment extends Fragment {
             requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
 
-        btnRegister.setOnClickListener(v -> {
-            SlideEffect.startActivity(requireActivity(), RegisterActivity.class);
-        });
+        btnRegister.setOnClickListener(v -> SlideEffect.startActivity(requireActivity(), RegisterActivity.class));
 
         btnLogoutItem.setOnClickListener(v -> {
-            new android.app.AlertDialog.Builder(requireContext())
-                    .setTitle("Xác nhận đăng xuất")
-                    .setMessage("Bạn có chắc chắn muốn đăng xuất khỏi tài khoản này không?")
-                    .setPositiveButton("Đăng xuất", (dialog, which) -> {
-                        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.clear();
-                        editor.apply();
+            sessionManager.logout();
+            
+            // Cập nhật lại số lượng giỏ hàng trên Header ngay lập tức
+            if (requireActivity() instanceof com.example.doanappfood.activity.MainActivity) {
+                ((com.example.doanappfood.activity.MainActivity) requireActivity()).updateBadge();
+            }
 
-                        Toast.makeText(requireActivity(), "Đã đăng xuất!", Toast.LENGTH_SHORT).show();
-
-                        checkLoginStatus();
-                    })
-                    .setNegativeButton("Hủy", (dialog, which) -> {
-                        dialog.dismiss();
-                    })
-                    .show();
-        });
-        tvChangePassword.setOnClickListener(v -> {
-            Intent intent = new Intent(requireActivity(), ChangePasswordActivity.class);
-            startActivity(intent);
+            Toast.makeText(getContext(), "Đã đăng xuất", Toast.LENGTH_SHORT).show();
+            updateUI();
         });
 
         return view;
     }
 
-    public void initView(View view){
+    private void initView(View view) {
         btnLogin = view.findViewById(R.id.btnLogin);
         btnRegister = view.findViewById(R.id.btnRegister);
-
         layoutNotLoggedIn = view.findViewById(R.id.layoutNotLoggedIn);
         layoutLoggedIn = view.findViewById(R.id.layoutLoggedIn);
+        btnLogoutItem = view.findViewById(R.id.btnLogoutItem);
 
         tvUserNameHeader = view.findViewById(R.id.tvUserNameHeader);
-        tvFullNameProfile = view.findViewById(R.id.tvFullNameProfile);
-        tvPhoneProfile = view.findViewById(R.id.tvPhoneProfile);
-        tvEmailProfile = view.findViewById(R.id.tvEmailProfile);
-        tvDobProfile = view.findViewById(R.id.tvDobProfile);
+        tvFullName = view.findViewById(R.id.tvFullName);
+        tvBirthDate = view.findViewById(R.id.tvBirthDate);
+        tvPhone = view.findViewById(R.id.tvPhone);
+        tvEmail = view.findViewById(R.id.tvEmail);
+    }
 
-        btnLogoutItem = view.findViewById(R.id.btnLogoutItem);
-        tvChangePassword = view.findViewById(R.id.tvChangePassword);
+    private void updateUI() {
+        if (sessionManager.isLoggedIn()) {
+            layoutNotLoggedIn.setVisibility(View.GONE);
+            layoutLoggedIn.setVisibility(View.VISIBLE);
+            btnLogoutItem.setVisibility(View.VISIBLE);
+
+            // Hiển thị thông tin từ session
+            tvUserNameHeader.setText(sessionManager.getUserName());
+            tvFullName.setText("Họ tên: " + sessionManager.getUserName());
+
+            // Xử lý định dạng ngày sinh (chỉ lấy ngày/tháng/năm)
+            String rawBirthDate = sessionManager.getUserBirthDate();
+            String formattedDate = rawBirthDate;
+
+            if (rawBirthDate != null && !rawBirthDate.isEmpty()) {
+                // 1. Cắt bỏ phần giờ (sau chữ T hoặc khoảng trắng)
+                String dateOnly = rawBirthDate;
+                if (rawBirthDate.contains("T")) {
+                    dateOnly = rawBirthDate.split("T")[0];
+                } else if (rawBirthDate.contains(" ")) {
+                    dateOnly = rawBirthDate.split(" ")[0];
+                }
+
+                // 2. Chuyển yyyy-MM-dd thành dd/MM/yyyy nếu cần
+                if (dateOnly.contains("-")) {
+                    String[] parts = dateOnly.split("-");
+                    if (parts.length == 3) {
+                        formattedDate = parts[2] + "/" + parts[1] + "/" + parts[0];
+                    } else {
+                        formattedDate = dateOnly;
+                    }
+                } else {
+                    formattedDate = dateOnly;
+                }
+            }
+
+            tvBirthDate.setText("Ngày sinh: " + formattedDate);
+            tvPhone.setText("SĐT: " + sessionManager.getUserPhone());
+            tvEmail.setText("Email: " + sessionManager.getUserEmail());
+        } else {
+            layoutNotLoggedIn.setVisibility(View.VISIBLE);
+            layoutLoggedIn.setVisibility(View.GONE);
+            btnLogoutItem.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        checkLoginStatus();
-    }
-
-    private void checkLoginStatus() {
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("USER_INFO", Context.MODE_PRIVATE);
-        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
-
-        if (isLoggedIn) {
-            // Đã đăng nhập: Hiện cục Profile, Nút Đăng xuất, Nút Đổi mật khẩu
-            layoutNotLoggedIn.setVisibility(View.GONE);
-            layoutLoggedIn.setVisibility(View.VISIBLE);
-            btnLogoutItem.setVisibility(View.VISIBLE);
-            tvChangePassword.setVisibility(View.VISIBLE);
-
-            String name = sharedPreferences.getString("userName", "Người dùng");
-            String email = sharedPreferences.getString("userEmail", "Chưa cập nhật");
-            String phone = sharedPreferences.getString("userPhone", "Chưa cập nhật");
-            String dob = sharedPreferences.getString("userDob", "Chưa cập nhật");
-
-            tvUserNameHeader.setText(name);
-            tvFullNameProfile.setText("Họ tên: " + name);
-            tvEmailProfile.setText("Email: " + email);
-            tvPhoneProfile.setText("SĐT: " + phone);
-            tvDobProfile.setText("Ngày sinh: " + dob);
-        } else {
-            // Chưa đăng nhập: Hiện cục Yêu cầu đăng nhập, ẨN CÁC NÚT KIA ĐI
-            layoutNotLoggedIn.setVisibility(View.VISIBLE);
-            layoutLoggedIn.setVisibility(View.GONE);
-            btnLogoutItem.setVisibility(View.GONE);
-            tvChangePassword.setVisibility(View.GONE);
-        }
+        updateUI(); // Cập nhật lại UI nếu user vừa đăng nhập xong quay lại
     }
 }
