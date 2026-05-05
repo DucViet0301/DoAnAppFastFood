@@ -60,15 +60,29 @@ public class MainActivity extends AppCompatActivity {
         new BottomMenuManager(this,binding,  bottomNav, fab, fab_chatbox);
         bottomNav.setBackground(null);
         startFabAnimation();
+
     }
-    public  void setupClick(){
-        btnShoppingacart.setOnClickListener( v -> {
-            Intent intent = new Intent(MainActivity.this, CartActivity.class);
-            startActivity(intent);
-            overridePendingTransition(
-                    R.anim.slide_in_right,
-                    R.anim.slide_out_left
-            );
+    public void setupClick() {
+        btnShoppingacart.setOnClickListener(v -> {
+            android.content.SharedPreferences sharedPreferences = getSharedPreferences("USER_INFO", MODE_PRIVATE);
+            boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+
+            if (isLoggedIn) {
+                Intent intent = new Intent(MainActivity.this, CartActivity.class);
+                startActivity(intent);
+                overridePendingTransition(
+                        R.anim.slide_in_right,
+                        R.anim.slide_out_left
+                );
+            } else {
+                android.widget.Toast.makeText(MainActivity.this, "Vui lòng đăng nhập để xem giỏ hàng!", android.widget.Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                overridePendingTransition(
+                        R.anim.slide_in_right,
+                        R.anim.slide_out_left
+                );
+            }
         });
     }
     private void handleIntent(Intent intent) {
@@ -159,13 +173,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateBadge() {
+        android.content.SharedPreferences sharedPreferences = getSharedPreferences("USER_INFO", MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+
+        if (!isLoggedIn) {
+            badgecount.setVisibility(View.GONE);
+            return;
+        }
+
         CartDAO cartDAO = new CartDAO(this);
+
+
         int count = cartDAO.getCount(CURRENT_USER_ID);
-        if( count > 0){
+
+        if(count > 0){
             badgecount.setVisibility(View.VISIBLE);
             badgecount.setText(String.valueOf(count));
-        }
-        else{
+        } else {
             badgecount.setVisibility(View.GONE);
         }
     }

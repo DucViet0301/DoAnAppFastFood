@@ -139,10 +139,14 @@
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical">
 
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Họ tên: Ngô Trung Hiếu" android:textSize="13sp" android:textColor="#333333" />
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Ngày sinh: 22.01.2005" android:textSize="13sp" android:textColor="#333333" />
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="SĐT: 0386808551" android:textSize="13sp" android:textColor="#333333" />
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Email: hieu2212005@gmail.com" android:textSize="13sp" android:textColor="#333333" />
+                                <TextView android:id="@+id/tvFullNameProfile" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Họ tên: Ngô Trung Hiếu" android:textSize="13sp" android:textColor="#333333" />
+
+                                <TextView android:id="@+id/tvDobProfile" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Ngày sinh: 22.01.2005" android:textSize="13sp" android:textColor="#333333" />
+
+                                <TextView android:id="@+id/tvPhoneProfile" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="SĐT: 0386808551" android:textSize="13sp" android:textColor="#333333" />
+
+                                <TextView android:id="@+id/tvEmailProfile" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Email: hieu2212005@gmail.com" android:textSize="13sp" android:textColor="#333333" />
+
                             </LinearLayout>
 
                             <ImageView

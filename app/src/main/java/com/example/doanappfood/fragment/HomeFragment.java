@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.doanappfood.R;
 import com.example.doanappfood.activity.AllNewsActivity;
+import com.example.doanappfood.activity.MainActivity;
 import com.example.doanappfood.activity.NewDetailActivity;
 import com.example.doanappfood.activity.ProductDetailActivity;
 import com.example.doanappfood.Utlis.SlideEffect;
@@ -62,7 +63,6 @@ public class HomeFragment extends Fragment {
     private Runnable autoScrollRunnable;
     private static final long Auto_Scroll_Delay = 3000L;
 
-    // ĐÃ SỬA Ở ĐÂY: Khai báo thêm tvSeeAllNews ngay cạnh SeeAllProduct
     TextView SeeAllProduct, tvSeeAllNews;
     CardView CardViewGiftBox, CardViewBestSeller, CardViewChicken, CardViewLocationStore;
 
@@ -87,6 +87,16 @@ public class HomeFragment extends Fragment {
         initViewModelNew();
 
 
+        TextView tvName = view.findViewById(R.id.tvNameCustomer);
+
+        android.content.SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("USER_INFO", android.content.Context.MODE_PRIVATE);
+        String fullName = sharedPreferences.getString("userName", "");
+
+        if (!fullName.isEmpty()) {
+            tvName.setText(fullName);
+        } else {
+            tvName.setText("Quý khách");
+        }
 
         SeeAllProduct = view.findViewById(R.id.tvSeeALLUD);
         CardViewGiftBox = view.findViewById(R.id.CardViewGiftBox);
@@ -125,8 +135,9 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        
+
         return  view;
+
     }
 
     private void setCardView(View view, int categoryId) {
