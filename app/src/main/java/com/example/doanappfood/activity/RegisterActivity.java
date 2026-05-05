@@ -187,21 +187,4 @@ public class RegisterActivity extends AppCompatActivity {
         Keyboard.hideKeyboardOnTouchOutside(this, event);
         return super.dispatchTouchEvent(event);
     }
-
-    private void checkInputs() {
-        String name = edtName.getText().toString().trim();
-        String email = edtEmail.getText().toString().trim();
-        String phone = edtPhone.getText().toString().trim();
-        String password = edtPassword.getText().toString().trim();
-        String dob = edtDob.getText().toString().trim();
-        boolean isChecked = cbTerms.isChecked();
-
-        if (!name.isEmpty() && !email.isEmpty() && !phone.isEmpty() && !password.isEmpty() && !dob.isEmpty() && isChecked) {
-            btnRegister.setEnabled(true);
-            btnRegister.setBackgroundResource(R.drawable.bg_button_login);
-        } else {
-            btnRegister.setEnabled(false);
-            btnRegister.setBackgroundResource(R.drawable.button_background_gray);
-        }
-    }
 }

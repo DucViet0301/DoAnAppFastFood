@@ -68,7 +68,6 @@
             android:backgroundTint="#FF4D4D"
             android:text="Mua ngay"
             android:textColor="@android:color/white"
-            android:backgroundTint="#FF4D4D"
             android:layout_marginBottom="12dp"
             app:cornerRadius="12dp"
             app:layout_constraintBottom_toBottomOf="parent" />
