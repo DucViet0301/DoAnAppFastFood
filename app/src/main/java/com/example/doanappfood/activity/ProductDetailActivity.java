@@ -45,10 +45,11 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private int quantity = 1;
     private double totalSaucesPrice = 0;
-    private static final int CURRENT_USER_ID = 1;
+    private int CURRENT_USER_ID;
+    private com.example.doanappfood.Utlis.SessionManager sessionManager;
     private int CartId;
     private double activePrice = 0;
-    private  boolean isUpdateMode = false;
+    private boolean isUpdateMode = false;
 
     private ProductDetailModel currentModel;
     private List<SaucesModel> selectedSaucesList = new ArrayList<>();
@@ -66,6 +67,9 @@ public class ProductDetailActivity extends AppCompatActivity {
             w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
+        sessionManager = new com.example.doanappfood.Utlis.SessionManager(this);
+        CURRENT_USER_ID = sessionManager.getUserId();
+
         setupUI();
         showInstantData();
         loadData();
@@ -91,7 +95,8 @@ public class ProductDetailActivity extends AppCompatActivity {
         binding.btnIncrease.setOnClickListener(v -> updateQuantity(quantity + 1));
         binding.btnDecrease.setOnClickListener(v -> updateQuantity(Math.max(1, quantity - 1)));
     }
-    public  void showInstantData(){
+
+    public void showInstantData() {
         String name = getIntent().getStringExtra("product_name");
         String image = getIntent().getStringExtra("product_image");
         double sale = getIntent().getDoubleExtra("product_sale_price", 0);
@@ -101,10 +106,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         Glide.with(this).load(image).into(binding.ivHeroBanner);
         quantity = oldQuantity;
         binding.tvQuantity.setText(String.valueOf(quantity));
-        if(sale > 0){
+        if (sale > 0) {
             activePrice = sale;
-        }
-        else{
+        } else {
             activePrice = list;
         }
         binding.tvPrice.setText(fmt.format(activePrice) + " đ");
@@ -142,13 +146,13 @@ public class ProductDetailActivity extends AppCompatActivity {
             saucesAdapter = new ProductDetailSaucesAdapter(model.getSaucesModel());
             binding.rvSauces.setAdapter(saucesAdapter);
 
-            if(sauces != null){
-                for(SaucesModel sauceAPI : model.getSaucesModel()){
-                    for(String oldName: sauces){
-                        if(sauceAPI.getName().equals(oldName)){
+            if (sauces != null) {
+                for (SaucesModel sauceAPI : model.getSaucesModel()) {
+                    for (String oldName : sauces) {
+                        if (sauceAPI.getName().equals(oldName)) {
                             selectedSaucesList.add(sauceAPI);
                             sauceAPI.setQuantity(sauceAPI.getQuantity() + 1);
-                            try{
+                            try {
                                 totalSaucesPrice += Double.parseDouble(sauceAPI.getPrice());
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
@@ -159,14 +163,13 @@ public class ProductDetailActivity extends AppCompatActivity {
                 updateTotalPrice();
             }
 
-            saucesAdapter.setOnProductSaucesClickListener((sauce,  isIncreate) -> {
+            saucesAdapter.setOnProductSaucesClickListener((sauce, isIncreate) -> {
                 try {
                     double price = Double.parseDouble(sauce.getPrice());
-                    if(isIncreate){
+                    if (isIncreate) {
                         selectedSaucesList.add(sauce);
                         totalSaucesPrice += price;
-                    }
-                    else{
+                    } else {
                         selectedSaucesList.remove(sauce);
                         totalSaucesPrice -= price;
                     }
@@ -219,9 +222,9 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private void updateTotalPrice() {
         double total = (activePrice + totalSaucesPrice) * quantity;
-        if (isUpdateMode){
+        if (isUpdateMode) {
             binding.btnAddToCart.setText("Cập nhật giỏ hàng: " + fmt.format(total) + " đ");
-        }else {
+        } else {
             binding.btnAddToCart.setText("Thêm giỏ hàng: " + fmt.format(total) + " đ");
         }
     }
@@ -255,6 +258,15 @@ public class ProductDetailActivity extends AppCompatActivity {
         Executor executor = Executors.newSingleThreadExecutor();
 
         binding.btnAddToCart.setOnClickListener(v -> {
+            // Kiểm tra đăng nhập trước khi cho phép thêm vào giỏ hàng
+            if (!sessionManager.isLoggedIn()) {
+                Toast.makeText(this, "Vui lòng đăng nhập để thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+                android.content.Intent intent = new android.content.Intent(this, LoginActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                return;
+            }
+
             if (currentModel == null) return;
 
             List<String> selectedSauceName = new ArrayList<>();
@@ -285,11 +297,11 @@ public class ProductDetailActivity extends AppCompatActivity {
                     double finalListPrice = (listPriceRaw + totalSaucesPrice) * quantity;
 
                     CartDAO cartDAO = new CartDAO(this);
-                    if(isUpdateMode){
-                       cartDAO.updateFullItem(CartId, quantity, finalListPrice,
-                               finalSalePrice,selectedSauceName);
-                    }else{
-                        cartDAO.addItem(CURRENT_USER_ID , currentModel.getId(), currentModel.getName(), finalListPrice,
+                    if (isUpdateMode) {
+                        cartDAO.updateFullItem(CartId, quantity, finalListPrice,
+                                finalSalePrice, selectedSauceName);
+                    } else {
+                        cartDAO.addItem(CURRENT_USER_ID, currentModel.getId(), currentModel.getName(), finalListPrice,
                                 finalSalePrice, quantity, currentModel.getImage(),
                                 selectedSauceName, comboDetail
                         );

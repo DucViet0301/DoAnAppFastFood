@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.Utlis.SessionManager;
 import com.example.doanappfood.adapter.CartAdapter;
 import com.example.doanappfood.data.CartDAO;
 import com.example.doanappfood.databinding.ActivityCartBinding;
@@ -44,8 +45,9 @@ public class CartActivity extends AppCompatActivity {
     private RecyclerView rvCart;
     private TextView tvTotalPrice, tvOldPrice;
     private CartAdapter adapter;
-    private static final int CURRENT_USER_ID = 1;
-    private CartDAO  cartDAO;
+    private int CURRENT_USER_ID;
+    private CartDAO cartDAO;
+    private SessionManager sessionManager;
     private List<CartItem> cartItemList = new ArrayList<>();
     private final NumberFormat fmt = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
     private final Executor executor = Executors.newSingleThreadExecutor();
@@ -54,6 +56,10 @@ public class CartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
+        
+        sessionManager = new SessionManager(this);
+        CURRENT_USER_ID = sessionManager.getUserId();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window w = getWindow();
             w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
@@ -79,8 +85,9 @@ public class CartActivity extends AppCompatActivity {
         });
 
     }
+
     @Override
-    protected  void onResume(){
+    protected void onResume() {
         super.onResume();
         loadCartData();
     }
@@ -92,22 +99,25 @@ public class CartActivity extends AppCompatActivity {
                     private final float BUTTON_WIDTH = 200f;
                     private final Paint paint = new Paint();
                     private final GradientDrawable background = new GradientDrawable();
+
                     {
                         background.setColor(Color.parseColor("#FF4D4D"));
                         float radius = 12 * getResources().getDisplayMetrics().density;
                         background.setCornerRadii(new float[]{
-                                0,0,
-                                radius,radius,
-                                radius,radius,
-                                0,0
+                                0, 0,
+                                radius, radius,
+                                radius, radius,
+                                0, 0
                         });
                     }
+
                     @Override
                     public boolean onMove(@NonNull RecyclerView recyclerView,
                                           @NonNull RecyclerView.ViewHolder viewHolder,
                                           @NonNull RecyclerView.ViewHolder target) {
                         return false;
                     }
+
                     @Override
                     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                         int position = viewHolder.getAdapterPosition();
@@ -153,7 +163,7 @@ public class CartActivity extends AppCompatActivity {
                         );
                         if (icon != null) {
                             int iconSize = 64;
-                            int iconLeft = right - (int)(BUTTON_WIDTH / 2 + iconSize / 2);
+                            int iconLeft = right - (int) (BUTTON_WIDTH / 2 + iconSize / 2);
                             int iconTop = top + (bottom - top) / 2 - iconSize / 2;
                             icon.setBounds(
                                     iconLeft,
@@ -176,13 +186,14 @@ public class CartActivity extends AppCompatActivity {
         tvTotalPrice = findViewById(R.id.tvTotalPrice);
         tvOldPrice = findViewById(R.id.tvOldPrice);
     }
+
     private void setupRecyclerView() {
         rvCart.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CartAdapter(cartItemList, new CartAdapter.CartListener() {
             @Override
             public void onQuanityChange(int cartId, int quantity, int position) {
                 executor.execute(() -> {
-                    try{
+                    try {
                         cartDAO.updateItem(cartId, quantity);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -202,8 +213,8 @@ public class CartActivity extends AppCompatActivity {
                 intent.putExtra("current_quantity", item.getQuantity());
 
                 ArrayList<String> selectedSauces = new ArrayList<>();
-                if(item.getSauces() != null){
-                    for(CartSauceItem s : item.getSauces()){
+                if (item.getSauces() != null) {
+                    for (CartSauceItem s : item.getSauces()) {
                         selectedSauces.add(s.getName());
                     }
                 }
@@ -216,10 +227,11 @@ public class CartActivity extends AppCompatActivity {
         });
         rvCart.setAdapter(adapter);
     }
+
     private void loadCartData() {
         executor.execute(() -> {
             try {
-                List<CartItem> fresh = cartDAO.getAll(CURRENT_USER_ID );
+                List<CartItem> fresh = cartDAO.getAll(CURRENT_USER_ID);
                 runOnUiThread(() -> {
                     cartItemList.clear();
                     cartItemList.addAll(fresh);

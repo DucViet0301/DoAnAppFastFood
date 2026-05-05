@@ -23,12 +23,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    private static final int CURRENT_USER_ID = 1;
     private BottomNavigationView bottomNav;
     private FloatingActionButton fab, fab_chatbox;
-    private  int currentId = -1;
-    private  TextView badgecount;
+    private int currentId = -1;
+    private TextView badgecount;
     private ImageView btnShoppingacart;
+    private com.example.doanappfood.Utlis.SessionManager sessionManager;
 
 
     @Override
@@ -36,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        sessionManager = new com.example.doanappfood.Utlis.SessionManager(this);
+        // Khởi tạo RetrofitInstance với context để kích hoạt Auto-Token & Refresh Token
+        com.example.doanappfood.network.RetrofitInstance.getRetrofit(this);
 
         CartDAO cartDAO = new CartDAO(this);
 
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
             handleIntent(getIntent());
         }
     }
+
     private void initViews() {
         badgecount = binding.layoutHeader.badgeCount;
         bottomNav = binding.bottomNavigationView;
@@ -57,12 +62,13 @@ public class MainActivity extends AppCompatActivity {
         fab_chatbox = binding.fabChatbox;
         fab = binding.fab;
 
-        new BottomMenuManager(this,binding,  bottomNav, fab, fab_chatbox);
+        new BottomMenuManager(this, binding, bottomNav, fab, fab_chatbox);
         bottomNav.setBackground(null);
         startFabAnimation();
     }
-    public  void setupClick(){
-        btnShoppingacart.setOnClickListener( v -> {
+
+    public void setupClick() {
+        btnShoppingacart.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CartActivity.class);
             startActivity(intent);
             overridePendingTransition(
@@ -71,8 +77,9 @@ public class MainActivity extends AppCompatActivity {
             );
         });
     }
+
     private void handleIntent(Intent intent) {
-        if(intent == null){
+        if (intent == null) {
             bottomNav.setSelectedItemId(R.id.home);
         }
         String openTab =
@@ -89,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         }
         bottomNav.setSelectedItemId(targetId);
     }
+
     private void openStoreTab(int cateId) {
 
         bottomNav.setSelectedItemId(R.id.store);
@@ -101,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
 
         replaceFragment(fragment, R.id.store);
     }
-    public  void startFabAnimation(){
+
+    public void startFabAnimation() {
         android.view.animation.RotateAnimation rotate = new android.view.animation.RotateAnimation(
                 0, 360,
                 android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f,
@@ -116,9 +125,6 @@ public class MainActivity extends AppCompatActivity {
             // startActivity(intent);
         });
     }
-
-
-
 
 
     @Override
@@ -144,28 +150,36 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
     }
-    private int getPosition(int id){
-        if(id == R.id.home || id == R.id.maps) return 1;
-        if(id == R.id.history) return 2;
-        if(id == R.id.store) return 3;
-        if(id == R.id.notification) return 4;
-        if(id == R.id.profile) return 5;
+
+    private int getPosition(int id) {
+        if (id == R.id.home || id == R.id.maps) return 1;
+        if (id == R.id.history) return 2;
+        if (id == R.id.store) return 3;
+        if (id == R.id.notification) return 4;
+        if (id == R.id.profile) return 5;
         return 0;
     }
+
     @Override
-    protected  void onResume() {
+    protected void onResume() {
         super.onResume();
         updateBadge();
     }
 
-    private void updateBadge() {
+    public void updateBadge() {
+        if (badgecount == null) return;
         CartDAO cartDAO = new CartDAO(this);
-        int count = cartDAO.getCount(CURRENT_USER_ID);
-        if( count > 0){
+        
+        int count = 0;
+        if (sessionManager.isLoggedIn()) {
+            int userId = sessionManager.getUserId();
+            count = cartDAO.getCount(userId);
+        }
+
+        if (count > 0) {
             badgecount.setVisibility(View.VISIBLE);
             badgecount.setText(String.valueOf(count));
-        }
-        else{
+        } else {
             badgecount.setVisibility(View.GONE);
         }
     }

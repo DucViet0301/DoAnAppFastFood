@@ -40,6 +40,26 @@ public class BottomMenuManager {
         this.fab = fab;
         this.fab_chatbox = fab_chatbox;
         setup();
+        updateCartBadge();
+    }
+
+    public void updateCartBadge() {
+        if (badge_count == null) return;
+
+        com.example.doanappfood.data.CartDAO cartDAO = new com.example.doanappfood.data.CartDAO(activity);
+        com.example.doanappfood.Utlis.SessionManager sessionManager = new com.example.doanappfood.Utlis.SessionManager(activity);
+
+        int count = 0;
+        if (sessionManager.isLoggedIn()) {
+            count = cartDAO.getCount(sessionManager.getUserId());
+        }
+
+        if (count > 0) {
+            badge_count.setVisibility(View.VISIBLE);
+            badge_count.setText(String.valueOf(count));
+        } else {
+            badge_count.setVisibility(View.GONE);
+        }
     }
 
     private void setup() {
@@ -60,6 +80,7 @@ public class BottomMenuManager {
             headerLayout.setBackgroundResource(R.color.do_tuoi);
             badge_count.setBackgroundResource(R.drawable.circle_border);
             badge_count.setTextColor(ContextCompat.getColor(activity, R.color.do_nhat));
+            updateCartBadge(); // Cập nhật lại số lượng khi chuyển tab
 
             Fragment selectedFragment = null;
 

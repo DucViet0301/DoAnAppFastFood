@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.doanappfood.R;
 import com.example.doanappfood.activity.AllNewsActivity;
+import com.example.doanappfood.activity.MainActivity;
 import com.example.doanappfood.activity.NewDetailActivity;
 import com.example.doanappfood.activity.ProductDetailActivity;
 import com.example.doanappfood.Utlis.SlideEffect;
@@ -63,15 +64,17 @@ public class HomeFragment extends Fragment {
     private static final long Auto_Scroll_Delay = 3000L;
 
     // ĐÃ SỬA Ở ĐÂY: Khai báo thêm tvSeeAllNews ngay cạnh SeeAllProduct
-    TextView SeeAllProduct, tvSeeAllNews;
+    TextView SeeAllProduct, tvSeeAllNews, tvNamCustomer;
     CardView CardViewGiftBox, CardViewBestSeller, CardViewChicken, CardViewLocationStore;
 
-    BannerRepository bannerRepository;
+    com.example.doanappfood.Utlis.SessionManager sessionManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        sessionManager = new com.example.doanappfood.Utlis.SessionManager(requireContext());
 
         //Banner
         initViewBanner(view);
@@ -87,8 +90,16 @@ public class HomeFragment extends Fragment {
         initViewModelNew();
 
 
-
         SeeAllProduct = view.findViewById(R.id.tvSeeALLUD);
+        tvNamCustomer = view.findViewById(R.id.tvNamCustomer);
+
+        // Hiển thị tên người dùng nếu đã đăng nhập
+        if (sessionManager.isLoggedIn()) {
+            tvNamCustomer.setText(sessionManager.getUserName());
+        } else {
+            tvNamCustomer.setText("Quý Khách");
+        }
+
         CardViewGiftBox = view.findViewById(R.id.CardViewGiftBox);
         CardViewBestSeller = view.findViewById(R.id.CardViewBestSeller);
         CardViewChicken = view.findViewById(R.id.CardViewChicken);
@@ -113,7 +124,7 @@ public class HomeFragment extends Fragment {
         CardViewLocationStore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).findViewById(R.id.fab_chatbox)
+                ((MainActivity) getActivity()).findViewById(R.id.fab_chatbox)
                         .setVisibility(View.GONE);
                 SlideEffect.changeFragment(requireActivity(), new MapFragment());
             }
@@ -125,8 +136,8 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        
-        return  view;
+
+        return view;
     }
 
     private void setCardView(View view, int categoryId) {
@@ -142,7 +153,7 @@ public class HomeFragment extends Fragment {
                 Fragment storeFragment = new StoreFragment();
                 storeFragment.setArguments(bundle);
 
-                //Animamtion
+
                 SlideEffect.changeFragment(requireActivity(), storeFragment);
             }
         });
@@ -203,6 +214,11 @@ public class HomeFragment extends Fragment {
         );
         comboAdapter = new ComboAdapter(new ArrayList<>(), requireContext());
         recyclerViewCombo.setAdapter(comboAdapter);
+        comboAdapter.setOnComboClickListener((comboModel, position) -> {
+            Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
+            intent.putExtra("product_id", comboModel.getId());
+            startActivity(intent);
+        });
     }
 
     private void initViewNew(View view) {
@@ -231,11 +247,12 @@ public class HomeFragment extends Fragment {
             autoScrollHandler.removeCallbacks(autoScrollRunnable);
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
 
-        ((MainActivity)getActivity()).findViewById(R.id.fab_chatbox)
+        ((MainActivity) getActivity()).findViewById(R.id.fab_chatbox)
                 .setVisibility(View.VISIBLE);
     }
 

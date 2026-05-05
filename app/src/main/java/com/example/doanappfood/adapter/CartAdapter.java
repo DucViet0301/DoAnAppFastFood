@@ -122,10 +122,11 @@ public class CartAdapter extends  RecyclerView.Adapter<CartAdapter.ViewHolder>{
     }
 
     private void refreshPrice(ViewHolder holder, CartItem item) {
-        double unitPirce = (item.getSale_price() > 0  && item.getSale_price() < item.getList_price())
+        double unitPrice = (item.getSale_price() > 0  && item.getSale_price() < item.getList_price())
                 ? item.getSale_price() :
                 item.getList_price();
-        holder.tvPrice.setText(fmt.format(unitPirce) + " đ");
+        double totalPrice = unitPrice * item.getQuantity();
+        holder.tvPrice.setText(fmt.format(totalPrice) + " đ");
     }
 
     @Override

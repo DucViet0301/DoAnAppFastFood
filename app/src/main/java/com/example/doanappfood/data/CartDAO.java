@@ -235,11 +235,17 @@ public class CartDAO {
         SQLiteDatabase db = null;
         try {
             db = dbHelper.getWritableDatabase();
+            db.beginTransaction();
+            db.delete(DatabaseHelper.TABLE_SAUCE, null, null);
             db.delete(DatabaseHelper.TABLE_CART, null, null);
+            db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.e(TAG, "clearCart error: " + e.getMessage(), e);
         } finally {
-            if (db != null) db.close();
+            if (db != null) {
+                db.endTransaction();
+                db.close();
+            }
         }
     }
 }

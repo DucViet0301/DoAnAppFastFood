@@ -44,8 +44,8 @@
             android:layout_height="wrap_content"
             android:text="Email hoặc số điện thoại"
             android:textColor="#001F3F"
-            android:textStyle="bold"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -53,7 +53,7 @@
             android:layout_marginTop="8dp">
 
             <EditText
-                android:id="@+id/edtAccount"
+                android:id="@+id/edtLogin"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/edittext_border"
@@ -82,8 +82,8 @@
             android:layout_marginTop="16dp"
             android:text="Mật khẩu"
             android:textColor="#001F3F"
-            android:textStyle="bold"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/edtPassword"

@@ -19,24 +19,59 @@ public class PromotionNewsModel {
         this.status = status;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int getId() {
+        return id;
+    }
 
-    public String getImage() { return image; }
-    public void setImage(String image) { this.image = image; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getImage() {
+        return image;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = this.description; }
+    public void setImage(String image) {
+        this.image = image;
+    }
 
-    public String getDate() { return date; }
-    public void setDate(String date) { this.date = date; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getCreated_at() { return created_at; }
-    public void setCreated_at(String created_at) { this.created_at = created_at; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = this.description;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }
