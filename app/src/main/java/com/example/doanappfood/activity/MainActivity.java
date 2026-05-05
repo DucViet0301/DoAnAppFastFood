@@ -23,7 +23,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    private static final int CURRENT_USER_ID = 1;
+    private static final int CURRENT_USER_ID = 2;
     private BottomNavigationView bottomNav;
     private FloatingActionButton fab, fab_chatbox;
     private  int currentId = -1;

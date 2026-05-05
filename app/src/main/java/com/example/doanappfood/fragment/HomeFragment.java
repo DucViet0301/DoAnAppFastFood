@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.doanappfood.R;
 import com.example.doanappfood.activity.AllNewsActivity;
+import com.example.doanappfood.activity.MainActivity;
 import com.example.doanappfood.activity.NewDetailActivity;
 import com.example.doanappfood.activity.ProductDetailActivity;
 import com.example.doanappfood.Utlis.SlideEffect;
@@ -178,6 +179,12 @@ public class HomeFragment extends Fragment {
             if (comboModels != null) {
                 comboAdapter.setData(comboModels);
             }
+        });
+        comboAdapter.setOnComboClickListener((comboModel, position) -> {
+            // Xóa Toast, thay bằng:
+            Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
+            intent.putExtra("product_id", comboModel.getId());
+            startActivity(intent);
         });
     }
 

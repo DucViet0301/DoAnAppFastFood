@@ -45,7 +45,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private int quantity = 1;
     private double totalSaucesPrice = 0;
-    private static final int CURRENT_USER_ID = 1;
+    private static final int CURRENT_USER_ID = 2;
     private int CartId;
     private double activePrice = 0;
     private  boolean isUpdateMode = false;

@@ -4,6 +4,7 @@ import com.example.doanappfood.model.BannerModel;
 import com.example.doanappfood.model.CategoryModel;
 import com.example.doanappfood.model.ComboModel;
 import com.example.doanappfood.model.DirectionModel;
+import com.example.doanappfood.model.MessModel;
 import com.example.doanappfood.model.NewModel;
 import com.example.doanappfood.model.ProductDetailModel;
 import com.example.doanappfood.model.ProductModel;
@@ -13,6 +14,7 @@ import com.example.doanappfood.model.StoreModel;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -55,6 +57,7 @@ public interface ApiApp {
             @Query("toLat")   double toLat,
             @Query("toLng")   double toLng
     );
-
+    @POST("orders")
+    Call<MessModel> postOrder(@Body okhttp3.RequestBody detail);
 
 }
