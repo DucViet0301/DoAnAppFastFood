@@ -28,13 +28,11 @@ import com.example.doanappfood.adapter.BannerAdapter;
 import com.example.doanappfood.adapter.ComboAdapter;
 import com.example.doanappfood.adapter.NewAdapter;
 import com.example.doanappfood.adapter.ProductAdapter;
-import com.example.doanappfood.adapter.PromotionNewsAdapter;
 import com.example.doanappfood.repository.BannerRepository;
 import com.example.doanappfood.viewmodel.BannerViewModel;
 import com.example.doanappfood.viewmodel.ComboViewModel;
 import com.example.doanappfood.viewmodel.NewViewModel;
 import com.example.doanappfood.viewmodel.ProductViewModel;
-import com.example.doanappfood.viewmodel.PromotionNewsViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -48,14 +46,12 @@ public class HomeFragment extends Fragment {
     private BannerAdapter bannerAdapter;
     private ComboAdapter comboAdapter;
     private NewAdapter newAdapter;
-    private PromotionNewsAdapter promotionNewsAdapter;
     private ProductAdapter productAdapter;
 
     //ViewModel
     private BannerViewModel bannerViewModel;
     private ComboViewModel comboViewModel;
     private NewViewModel newViewModel;
-    private PromotionNewsViewModel promotionNewsViewModel;
     ProductViewModel productViewModel;
 
     //Auto-scroll
@@ -89,7 +85,6 @@ public class HomeFragment extends Fragment {
         initViewNew(view);
         initViewModelNew();
 
-
         SeeAllProduct = view.findViewById(R.id.tvSeeALLUD);
         tvNamCustomer = view.findViewById(R.id.tvNamCustomer);
 
@@ -117,18 +112,6 @@ public class HomeFragment extends Fragment {
                 }
             });
         }
-
-        setCardView(SeeAllProduct, 2);
-        setCardView(CardViewBestSeller, 1);
-        setCardView(CardViewChicken, 9);
-        CardViewLocationStore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) getActivity()).findViewById(R.id.fab_chatbox)
-                        .setVisibility(View.GONE);
-                SlideEffect.changeFragment(requireActivity(), new MapFragment());
-            }
-        });
         CardViewGiftBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,25 +120,29 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        setCardViewToStore(SeeAllProduct, 2);
+        setCardViewToStore(CardViewBestSeller, 1);
+        setCardViewToStore(CardViewChicken, 9);
+        CardViewLocationStore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).findViewById(R.id.fab_chatbox)
+                        .setVisibility(View.GONE);
+                SlideEffect.changeFragment(requireActivity(), new MapFragment());
+            }
+        });
+
         return view;
     }
 
-    private void setCardView(View view, int categoryId) {
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView);
-                bottomNavigationView.setSelectedItemId(R.id.store);
+    private void setCardViewToStore(View view, int categoryId) {
+        view.setOnClickListener(v -> {
+            // Đổi tab bottom nav
+            BottomNavigationView bottomNav = requireActivity().findViewById(R.id.bottomNavigationView);
+            bottomNav.setSelectedItemId(R.id.store);
 
-                Bundle bundle = new Bundle();
-                bundle.putInt("IdCate", categoryId);
-
-                Fragment storeFragment = new StoreFragment();
-                storeFragment.setArguments(bundle);
-
-
-                SlideEffect.changeFragment(requireActivity(), storeFragment);
-            }
+            // ✅ Gọi MainActivity để dùng storeFragment có sẵn
+            ((MainActivity) requireActivity()).openStoreWithCategory(categoryId);
         });
     }
 
@@ -190,6 +177,12 @@ public class HomeFragment extends Fragment {
                 comboAdapter.setData(comboModels);
             }
         });
+        comboAdapter.setOnComboClickListener((comboModel, position) -> {
+            // Xóa Toast, thay bằng:
+            Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
+            intent.putExtra("product_id", comboModel.getId());
+            startActivity(intent);
+        });
     }
 
     private void initViewModelNew() {
@@ -215,11 +208,13 @@ public class HomeFragment extends Fragment {
         comboAdapter = new ComboAdapter(new ArrayList<>(), requireContext());
         recyclerViewCombo.setAdapter(comboAdapter);
         comboAdapter.setOnComboClickListener((comboModel, position) -> {
+            // Xóa Toast, thay bằng:
             Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
             intent.putExtra("product_id", comboModel.getId());
             startActivity(intent);
         });
     }
+
 
     private void initViewNew(View view) {
         recyclerViewNew = view.findViewById(R.id.RecyclerViewNew);

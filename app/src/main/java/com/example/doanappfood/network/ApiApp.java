@@ -6,6 +6,7 @@ import com.example.doanappfood.model.CategoryModel;
 import com.example.doanappfood.model.ComboModel;
 import com.example.doanappfood.model.DirectionModel;
 import com.example.doanappfood.model.LoginModel;
+import com.example.doanappfood.model.MessModel;
 import com.example.doanappfood.model.NewModel;
 import com.example.doanappfood.model.ProductDetailModel;
 import com.example.doanappfood.model.ProductModel;
@@ -14,6 +15,7 @@ import com.example.doanappfood.model.RegisterModel;
 import com.example.doanappfood.model.StoreModel;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -64,6 +66,8 @@ public interface ApiApp {
             @Query("toLat") double toLat,
             @Query("toLng") double toLng
     );
+    @POST("orders")
+    Call<MessModel> postOrder(@Body okhttp3.RequestBody detail);
 
     @POST("login")
     Call<AuthModel> login(@Body LoginModel request);
@@ -74,5 +78,7 @@ public interface ApiApp {
     @POST("auth/refresh")
     Call<AuthModel> refreshToken(@Field("refresh_token") String refreshToken);
 
+    @POST("chatbot")
+    Call<Map<String, String>> sendMessage(@Body Map<String, String> body);
 
 }

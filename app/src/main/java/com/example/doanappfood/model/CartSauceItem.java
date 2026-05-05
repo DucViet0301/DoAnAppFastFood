@@ -5,11 +5,21 @@ public class CartSauceItem {
     private int id;
     private int cartItemId;
     private String name;
+    private int quantity;
 
-    public CartSauceItem(int id, int cartItemId, String name) {
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public CartSauceItem(int id, int cartItemId, String name , int quantity) {
         this.id = id;
         this.cartItemId = cartItemId;
         this.name = name;
+        this.quantity = quantity;
     }
 
     public void setId(int id) {

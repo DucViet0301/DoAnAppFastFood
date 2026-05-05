@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "doanappfood.db";
-    private static final int DB_VERSION = 6;
+    private static final int DB_VERSION = 7;
     private static DatabaseHelper instance;
     //Cart_item
     public static final String TABLE_CART = "cart_item";
@@ -25,6 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_SAUCE_ID = "id";
     public static final String COLUMN_SAUCE_CART_ITEM_ID = "cart_item_id";
     public static final String COLUMN_SAUCE_NAME = "sauce_name";
+    static final String COLUMN_SAUCE_QUANTITY = "quantity";
 
     private DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -56,6 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_SAUCE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_SAUCE_CART_ITEM_ID + " INTEGER NOT NULL, " +
                 COLUMN_SAUCE_NAME + " TEXT NOT NULL, " +
+                COLUMN_SAUCE_QUANTITY + " INTEGER DEFAULT 1, " +
                 "FOREIGN KEY(" + COLUMN_SAUCE_CART_ITEM_ID + ") REFERENCES " + TABLE_CART + "(" + COLUMN_ID + "))";
         db.execSQL(CREATE_SAUCE_TABLE);
     }

@@ -172,7 +172,8 @@ public class CartDAO {
         try {
             db = dbHelper.getReadableDatabase();
             String query = "SELECT c.*, s." + DatabaseHelper.COLUMN_SAUCE_ID + " AS s_id, " +
-                    "s." + DatabaseHelper.COLUMN_SAUCE_NAME + " AS s_name " +
+                    "s." + DatabaseHelper.COLUMN_SAUCE_NAME + " AS s_name, " +
+                    "s." + DatabaseHelper.COLUMN_SAUCE_QUANTITY + " AS s_quantity " +
                     "FROM " + DatabaseHelper.TABLE_CART + " c " +
                     "LEFT JOIN " + DatabaseHelper.TABLE_SAUCE + " s " +
                     "ON c." + DatabaseHelper.COLUMN_ID +
@@ -202,7 +203,18 @@ public class CartDAO {
 
                 if (!cursor.isNull(cursor.getColumnIndexOrThrow("s_id"))) {
                     String sauceName = cursor.getString(cursor.getColumnIndexOrThrow("s_name"));
-                    map.get(cartId).getSauces().add(new CartSauceItem(0, cartId, sauceName));
+                    List<CartSauceItem> sauces = map.get(cartId).getSauces();
+                    boolean found = false;
+                    for (CartSauceItem existing : sauces) {
+                        if (existing.getName().equals(sauceName)) {
+                            existing.setQuantity(existing.getQuantity() + 1); // cộng dồn
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        sauces.add(new CartSauceItem(0, cartId, sauceName, 1));
+                    }
                 }
             }
         } finally {
