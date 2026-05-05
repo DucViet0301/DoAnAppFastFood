@@ -28,13 +28,11 @@ import com.example.doanappfood.adapter.BannerAdapter;
 import com.example.doanappfood.adapter.ComboAdapter;
 import com.example.doanappfood.adapter.NewAdapter;
 import com.example.doanappfood.adapter.ProductAdapter;
-import com.example.doanappfood.adapter.PromotionNewsAdapter;
 import com.example.doanappfood.repository.BannerRepository;
 import com.example.doanappfood.viewmodel.BannerViewModel;
 import com.example.doanappfood.viewmodel.ComboViewModel;
 import com.example.doanappfood.viewmodel.NewViewModel;
 import com.example.doanappfood.viewmodel.ProductViewModel;
-import com.example.doanappfood.viewmodel.PromotionNewsViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -48,22 +46,18 @@ public class HomeFragment extends Fragment {
     private BannerAdapter bannerAdapter;
     private ComboAdapter comboAdapter;
     private NewAdapter newAdapter;
-    private PromotionNewsAdapter promotionNewsAdapter;
     private ProductAdapter productAdapter;
 
     //ViewModel
     private BannerViewModel bannerViewModel;
     private ComboViewModel comboViewModel;
     private NewViewModel newViewModel;
-    private PromotionNewsViewModel promotionNewsViewModel;
     ProductViewModel productViewModel;
 
     //Auto-scroll
     private Handler autoScrollHandler;
     private Runnable autoScrollRunnable;
     private static final long Auto_Scroll_Delay = 3000L;
-
-    // ĐÃ SỬA Ở ĐÂY: Khai báo thêm tvSeeAllNews ngay cạnh SeeAllProduct
     TextView SeeAllProduct, tvSeeAllNews;
     CardView CardViewGiftBox, CardViewBestSeller, CardViewChicken, CardViewLocationStore;
 
@@ -87,8 +81,6 @@ public class HomeFragment extends Fragment {
         initViewNew(view);
         initViewModelNew();
 
-
-
         SeeAllProduct = view.findViewById(R.id.tvSeeALLUD);
         CardViewGiftBox = view.findViewById(R.id.CardViewGiftBox);
         CardViewBestSeller = view.findViewById(R.id.CardViewBestSeller);
@@ -107,10 +99,17 @@ public class HomeFragment extends Fragment {
                 }
             });
         }
+        CardViewGiftBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(requireActivity(), PromotionNewsActivity.class);
+                startActivity(intent);
+            }
+        });
 
-        setCardView(SeeAllProduct, 2);
-        setCardView(CardViewBestSeller, 1);
-        setCardView(CardViewChicken, 9);
+        setCardViewToStore(SeeAllProduct, 2);
+        setCardViewToStore(CardViewBestSeller, 1);
+        setCardViewToStore(CardViewChicken, 9);
         CardViewLocationStore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,33 +118,18 @@ public class HomeFragment extends Fragment {
                 SlideEffect.changeFragment(requireActivity(), new MapFragment());
             }
         });
-        CardViewGiftBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(requireActivity(), PromotionNewsActivity.class);
-                startActivity(intent);
-            }
-        });
-        
-        return  view;
+
+        return view;
     }
 
-    private void setCardView(View view, int categoryId) {
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView);
-                bottomNavigationView.setSelectedItemId(R.id.store);
+    private void setCardViewToStore(View view, int categoryId) {
+        view.setOnClickListener(v -> {
+            // Đổi tab bottom nav
+            BottomNavigationView bottomNav = requireActivity().findViewById(R.id.bottomNavigationView);
+            bottomNav.setSelectedItemId(R.id.store);
 
-                Bundle bundle = new Bundle();
-                bundle.putInt("IdCate", categoryId);
-
-                Fragment storeFragment = new StoreFragment();
-                storeFragment.setArguments(bundle);
-
-                //Animamtion
-                SlideEffect.changeFragment(requireActivity(), storeFragment);
-            }
+            // ✅ Gọi MainActivity để dùng storeFragment có sẵn
+            ((MainActivity) requireActivity()).openStoreWithCategory(categoryId);
         });
     }
 
@@ -210,7 +194,14 @@ public class HomeFragment extends Fragment {
         );
         comboAdapter = new ComboAdapter(new ArrayList<>(), requireContext());
         recyclerViewCombo.setAdapter(comboAdapter);
+        comboAdapter.setOnComboClickListener((comboModel, position) -> {
+            // Xóa Toast, thay bằng:
+            Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
+            intent.putExtra("product_id", comboModel.getId());
+            startActivity(intent);
+        });
     }
+
 
     private void initViewNew(View view) {
         recyclerViewNew = view.findViewById(R.id.RecyclerViewNew);

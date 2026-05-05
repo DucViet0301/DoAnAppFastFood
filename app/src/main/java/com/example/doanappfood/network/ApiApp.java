@@ -12,6 +12,7 @@ import com.example.doanappfood.model.PromotionNewsModel;
 import com.example.doanappfood.model.StoreModel;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -59,5 +60,8 @@ public interface ApiApp {
     );
     @POST("orders")
     Call<MessModel> postOrder(@Body okhttp3.RequestBody detail);
+
+    @POST("chatbot")
+    Call<Map<String, String>> sendMessage(@Body Map<String, String> body);
 
 }
