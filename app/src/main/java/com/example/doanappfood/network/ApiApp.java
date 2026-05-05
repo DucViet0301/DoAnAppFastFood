@@ -13,6 +13,9 @@ import com.example.doanappfood.model.ProductModel;
 import com.example.doanappfood.model.PromotionNewsModel;
 import com.example.doanappfood.model.RegisterModel;
 import com.example.doanappfood.model.StoreModel;
+import com.example.doanappfood.model.LoginRequest;
+import com.example.doanappfood.model.ResponseModel;
+import com.example.doanappfood.model.UserModel;
 
 import java.util.List;
 import java.util.Map;
@@ -81,4 +84,20 @@ public interface ApiApp {
     @POST("chatbot")
     Call<Map<String, String>> sendMessage(@Body Map<String, String> body);
 
+    // THÊM 2 API MỚI CHO TÍNH NĂNG ĐỔI MẬT KHẨU
+
+    @FormUrlEncoded
+    @POST("users/send-otp")
+    Call<ResponseModel> sendOtp(@Field("email") String email);
+
+    @FormUrlEncoded
+    @POST("users/change-password")
+    Call<ResponseModel> changePassword(
+            @Field("email") String email,
+            @Field("otp") String otp,
+            @Field("newPassword") String newPassword
+    );
+    @FormUrlEncoded
+    @POST("users/forgot-password-send-otp")
+    Call<ResponseModel> forgotPasswordSendOtp(@Field("email") String email);
 }

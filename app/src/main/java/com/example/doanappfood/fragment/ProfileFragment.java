@@ -1,6 +1,8 @@
 package com.example.doanappfood.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatButton;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 import com.example.doanappfood.R;
 import com.example.doanappfood.Utlis.SessionManager;
 import com.example.doanappfood.Utlis.SlideEffect;
+import com.example.doanappfood.activity.ChangePasswordActivity;
 import com.example.doanappfood.activity.LoginActivity;
 import com.example.doanappfood.activity.RegisterActivity;
 

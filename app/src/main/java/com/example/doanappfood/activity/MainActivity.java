@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         new BottomMenuManager(this, binding, bottomNav, fab, fab_chatbox);
         bottomNav.setBackground(null);
         startFabAnimation();
+
     }
 
     public void setupClick() {
@@ -186,6 +187,8 @@ public class MainActivity extends AppCompatActivity {
     public void updateBadge() {
         if (badgecount == null) return;
         CartDAO cartDAO = new CartDAO(this);
+
+
         int count = cartDAO.getCount(CURRENT_USER_ID);
         if (count > 0) {
             badgecount.setVisibility(View.VISIBLE);

@@ -3,6 +3,8 @@ package com.example.doanappfood.activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
@@ -40,8 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window w = getWindow();
-            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
 
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
@@ -185,5 +186,22 @@ public class RegisterActivity extends AppCompatActivity {
     public boolean dispatchTouchEvent(MotionEvent event) {
         Keyboard.hideKeyboardOnTouchOutside(this, event);
         return super.dispatchTouchEvent(event);
+    }
+
+    private void checkInputs() {
+        String name = edtName.getText().toString().trim();
+        String email = edtEmail.getText().toString().trim();
+        String phone = edtPhone.getText().toString().trim();
+        String password = edtPassword.getText().toString().trim();
+        String dob = edtDob.getText().toString().trim();
+        boolean isChecked = cbTerms.isChecked();
+
+        if (!name.isEmpty() && !email.isEmpty() && !phone.isEmpty() && !password.isEmpty() && !dob.isEmpty() && isChecked) {
+            btnRegister.setEnabled(true);
+            btnRegister.setBackgroundResource(R.drawable.bg_button_login);
+        } else {
+            btnRegister.setEnabled(false);
+            btnRegister.setBackgroundResource(R.drawable.button_background_gray);
+        }
     }
 }
