@@ -219,7 +219,8 @@ public class MapFragment extends Fragment {
     }
     @Override public void onDestroyView() {
         super.onDestroyView();
-        binding.mapView.onDetach();
-        binding = null;
+        if( binding != null ){
+            binding.mapView.onDetach();
+        }
     }
 }

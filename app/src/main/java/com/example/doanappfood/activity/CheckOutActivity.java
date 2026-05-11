@@ -37,6 +37,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
+import androidx.core.text.BidiFormatter;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
@@ -44,14 +45,18 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.Utlis.DateUtils;
 import com.example.doanappfood.Utlis.FusedLocationHelper;
 import com.example.doanappfood.Utlis.Keyboard;
 import com.example.doanappfood.Utlis.LocationHelper;
 import com.example.doanappfood.Utlis.LocationPermissionHelper;
+import com.example.doanappfood.Utlis.NotificationBadgeUtlis;
+import com.example.doanappfood.Utlis.NotificationManager;
 import com.example.doanappfood.data.CartDAO;
 import com.example.doanappfood.fragment.NotifactionFragment;
 import com.example.doanappfood.fragment.StoreFragment;
 import com.example.doanappfood.model.MessModel;
+import com.example.doanappfood.model.NotificationModel;
 import com.example.doanappfood.repository.OrderRepository;
 import com.example.doanappfood.viewmodel.OrderViewModel;
 import com.google.android.gms.internal.location.zzbb;
@@ -65,6 +70,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -130,18 +137,7 @@ public class CheckOutActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
-
-
         btnBackCheckOut.setOnClickListener(v -> finish());
-//        btnCheckOut.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.d("CHECKOUT_INFO",
-//                        "Địa chỉ: " + editAddress.getText().toString()
-//                                + " | time_delivery = " + time_delivery + " phút");
-////                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-//            }
-//        });
         imgMarker.setOnClickListener(v -> handleLocationClick());
         setupAddressWatcher();
         saleTotal = getIntent().getDoubleExtra("sale_total", 0);
@@ -361,11 +357,31 @@ public class CheckOutActivity extends AppCompatActivity {
             @Override
             public void onChanged(MessModel messModel) {
                 if (messModel.isSuccess()) {
-                    Toast.makeText(getApplicationContext(), messModel.getMessage(), Toast.LENGTH_LONG).show();
+                    int orderId = messModel.getOrder_id();
+                    Log.d("API_DEBUG", "OrderId thực tế: " + orderId);
+                    String currentTime = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date());
+                    NotificationModel newNotif = new NotificationModel(
+                            orderId,
+                            "Đặt hàng thành công",
+                            "Đơn hàng của bạn đã được đặt thành công. Chúng tôi đang xử lý!",
+                            currentTime,
+                            tvTotalPriceCheckOut.getText().toString(),
+                            "Đang xử lý",
+                            "success"
+                    );
+                    NotificationManager.addNotification(getApplicationContext(), user_id, newNotif);
+
                     CartDAO cartDAO = new CartDAO(CheckOutActivity.this);
                     cartDAO.clearCart();
+
+                    Toast.makeText(CheckOutActivity.this, "Đặt hàng thành công!", Toast.LENGTH_SHORT).show();
+
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    intent.putExtra("SELECTED_ID", R.id.notification);
+                    intent.putExtra("SELECTED_ID", R.id.home);
+                    getSharedPreferences("AppData", MODE_PRIVATE)
+                            .edit()
+                            .putBoolean("need_show_badge", true)
+                            .apply();
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();

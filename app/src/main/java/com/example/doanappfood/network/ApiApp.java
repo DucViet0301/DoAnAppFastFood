@@ -9,6 +9,8 @@ import com.example.doanappfood.model.DirectionModel;
 import com.example.doanappfood.model.LoginModel;
 import com.example.doanappfood.model.MessModel;
 import com.example.doanappfood.model.NewModel;
+import com.example.doanappfood.model.OrderDetailModel;
+import com.example.doanappfood.model.OrderModel;
 import com.example.doanappfood.model.ProductDetailModel;
 import com.example.doanappfood.model.ProductModel;
 import com.example.doanappfood.model.PromotionNewsModel;
@@ -25,6 +27,8 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiApp {
@@ -93,6 +97,15 @@ public interface ApiApp {
     Call<ResponseModel> changePassword(
             @Body ChangePassModel body
     );
+    @FormUrlEncoded
+    @POST("users/forgot-password-send-otp")
+    Call<ResponseModel> forgotPasswordSendOtp(@Field("email") String email);
+    @GET("getOrder/{userId}")
+    Call<List<OrderModel>> getAllOrder(@Path("userId") int userId);
 
+    @PUT("getOrder/cancel/{orderId}")
+    Call<MessModel> cancelOrder(@Path("orderId") int orderId);
+    @GET("getOrder/detail/{orderId}")
+    Call<OrderDetailModel> getOrderDetail(@Path("orderId") int orderId);
 
 }

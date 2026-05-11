@@ -47,7 +47,7 @@ public class CartDAO {
                 int cartId = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID));
                 int currentQuantity = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_QUANTITY));
                 ContentValues values = new ContentValues();
-                values.put(DatabaseHelper.COLUMN_QUANTITY, currentQuantity + quantity);
+                values.put(DatabaseHelper.COLUMN_QUANTITY, quantity);
                 db.update(DatabaseHelper.TABLE_CART, values,
                         DatabaseHelper.COLUMN_ID + " = ?",
                         new String[]{String.valueOf(cartId)});
@@ -116,35 +116,42 @@ public class CartDAO {
             if(db != null) db.close();
         }
     }
-    public void updateFullItem ( int cartId, int quantity, double listPirce,double salePrice, List<String> sauces){
+    public void updateFullItem(int cartId, int quantity, double listPrice, double salePrice, List<String> sauces) {
         SQLiteDatabase db = null;
-        try{
+        try {
             db = dbHelper.getWritableDatabase();
             db.beginTransaction();
 
+            // Cập nhật cart
             ContentValues values = new ContentValues();
             values.put(DatabaseHelper.COLUMN_QUANTITY, quantity);
-            values.put(DatabaseHelper.COLUMN_LIST_PRICE, listPirce);
+            values.put(DatabaseHelper.COLUMN_LIST_PRICE, listPrice);
             values.put(DatabaseHelper.COLUMN_SALE_PRICE, salePrice);
+            db.update(DatabaseHelper.TABLE_CART, values,
+                    DatabaseHelper.COLUMN_ID + " = ?",
+                    new String[]{String.valueOf(cartId)});
 
-            db.update(DatabaseHelper.TABLE_CART, values, DatabaseHelper.COLUMN_ID + " = ?",
+            // Xóa sauce cũ — ĐÚNG column
+            db.delete(DatabaseHelper.TABLE_SAUCE,
+                    DatabaseHelper.COLUMN_SAUCE_CART_ITEM_ID + " = ?",
                     new String[]{String.valueOf(cartId)});
-            db.delete(DatabaseHelper.TABLE_SAUCE, DatabaseHelper.COLUMN_SAUCE_ID + " = ? ",
-                    new String[]{String.valueOf(cartId)});
-            for(String sauceName : sauces){
+
+            // Insert sauce mới
+            for (String sauceName : sauces) {
                 ContentValues sValues = new ContentValues();
                 sValues.put(DatabaseHelper.COLUMN_SAUCE_CART_ITEM_ID, cartId);
                 sValues.put(DatabaseHelper.COLUMN_SAUCE_NAME, sauceName);
                 db.insert(DatabaseHelper.TABLE_SAUCE, null, sValues);
             }
-            db.setTransactionSuccessful();
 
+            db.setTransactionSuccessful();
         } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        finally {
-            if(db != null) db.endTransaction();
-            if(db != null) db.close();
+            Log.e(TAG, "updateFullItem error: " + e.getMessage(), e);
+        } finally {
+            if (db != null) {
+                db.endTransaction();
+                db.close();
+            }
         }
     }
     public  void removeItem(int cartId){

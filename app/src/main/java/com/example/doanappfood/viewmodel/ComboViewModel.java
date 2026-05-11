@@ -25,7 +25,4 @@ public class ComboViewModel extends AndroidViewModel {
         }
         return  comboList;
     }
-    public  void refreshBanners(){
-        comboList = comboRepository.getCombos();
-    }
 }

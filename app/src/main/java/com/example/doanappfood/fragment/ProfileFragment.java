@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.Utlis.NotificationManager;
 import com.example.doanappfood.Utlis.SessionManager;
 import com.example.doanappfood.Utlis.SlideEffect;
 import com.example.doanappfood.activity.ChangePasswordActivity;

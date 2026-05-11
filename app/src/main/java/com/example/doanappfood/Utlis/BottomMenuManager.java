@@ -21,6 +21,7 @@ public class BottomMenuManager {
     private final BottomNavigationView bottomNav;
     private final FloatingActionButton fab;
     private final ActivityMainBinding binding;
+    private FloatingActionButton  fab_chatbox;
     private ImageView shoppingcart;
     private ConstraintLayout headerLayout;
     private TextView badge_count;
@@ -59,20 +60,26 @@ public class BottomMenuManager {
         shoppingcart = binding.layoutHeader.icShoppingcart;
         headerLayout = binding.layoutHeader.headerLayout;
         badge_count = binding.layoutHeader.badgeCount;
+        fab_chatbox = binding.fabChatbox;
 
         fab.setOnClickListener(v -> bottomNav.setSelectedItemId(R.id.store));
         setHomeColors();
+
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
+
             fab.setImageTintList(ColorStateList.valueOf(Color.WHITE));
             shoppingcart.setImageTintList(ColorStateList.valueOf(Color.WHITE));
             headerLayout.setBackgroundResource(R.color.do_tuoi);
             badge_count.setBackgroundResource(R.drawable.circle_border);
             badge_count.setTextColor(ContextCompat.getColor(activity, R.color.do_nhat));
-            updateCartBadge(); // Cập nhật lại số lượng khi chuyển tab
+            updateCartBadge();
 
             if (itemId == R.id.home) {
                 setHomeColors();
+                activity.setFabChatboxVisible(true);
+            } else {
+                activity.setFabChatboxVisible(false);
             }
             activity.switchToNavId(itemId);
             return true;

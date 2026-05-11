@@ -12,8 +12,8 @@ public class UserModel {
     public UserModel(int id, String name, String phone, String email, String password, String address, String birth_date) {
         this.id = id;
         this.name = name;
-        this.email = email;
         this.phone = phone;
+        this.email = email;
         this.password = password;
         this.address = address;
         this.birth_date = birth_date;

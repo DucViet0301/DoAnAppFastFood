@@ -8,7 +8,7 @@ public class RegisterModel {
     private String address;
     private String birth_date;
 
-    public RegisterModel(String name, String email, String phone, String password, String address, String birth_date) {
+    public RegisterModel(String name, String phone, String email, String password, String address, String birth_date) {
         this.name = name;
         this.email = email;
         this.phone = phone;
