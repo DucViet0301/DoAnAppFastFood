@@ -88,12 +88,7 @@ public class HomeFragment extends Fragment {
         SeeAllProduct = view.findViewById(R.id.tvSeeALLUD);
         tvNamCustomer = view.findViewById(R.id.tvNameCustomer);
 
-        // Hiển thị tên người dùng nếu đã đăng nhập
-        if (sessionManager.isLoggedIn()) {
-            tvNamCustomer.setText(sessionManager.getUserName());
-        } else {
-            tvNamCustomer.setText("Quý Khách");
-        }
+        updateGreeting();
 
         CardViewGiftBox = view.findViewById(R.id.CardViewGiftBox);
         CardViewBestSeller = view.findViewById(R.id.CardViewBestSeller);
@@ -232,5 +227,27 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        updateGreeting();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            // Khi hiện lại HomeFragment, tạo mới sessionManager để lấy dữ liệu mới nhất
+            sessionManager = new com.example.doanappfood.Utlis.SessionManager(requireContext());
+            updateGreeting();
+        }
+    }
+
+    private void updateGreeting() {
+        if (tvNamCustomer != null) {
+            if (sessionManager != null && sessionManager.isLoggedIn()) {
+                String userName = sessionManager.getUserName();
+                tvNamCustomer.setText(userName != null && !userName.isEmpty() ? userName : "Quý Khách");
+            } else {
+                tvNamCustomer.setText("Quý Khách");
+            }
+        }
     }
 }

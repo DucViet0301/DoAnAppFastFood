@@ -1,11 +1,8 @@
 package com.example.doanappfood.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
@@ -107,6 +104,7 @@ public class LoginActivity extends AppCompatActivity {
             if (authResponse != null && authResponse.isSuccess()) {
                 // Lưu token + thông tin user vào SharedPreferences
                 SessionManager session = new SessionManager(this);
+
                 session.saveSession(
                         authResponse.getToken(),
                         authResponse.getRefreshToken(), // Lưu thêm Refresh Token ở đây
