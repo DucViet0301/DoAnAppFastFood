@@ -58,6 +58,7 @@ import com.example.doanappfood.fragment.StoreFragment;
 import com.example.doanappfood.model.MessModel;
 import com.example.doanappfood.model.NotificationModel;
 import com.example.doanappfood.repository.OrderRepository;
+import com.example.doanappfood.viewmodel.MomoViewModel;
 import com.example.doanappfood.viewmodel.OrderViewModel;
 import com.google.android.gms.internal.location.zzbb;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -84,10 +85,11 @@ public class CheckOutActivity extends AppCompatActivity {
     private ImageView btnBackCheckOut, imgMarker;
     private Button btnCheckOut;
     private EditText editAddress, edtNote;
-    private TextView tvAddMore, tvSelectedPayment , tvTotalPriceCheckOut, tvOldPrice;
+    private TextView tvAddMore, tvSelectedPayment, tvTotalPriceCheckOut, tvOldPrice;
     CardView cardPaymentMethod;
-    View  dimOverlay;
+    View dimOverlay;
     OrderViewModel viewModel;
+    MomoViewModel momoViewModel;
     private boolean isLocationFetched = false;
     private double finalTimeDelivery = 30;
     private FusedLocationHelper locationHelper;
@@ -112,6 +114,11 @@ public class CheckOutActivity extends AppCompatActivity {
     private String description = "mua hàng online";
     private int ppthanhtoan = 0;
     private String tempOrderId = "";
+
+    private static final String MOMO_REDIRECT_HOST = "payment.doanappfood.vn";
+    private static final String MOMO_REDIRECT_PATH = "/result";
+    private static final String MOMO_REDIRECT_URL = "https://payment.doanappfood.vn/result";
+    private static final int REQUEST_MOMO_PAY = 2001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,13 +149,11 @@ public class CheckOutActivity extends AppCompatActivity {
         setupAddressWatcher();
         saleTotal = getIntent().getDoubleExtra("sale_total", 0);
         listTotal = getIntent().getDoubleExtra("list_total", 0);
-        user_id = getIntent().getIntExtra("user_id",1);
+        user_id = getIntent().getIntExtra("user_id", 1);
         cartJson = getIntent().getStringExtra("cart_json");
         initControl();
         updateBottomTotal();
-        AppMoMoLib.getInstance().setEnvironment(AppMoMoLib.ENVIRONMENT.DEVELOPMENT);
     }
-
 
 
     public void intitViews() {
@@ -171,6 +176,7 @@ public class CheckOutActivity extends AppCompatActivity {
         switchChili = findViewById(R.id.switchChili);
         edtNote = findViewById(R.id.edtNote);
         viewModel = new ViewModelProvider(this).get(OrderViewModel.class);
+        momoViewModel = new ViewModelProvider(this).get(MomoViewModel.class);
     }
 
     public void setupClick() {
@@ -243,7 +249,7 @@ public class CheckOutActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(!isAutoFillFromLocation){
+                if (!isAutoFillFromLocation) {
                     finalTimeDelivery = 30;
                     isLocationFetched = false;
                 }
@@ -317,6 +323,7 @@ public class CheckOutActivity extends AppCompatActivity {
         Keyboard.hideKeyboardOnTouchOutside(this, event);
         return super.dispatchTouchEvent(event);
     }
+
     private void updateBottomTotal() {
         NumberFormat fmt = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
 
@@ -332,8 +339,13 @@ public class CheckOutActivity extends AppCompatActivity {
             tvOldPrice.setVisibility(View.GONE);
         }
     }
+
     // gọi api tạo đơn hàngI
     private void placeOrder(String paymentMethod) {
+        placeOrder(paymentMethod, false);
+    }
+
+    private void placeOrder(String paymentMethod, boolean momoSuccess) {
         Map<String, Object> checkoutData = new LinkedHashMap<>();
         checkoutData.put("user_id", user_id);
         checkoutData.put("address", editAddress.getText().toString());
@@ -346,6 +358,7 @@ public class CheckOutActivity extends AppCompatActivity {
         checkoutData.put("ketchup", switchKetchup.isChecked());
         checkoutData.put("chili", switchChili.isChecked());
         checkoutData.put("cart_items", new Gson().fromJson(cartJson, List.class));
+        checkoutData.put("momo_success", momoSuccess);
 
         String json = new Gson().toJson(checkoutData);
         viewModel.CheckOut(json);
@@ -387,133 +400,89 @@ public class CheckOutActivity extends AppCompatActivity {
                     finish();
                 }
             }
+        });// ── Observer thanh toán MoMo ───────────────────────────────────
+        momoViewModel.init();
+        momoViewModel.messModelMutableLiveData().observe(this, messModel -> {
+            resetCheckoutButton();
+            if (messModel.isSuccess()) {
+                openMoMoWebView(messModel.getPayUrl(), messModel.getOrderId());
+            } else {
+                Toast.makeText(this,
+                        messModel.getMessage() != null ? messModel.getMessage() : "Tạo đơn thất bại",
+                        Toast.LENGTH_LONG).show();
+            }
         });
+
         btnCheckOut.setOnClickListener(v -> {
-            if (editAddress.getText().toString().isEmpty()){
+            if (editAddress.getText().toString().isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập địa chỉ nhận hàng", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if(ppthanhtoan == 0){
+            if (ppthanhtoan == 0) {
                 new androidx.appcompat.app.AlertDialog.Builder(this)
                         .setTitle("Xác nhận thanh toán")
                         .setMessage("Bạn có chắc muốn đặt hàng với phương thức thanh toán \""
                                 + selectedPayment + "\" không?")
-                        .setPositiveButton("Xác nhận", (dialog, which) -> {
-                            placeOrder(selectedPayment);
-                        })
-                        .setNegativeButton("Hủy", (dialog, which) -> {
-                            dialog.dismiss();
-                        })
+                        .setPositiveButton("Xác nhận", (dialog, which) -> placeOrder(selectedPayment))
+                        .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss())
                         .show();
-            }
-            else if(ppthanhtoan == 1){
+            } else if (ppthanhtoan == 1) {
                 new androidx.appcompat.app.AlertDialog.Builder(this)
                         .setTitle("Xác nhận thanh toán")
                         .setMessage("Bạn có chắc muốn đặt hàng với phương thức thanh toán \""
                                 + selectedPayment + "\" không?")
-                        .setPositiveButton("Xác nhận", (dialog, which) -> {
-                            requestPayment();
-                        })
-                        .setNegativeButton("Hủy", (dialog, which) -> {
-                            dialog.dismiss();
-                        })
+                        .setPositiveButton("Xác nhận", (dialog, which) -> requestPayment())
+                        .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss())
                         .show();
             }
-            else {
-                return;
-            }
-
-
         });
     }
-    //Get token through MoMo app
+
+    // ── Bước 1: Gọi MomoViewModel (không gọi Retrofit trực tiếp) ─────
     private void requestPayment() {
-        AppMoMoLib.getInstance().setAction(AppMoMoLib.ACTION.PAYMENT);
-        AppMoMoLib.getInstance().setActionType(AppMoMoLib.ACTION_TYPE.GET_TOKEN);
-        if (tvTotalPriceCheckOut.getText().toString() != null && tvTotalPriceCheckOut.getText().toString().trim().length() != 0)
-            amount = tvTotalPriceCheckOut.getText().toString().trim();
-        tempOrderId = "ORDER_" + System.currentTimeMillis();
-
-        Map<String, Object> eventValue = new HashMap<>();
-        //client Required
-        eventValue.put("merchantname", merchantName); //Tên đối tác. được đăng ký tại https://business.momo.vn. VD: Google, Apple, Tiki , CGV Cinemas
-        eventValue.put("merchantcode", merchantCode); //Mã đối tác, được cung cấp bởi MoMo tại https://business.momo.vn
-        eventValue.put("amount", amount); //Kiểu integer
-        eventValue.put("orderId", tempOrderId); //uniqueue id cho Bill order, giá trị duy nhất cho mỗi đơn hàng
-        eventValue.put("orderLabel", tempOrderId); //gán nhãn
-
-        //client Optional - bill info
-        eventValue.put("merchantnamelabel", "Dịch vụ");//gán nhãn
-        eventValue.put("fee", "0"); //Kiểu integer
-        eventValue.put("description", description); //mô tả đơn hàng - short description
-
-        //client extra data
-        eventValue.put("requestId",  merchantCode+"merchant_billId_"+System.currentTimeMillis());
-        eventValue.put("partnerCode", merchantCode);
-        //Example extra data
-        JSONObject objExtraData = new JSONObject();
-        try {
-            objExtraData.put("site_code", "008");
-            objExtraData.put("site_name", "CGV Cresent Mall");
-            objExtraData.put("screen_code", 0);
-            objExtraData.put("screen_name", "Special");
-            objExtraData.put("movie_name", "Kẻ Trộm Mặt Trăng 3");
-            objExtraData.put("movie_format", "2D");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        eventValue.put("extraData", objExtraData.toString());
-
-        eventValue.put("extra", "");
-        AppMoMoLib.getInstance().requestMoMoCallBack(this, eventValue);
-
-
+        btnCheckOut.setEnabled(false);
+        btnCheckOut.setText("Đang xử lý...");
+        momoViewModel.createPayment(
+                (long) saleTotal,
+                "Thanh toán đơn hàng FastFoodFour",
+                MOMO_REDIRECT_URL
+        );
     }
-    //Get token callback from MoMo app an submit to server side
+
+    // ── Bước 2: Mở PaymentWebViewActivity ───────────────────────────
+    private void openMoMoWebView(String payUrl, String orderId) {
+        resetCheckoutButton();
+        Intent intent = new Intent(this, PaymentWebViewActivity.class);
+        intent.putExtra("pay_url", payUrl);
+        intent.putExtra("order_id", orderId);
+        intent.putExtra("redirect_host", MOMO_REDIRECT_HOST);
+        intent.putExtra("redirect_path", MOMO_REDIRECT_PATH);
+        startActivityForResult(intent, REQUEST_MOMO_PAY);
+    }
+
+    private void resetCheckoutButton() {
+        btnCheckOut.setEnabled(true);
+        btnCheckOut.setText("Đặt hàng");
+    }
+
+    // ── Bước 3: Nhận kết quả từ WebView ─────────────────────────────
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == AppMoMoLib.getInstance().REQUEST_CODE_MOMO && resultCode == -1) {
-            if(data != null) {
-                if(data.getIntExtra("status", -1) == 0) {
-                    //TOKEN IS AVAILABLE
-                    Log.d("thanhcong", data.getStringExtra("message"));
-//                    tvMessage.setText("message: " + "Get token " + data.getStringExtra("message"));
-                    String token = data.getStringExtra("data"); //Token response
-                    String phoneNumber = data.getStringExtra("phonenumber");
-                    String env = data.getStringExtra("env");
-                    if(env == null){
-                        env = "app";
-                    }
 
-                    if(token != null && !token.equals("")) {
-                        // TODO: send phoneNumber & token to your server side to process payment with MoMo server
-                        // IF Momo topup success, continue to process your order
-                        placeOrder(selectedPayment);
-                    } else {
-                        Log.d("thanhcong", "khong thanh cong");
-//                        tvMessage.setText("message: " + this.getString(R.string.not_receive_info));
-                    }
-                } else if(data.getIntExtra("status", -1) == 1) {
-                    //TOKEN FAIL
-                    String message = data.getStringExtra("message") != null?data.getStringExtra("message"):"Thất bại";
-                    Log.d("thanhcong", "khong thanh cong");
-//                    tvMessage.setText("message: " + message);
-                } else if(data.getIntExtra("status", -1) == 2) {
-                    //TOKEN FAIL
-                    Log.d("thanhcong", "khong thanh cong");
-//                    tvMessage.setText("message: " + this.getString(R.string.not_receive_info));
-                } else {
-                    //TOKEN FAIL
-                    Log.d("thanhcong", "khong thanh cong");
-//                    tvMessage.setText("message: " + this.getString(R.string.not_receive_info));
-                }
-            } else {
-                Log.d("thanhcong", "khong thanh cong");
-//                tvMessage.setText("message: " + this.getString(R.string.not_receive_info));
-            }
+        if (requestCode != REQUEST_MOMO_PAY) return;
+
+        if (resultCode == RESULT_OK && data != null) {
+            String orderId = data.getStringExtra("order_id");
+            Log.d("MOMO", "Thanh toán thành công, orderId: " + orderId);
+            placeOrder("Ví MoMo", true);
+
         } else {
-            Log.d("thanhcong", "khong thanh cong");
-//            tvMessage.setText("message: " + this.getString(R.string.not_receive_info_err));
+            String error = (data != null) ? data.getStringExtra("error_message") : null;
+            String msg = (error != null) ? error : "Thanh toán đã bị hủy";
+            Log.d("MOMO", "Thanh toán thất bại: " + msg);
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         }
+
     }
 }

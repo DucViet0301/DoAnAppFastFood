@@ -312,8 +312,9 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:padding="8dp"
-                android:background="#FFF3E0"
-                android:backgroundTint="#FFF3E0"/>
+                android:src="@drawable/cash"
+                android:background="#55FFF3E0"
+                android:backgroundTint="#52841d"/>
 
             <LinearLayout
                 android:layout_width="0dp"
