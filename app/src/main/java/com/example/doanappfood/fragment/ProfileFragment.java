@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.Utlis.NotificationManager;
 import com.example.doanappfood.Utlis.SessionManager;
 import com.example.doanappfood.Utlis.SlideEffect;
 import com.example.doanappfood.activity.ChangePasswordActivity;
@@ -48,8 +49,7 @@ public class ProfileFragment extends Fragment {
 
         btnLogoutItem.setOnClickListener(v -> {
             sessionManager.logout();
-            
-            // Cập nhật lại số lượng giỏ hàng trên Header ngay lập tức
+
             if (requireActivity() instanceof com.example.doanappfood.activity.MainActivity) {
                 ((com.example.doanappfood.activity.MainActivity) requireActivity()).updateBadge();
             }
@@ -81,16 +81,13 @@ public class ProfileFragment extends Fragment {
             layoutLoggedIn.setVisibility(View.VISIBLE);
             btnLogoutItem.setVisibility(View.VISIBLE);
 
-            // Hiển thị thông tin từ session
             tvUserNameHeader.setText(sessionManager.getUserName());
             tvFullName.setText("Họ tên: " + sessionManager.getUserName());
 
-            // Xử lý định dạng ngày sinh (chỉ lấy ngày/tháng/năm)
             String rawBirthDate = sessionManager.getUserBirthDate();
             String formattedDate = rawBirthDate;
 
             if (rawBirthDate != null && !rawBirthDate.isEmpty()) {
-                // 1. Cắt bỏ phần giờ (sau chữ T hoặc khoảng trắng)
                 String dateOnly = rawBirthDate;
                 if (rawBirthDate.contains("T")) {
                     dateOnly = rawBirthDate.split("T")[0];
@@ -98,7 +95,6 @@ public class ProfileFragment extends Fragment {
                     dateOnly = rawBirthDate.split(" ")[0];
                 }
 
-                // 2. Chuyển yyyy-MM-dd thành dd/MM/yyyy nếu cần
                 if (dateOnly.contains("-")) {
                     String[] parts = dateOnly.split("-");
                     if (parts.length == 3) {

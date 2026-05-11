@@ -1,6 +1,8 @@
 package com.example.doanappfood.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -15,13 +17,16 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.doanappfood.R;
 import com.example.doanappfood.Utlis.BottomMenuManager;
+import com.example.doanappfood.Utlis.NotificationBadgeUtlis;
 import com.example.doanappfood.data.CartDAO;
 import com.example.doanappfood.databinding.ActivityMainBinding;
 import com.example.doanappfood.fragment.HistoryFragment;
 import com.example.doanappfood.fragment.HomeFragment;
+import com.example.doanappfood.fragment.MapFragment;
 import com.example.doanappfood.fragment.NotifactionFragment;
 import com.example.doanappfood.fragment.ProfileFragment;
 import com.example.doanappfood.fragment.StoreFragment;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -29,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private BottomNavigationView bottomNav;
     private FloatingActionButton fab, fab_chatbox;
-    private int currentId = -1;
     private TextView badgecount;
     private ImageView btnShoppingacart;
     private com.example.doanappfood.Utlis.SessionManager sessionManager;
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private NotifactionFragment notifactionFragment;
     private ProfileFragment profileFragment;
     private Fragment activeFragment;
+    private  MapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         sessionManager = new com.example.doanappfood.Utlis.SessionManager(this);
-        // Khởi tạo RetrofitInstance với context để kích hoạt Auto-Token & Refresh Token
         com.example.doanappfood.network.RetrofitInstance.getRetrofit(this);
 
         CartDAO cartDAO = new CartDAO(this);
@@ -65,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             handleIntent(getIntent());
         }
+
 
         fab_chatbox.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ChatBotActivity.class);
@@ -85,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         storeFragment = new StoreFragment();
         historyFragment = new HistoryFragment();
         notifactionFragment = new NotifactionFragment();
+        mapFragment = new MapFragment();
         profileFragment = new ProfileFragment();
         activeFragment = homeFragment;
 
@@ -93,8 +99,13 @@ public class MainActivity extends AppCompatActivity {
                 .add(R.id.fragment_container, notifactionFragment, "notification").hide(notifactionFragment)
                 .add(R.id.fragment_container, historyFragment, "history").hide(historyFragment)
                 .add(R.id.fragment_container, storeFragment, "store").hide(storeFragment)
+                .add(R.id.fragment_container, mapFragment, "map").hide(mapFragment)
                 .add(R.id.fragment_container, homeFragment, "home")
                 .commit();
+    }
+    public void navigateToMap() {
+        fab_chatbox.setVisibility(View.GONE);
+        switchTab(mapFragment, -1);
     }
 
     private void initViews() {
@@ -102,7 +113,9 @@ public class MainActivity extends AppCompatActivity {
         bottomNav = binding.bottomNavigationView;
         btnShoppingacart = binding.layoutHeader.icShoppingcart;
         fab_chatbox = binding.fabChatbox;
+
         fab = binding.fab;
+        fab_chatbox.setVisibility(View.VISIBLE);
         new BottomMenuManager(this, binding, bottomNav, fab, fab_chatbox);
         bottomNav.setBackground(null);
         startFabAnimation();
@@ -116,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
     }
+
 
     private void handleIntent(Intent intent) {
         if (intent == null) {
@@ -159,16 +173,27 @@ public class MainActivity extends AppCompatActivity {
     }
     public void switchToNavId(int navId) {
         Fragment target;
-        if (navId == R.id.home)         target = homeFragment;
-        else if (navId == R.id.store)   target = storeFragment;
-        else if (navId == R.id.history) target = historyFragment;
-        else if (navId == R.id.notification) target = notifactionFragment;
-        else if (navId == R.id.profile) target = profileFragment;
-        else target = homeFragment;
+        if (navId == R.id.home) {
+            fab_chatbox.setVisibility(View.VISIBLE);
+            target = homeFragment;
+        }
+        else{
+            fab_chatbox.setVisibility(View.GONE);
+            if (navId == R.id.store) {
+                target = storeFragment;
+            } else if (navId == R.id.history) {
+                target = historyFragment;
+            } else if (navId == R.id.notification) {
+                target = notifactionFragment;
+                NotificationBadgeUtlis.hideNotificationBadge(bottomNav);
+            } else if (navId == R.id.profile) {
+                target = profileFragment;
+            } else {
+                target = homeFragment;
+                fab_chatbox.setVisibility(View.VISIBLE);
+            }
+        }
         switchTab(target, navId);
-    }
-    public void replaceFragment(Fragment fragment, int nextId) {
-        switchToNavId(nextId);
     }
 
     @Override
@@ -182,6 +207,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateBadge();
+        checkNotificationFlag();
+    }
+    private void checkNotificationFlag() {
+        SharedPreferences pref = getSharedPreferences("AppData", MODE_PRIVATE);
+        boolean needShow = pref.getBoolean("need_show_badge", false);
+
+        if (needShow) {
+            NotificationBadgeUtlis.showNotificationBadge(bottomNav);
+            pref.edit().remove("need_show_badge").apply();
+        }
     }
 
     public void updateBadge() {
@@ -190,10 +225,8 @@ public class MainActivity extends AppCompatActivity {
         // Khởi tạo DAO
         CartDAO cartDAO = new CartDAO(this);
 
-        // Lấy ID từ sessionManager đã được khai báo ở đầu Class
         int userId = sessionManager.getUserId();
 
-        // Nếu userId = -1 (chưa đăng nhập) thì ẩn badge, ngược lại lấy số lượng từ DB
         int count = (userId != -1) ? cartDAO.getCount(userId) : 0;
 
         if (count > 0) {

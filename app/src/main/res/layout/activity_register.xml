@@ -181,26 +181,6 @@
                 android:paddingHorizontal="16dp"
                 android:textSize="15sp" />
 
-            <!-- Ngày sinh -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Ngày sinh"
-                android:textColor="#001F3F"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/edtDob"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/edittext_border"
-                android:hint="Ví dụ: 22/01/2005"
-                android:inputType="date"
-                android:paddingHorizontal="16dp"
-                android:textSize="15sp" />
-
             <!-- Điều khoản -->
             <LinearLayout
                 android:layout_width="match_parent"
