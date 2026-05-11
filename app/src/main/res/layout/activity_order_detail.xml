@@ -19,6 +19,7 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            android:paddingTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/baseline_arrow_back_ios_24"
@@ -271,40 +272,6 @@
                         android:layout_marginHorizontal="14dp"
                         android:background="#EEEEEE" />
 
-                    <!-- Cửa hàng -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="14dp"
-                        android:paddingVertical="13dp">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_marginEnd="10dp"
-                            android:src="@drawable/locationstore" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Cửa hàng"
-                            android:textColor="@color/black"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:id="@+id/tvStoreName"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="end"
-                            android:textColor="#1A1A1A"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            tools:text="Trần Đại Nghĩa, Bạch Mai, Hà Nội" />
-                    </LinearLayout>
-
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="0.5dp"
@@ -396,10 +363,10 @@
                                         tools:text="4 sản phẩm" />
                                 </LinearLayout>
 
-                                <View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="0.5dp"
-                                    android:background="#EEEEEE" />
+<!--                                <View-->
+<!--                                    android:layout_width="match_parent"-->
+<!--                                    android:layout_height="0.5dp"-->
+<!--                                    android:background="#EEEEEE" />-->
 
                                 <!-- ★ DYNAMIC: inflate item_product_row.xml vào đây -->
                                 <LinearLayout
@@ -414,12 +381,17 @@
                                     android:layout_height="wrap_content"/>
 
                                 <View
+                                    android:id="@+id/lineproduct"
                                     android:layout_width="match_parent"
                                     android:layout_height="0.5dp"
                                     android:background="#8C8C8C" />
 
                                 <!-- Ghi chú đơn hàng -->
+
+                                <!-- Đường kẻ nét đứt -->
+
                                 <LinearLayout
+                                    android:id="@+id/noteOrder"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:orientation="vertical"
@@ -429,55 +401,54 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginBottom="8dp"
                                         android:text="Ghi chú"
                                         android:textColor="@color/black"
                                         android:textSize="13sp"
-                                        android:textStyle="bold"
-                                        android:layout_marginBottom="8dp" />
+                                        android:textStyle="bold" />
 
                                     <!-- Lấy dụng cụ ăn uống -->
                                     <TextView
                                         android:id="@+id/tvNoteUtensils"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginBottom="4dp"
                                         android:text="- Lấy dụng cụ ăn uống"
                                         android:textColor="#333333"
-                                        android:textSize="13sp"
-                                        android:layout_marginBottom="4dp" />
+                                        android:textSize="13sp" />
 
                                     <!-- Lấy tương ớt -->
                                     <TextView
                                         android:id="@+id/tvNoteChili"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginBottom="4dp"
                                         android:text="- Lấy tương ớt"
                                         android:textColor="#333333"
-                                        android:textSize="13sp"
-                                        android:layout_marginBottom="4dp" />
+                                        android:textSize="13sp" />
 
                                     <!-- Lấy tương cà -->
                                     <TextView
                                         android:id="@+id/tvNoteKetchup"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginBottom="4dp"
                                         android:text="- Lấy tương cà"
                                         android:textColor="#333333"
-                                        android:textSize="13sp"
-                                        android:layout_marginBottom="4dp" />
+                                        android:textSize="13sp" />
 
                                     <!-- Ghi chú chi tiết -->
                                     <TextView
                                         android:id="@+id/tvNoteDetail"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
+                                        android:lineSpacingExtra="2dp"
                                         android:textColor="#333333"
                                         android:textSize="13sp"
-                                        android:lineSpacingExtra="2dp"
                                         tools:text="- Ít đá, không hành" />
 
                                 </LinearLayout>
 
-                                <!-- Đường kẻ nét đứt -->
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="0.7dp"

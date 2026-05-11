@@ -20,7 +20,6 @@ public class RetrofitInstance {
             SessionManager sessionManager = new SessionManager(context.getApplicationContext());
 
             OkHttpClient client = new OkHttpClient.Builder()
-                // 1. Interceptor: Tự động thêm Token vào Header của mọi request
                 .addInterceptor(chain -> {
                     Request.Builder newRequest = chain.request().newBuilder();
                     String token = sessionManager.getToken();

@@ -7,20 +7,40 @@ import java.util.List;
 public class ProductDetailModel {
     int id;
     String name, image;
-    Double sale_price, list_price;
+    Double sale_price, list_price, price;
+    private String quantity;
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public String getQuantity() {
+        return quantity;
+    }
+
     @SerializedName("item_sauces")
     List<SaucesModel> saucesModel;
     @SerializedName("item_product")
     List<ProductModel> productModels;
 
-    @SerializedName("is_combo")
-    private int is_combo;
+    @SerializedName("sub_items")
+    private List<String> subItems;
 
-    public boolean isIs_combo() {
-        return is_combo == 1;
+
+
+    @SerializedName("is_combo")
+    private boolean combo;
+
+    public boolean isCombo() {
+        return combo;
     }
-    public void setIs_combo(int is_combo) {
-        this.is_combo = is_combo;
+
+    public List<String> getSubItems() {
+        return subItems;
+    }
+
+    public void setCombo(boolean combo) {
+        this.combo = combo;
     }
 
 

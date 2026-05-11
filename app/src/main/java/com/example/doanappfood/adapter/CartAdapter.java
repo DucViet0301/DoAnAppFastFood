@@ -86,7 +86,10 @@ public class CartAdapter extends  RecyclerView.Adapter<CartAdapter.ViewHolder>{
         if (item.getSauces() != null && !item.getSauces().isEmpty()) {
             java.util.Map<String, Integer> counts = new java.util.HashMap<>();
             for (CartSauceItem s : item.getSauces()) {
-                counts.put(s.getName(), counts.getOrDefault(s.getName(), 0) + 1);
+                counts.put(
+                        s.getName(),
+                        counts.getOrDefault(s.getName(), 0) + s.getQuantity()
+                );
             }
 
             StringBuilder sb = new StringBuilder();
@@ -117,7 +120,6 @@ public class CartAdapter extends  RecyclerView.Adapter<CartAdapter.ViewHolder>{
             listener.onQuanityChange(item.getId(), item.getQuantity(), position);
         });
 
-        // Click xem chi tiet
         holder.itemView.setOnClickListener(v -> listener.onItemClick(item));
     }
 

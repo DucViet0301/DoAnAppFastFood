@@ -250,7 +250,9 @@ public class CartActivity extends AppCompatActivity {
                 ArrayList<String> selectedSauces = new ArrayList<>();
                 if (item.getSauces() != null) {
                     for (CartSauceItem s : item.getSauces()) {
-                        selectedSauces.add(s.getName());
+                        for ( int i = 0 ; i < s.getQuantity(); i++){
+                            selectedSauces.add(s.getName());
+                        }
                     }
                 }
                 intent.putStringArrayListExtra("selected_sauces", selectedSauces);

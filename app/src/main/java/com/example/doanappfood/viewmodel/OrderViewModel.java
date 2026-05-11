@@ -4,7 +4,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.doanappfood.model.MessModel;
+import com.example.doanappfood.model.OrderModel;
 import com.example.doanappfood.repository.OrderRepository;
+
+import java.util.List;
 
 public class OrderViewModel extends ViewModel {
     private OrderRepository orderRepository;
@@ -18,5 +21,8 @@ public class OrderViewModel extends ViewModel {
     }
     public MutableLiveData<MessModel> getMessModelMutableLiveData(){
         return data;
+    }
+    public  MutableLiveData<List<OrderModel>> getAllOrder(int userId){
+        return orderRepository.getOrder(userId);
     }
 }
