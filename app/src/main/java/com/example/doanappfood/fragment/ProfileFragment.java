@@ -21,12 +21,15 @@ import com.example.doanappfood.Utlis.SlideEffect;
 import com.example.doanappfood.activity.ChangePasswordActivity;
 import com.example.doanappfood.activity.LoginActivity;
 import com.example.doanappfood.activity.RegisterActivity;
+import com.example.doanappfood.model.AuthModel;
+import com.example.doanappfood.repository.AuthRepository;
+import com.example.doanappfood.data.CartDAO;
 
 public class ProfileFragment extends Fragment {
 
     private AppCompatButton btnLogin, btnRegister;
     private LinearLayout layoutNotLoggedIn, layoutLoggedIn, btnLogoutItem;
-    private TextView tvUserNameHeader, tvFullName, tvBirthDate, tvPhone, tvEmail;
+    private TextView tvUserNameHeader, tvFullName, tvBirthDate, tvPhone, tvEmail, tvChangePassword;
     private SessionManager sessionManager;
 
     @Override
@@ -46,19 +49,39 @@ public class ProfileFragment extends Fragment {
 
         btnRegister.setOnClickListener(v -> SlideEffect.startActivity(requireActivity(), RegisterActivity.class));
 
-        btnLogoutItem.setOnClickListener(v -> {
-            sessionManager.logout();
-            
-            // Cập nhật lại số lượng giỏ hàng trên Header ngay lập tức
-            if (requireActivity() instanceof com.example.doanappfood.activity.MainActivity) {
-                ((com.example.doanappfood.activity.MainActivity) requireActivity()).updateBadge();
-            }
+        tvChangePassword.setOnClickListener(v -> {
+            Intent intent = new Intent(requireActivity(), ChangePasswordActivity.class);
+            startActivity(intent);
+        });
 
-            Toast.makeText(getContext(), "Đã đăng xuất", Toast.LENGTH_SHORT).show();
-            updateUI();
+        btnLogoutItem.setOnClickListener(v -> {
+            AuthRepository authRepository = new AuthRepository(requireContext());
+            authRepository.logout(new AuthRepository.AuthCallback() {
+                @Override
+                public void onSuccess(AuthModel response) {
+                    performLogout();
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    performLogout();
+                }
+            });
         });
 
         return view;
+    }
+
+    private void performLogout() {
+        // Không xóa giỏ hàng ở đây để khi đăng nhập lại vẫn còn dữ liệu
+        sessionManager.logout();
+
+        if (requireActivity() instanceof com.example.doanappfood.activity.MainActivity) {
+            ((com.example.doanappfood.activity.MainActivity) requireActivity()).updateBadge();
+        }
+
+        Toast.makeText(getContext(), "Đã đăng xuất", Toast.LENGTH_SHORT).show();
+        updateUI();
     }
 
     private void initView(View view) {
@@ -73,6 +96,7 @@ public class ProfileFragment extends Fragment {
         tvBirthDate = view.findViewById(R.id.tvBirthDate);
         tvPhone = view.findViewById(R.id.tvPhone);
         tvEmail = view.findViewById(R.id.tvEmail);
+        tvChangePassword = view.findViewById(R.id.tvChangePassword);
     }
 
     private void updateUI() {
@@ -81,33 +105,23 @@ public class ProfileFragment extends Fragment {
             layoutLoggedIn.setVisibility(View.VISIBLE);
             btnLogoutItem.setVisibility(View.VISIBLE);
 
-            // Hiển thị thông tin từ session
             tvUserNameHeader.setText(sessionManager.getUserName());
             tvFullName.setText("Họ tên: " + sessionManager.getUserName());
 
-            // Xử lý định dạng ngày sinh (chỉ lấy ngày/tháng/năm)
             String rawBirthDate = sessionManager.getUserBirthDate();
             String formattedDate = rawBirthDate;
-
             if (rawBirthDate != null && !rawBirthDate.isEmpty()) {
-                // 1. Cắt bỏ phần giờ (sau chữ T hoặc khoảng trắng)
                 String dateOnly = rawBirthDate;
                 if (rawBirthDate.contains("T")) {
                     dateOnly = rawBirthDate.split("T")[0];
                 } else if (rawBirthDate.contains(" ")) {
                     dateOnly = rawBirthDate.split(" ")[0];
                 }
-
-                // 2. Chuyển yyyy-MM-dd thành dd/MM/yyyy nếu cần
                 if (dateOnly.contains("-")) {
                     String[] parts = dateOnly.split("-");
                     if (parts.length == 3) {
                         formattedDate = parts[2] + "/" + parts[1] + "/" + parts[0];
-                    } else {
-                        formattedDate = dateOnly;
                     }
-                } else {
-                    formattedDate = dateOnly;
                 }
             }
 
@@ -124,6 +138,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateUI(); // Cập nhật lại UI nếu user vừa đăng nhập xong quay lại
+        updateUI();
     }
 }
