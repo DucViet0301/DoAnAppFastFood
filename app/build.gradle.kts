@@ -76,4 +76,6 @@ dependencies {
     implementation("com.github.momo-wallet:mobile-sdk:1.0.6") {
         exclude(group = "com.android.support")
     }
+    //web view
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }

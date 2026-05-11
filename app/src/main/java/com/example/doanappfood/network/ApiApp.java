@@ -100,4 +100,8 @@ public interface ApiApp {
     @FormUrlEncoded
     @POST("users/forgot-password-send-otp")
     Call<ResponseModel> forgotPasswordSendOtp(@Field("email") String email);
+    // momo
+    @POST("payment")
+    Call<MessModel> createMomoPayment(@Body okhttp3.RequestBody body);
+
 }
