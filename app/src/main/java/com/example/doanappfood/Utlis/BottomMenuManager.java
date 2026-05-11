@@ -77,6 +77,9 @@ public class BottomMenuManager {
 
             if (itemId == R.id.home) {
                 setHomeColors();
+                activity.setFabChatboxVisible(true);
+            } else {
+                activity.setFabChatboxVisible(false);
             }
             activity.switchToNavId(itemId);
             return true;

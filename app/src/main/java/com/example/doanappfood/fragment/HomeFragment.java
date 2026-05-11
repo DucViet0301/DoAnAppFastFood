@@ -232,10 +232,5 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MainActivity mainActivity = (MainActivity) getActivity();
-        if (mainActivity != null && mainActivity.getActiveFragment() == this) {
-            mainActivity.findViewById(R.id.fab_chatbox).setVisibility(View.VISIBLE);
-        }
     }
-
 }

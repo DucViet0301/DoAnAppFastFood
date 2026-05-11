@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
     public void navigateToMap() {
-        fab_chatbox.setVisibility(View.GONE);
+        setFabChatboxVisible(false);
         switchTab(mapFragment, -1);
     }
 
@@ -113,13 +113,12 @@ public class MainActivity extends AppCompatActivity {
         bottomNav = binding.bottomNavigationView;
         btnShoppingacart = binding.layoutHeader.icShoppingcart;
         fab_chatbox = binding.fabChatbox;
-
         fab = binding.fab;
+
         fab_chatbox.setVisibility(View.VISIBLE);
         new BottomMenuManager(this, binding, bottomNav, fab, fab_chatbox);
         bottomNav.setBackground(null);
         startFabAnimation();
-
     }
 
     public void setupClick() {
@@ -174,24 +173,18 @@ public class MainActivity extends AppCompatActivity {
     public void switchToNavId(int navId) {
         Fragment target;
         if (navId == R.id.home) {
-            fab_chatbox.setVisibility(View.VISIBLE);
             target = homeFragment;
-        }
-        else{
-            fab_chatbox.setVisibility(View.GONE);
-            if (navId == R.id.store) {
-                target = storeFragment;
-            } else if (navId == R.id.history) {
-                target = historyFragment;
-            } else if (navId == R.id.notification) {
-                target = notifactionFragment;
-                NotificationBadgeUtlis.hideNotificationBadge(bottomNav);
-            } else if (navId == R.id.profile) {
-                target = profileFragment;
-            } else {
-                target = homeFragment;
-                fab_chatbox.setVisibility(View.VISIBLE);
-            }
+        } else if (navId == R.id.store) {
+            target = storeFragment;
+        } else if (navId == R.id.history) {
+            target = historyFragment;
+        } else if (navId == R.id.notification) {
+            target = notifactionFragment;
+            NotificationBadgeUtlis.hideNotificationBadge(bottomNav);
+        } else if (navId == R.id.profile) {
+            target = profileFragment;
+        } else {
+            target = homeFragment;
         }
         switchTab(target, navId);
     }
@@ -247,5 +240,15 @@ public class MainActivity extends AppCompatActivity {
         rotate.setRepeatCount(android.view.animation.Animation.INFINITE);
         rotate.setInterpolator(new android.view.animation.LinearInterpolator());
         fab_chatbox.startAnimation(rotate);
+    }
+    public void setFabChatboxVisible(boolean visible) {
+        if (fab_chatbox == null) return;
+        if (visible) {
+            fab_chatbox.setVisibility(View.VISIBLE);
+            startFabAnimation();
+        } else {
+            fab_chatbox.clearAnimation();
+            fab_chatbox.setVisibility(View.GONE);
+        }
     }
 }
