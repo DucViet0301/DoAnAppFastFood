@@ -101,11 +101,8 @@ public class ProductDetailActivity extends AppCompatActivity {
         String image = getIntent().getStringExtra("product_image");
         double sale = getIntent().getDoubleExtra("product_sale_price", 0);
         double list = getIntent().getDoubleExtra("product_price", 0);
-        int oldQuantity = getIntent().getIntExtra("current_quantity", 1);
         binding.tvComboTitle.setText(name);
         Glide.with(this).load(image).into(binding.ivHeroBanner);
-        quantity = oldQuantity;
-        binding.tvQuantity.setText(String.valueOf(quantity));
         if (sale > 0) {
             activePrice = sale;
         } else {
@@ -117,7 +114,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private void loadData() {
         int id = getIntent().getIntExtra("product_id", -1);
-        isUpdateMode = getIntent().getBooleanExtra("is_update", false);
+        isUpdateMode = getIntent().hasExtra("cart_id");
         CartId = getIntent().getIntExtra("cart_id", -1);
 
         ArrayList<String> oldSauces = getIntent().getStringArrayListExtra("selected_sauces");
@@ -143,30 +140,38 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void setupSauces(ProductDetailModel model, ArrayList<String> sauces) {
         if (model.getSaucesModel() != null && !model.getSaucesModel().isEmpty()) {
 
+            // Reset quantity về 0 trước khi restore
+            for (SaucesModel s : model.getSaucesModel()) {
+                s.setQuantity(0);
+            }
+
             saucesAdapter = new ProductDetailSaucesAdapter(model.getSaucesModel());
             binding.rvSauces.setAdapter(saucesAdapter);
 
             if (sauces != null) {
-                for (SaucesModel sauceAPI : model.getSaucesModel()) {
-                    for (String oldName : sauces) {
+                for (String oldName : sauces) {
+                    for (SaucesModel sauceAPI : model.getSaucesModel()) {
                         if (sauceAPI.getName().equals(oldName)) {
-                            selectedSaucesList.add(sauceAPI);
+                            // Cộng đúng 1 lần cho mỗi oldName tìm được
                             sauceAPI.setQuantity(sauceAPI.getQuantity() + 1);
+                            selectedSaucesList.add(sauceAPI);
                             try {
                                 totalSaucesPrice += Double.parseDouble(sauceAPI.getPrice());
                             } catch (Exception e) {
-                                throw new RuntimeException(e);
+                                Log.e("SAUCE_ERROR", "Parse price lỗi", e);
                             }
+                            break;
                         }
                     }
                 }
+                saucesAdapter.notifyDataSetChanged();
                 updateTotalPrice();
             }
 
-            saucesAdapter.setOnProductSaucesClickListener((sauce, isIncreate) -> {
+            saucesAdapter.setOnProductSaucesClickListener((sauce, isIncrease) -> {
                 try {
                     double price = Double.parseDouble(sauce.getPrice());
-                    if (isIncreate) {
+                    if (isIncrease) {
                         selectedSaucesList.add(sauce);
                         totalSaucesPrice += price;
                     } else {
@@ -184,7 +189,6 @@ public class ProductDetailActivity extends AppCompatActivity {
             binding.cardSauces.setVisibility(View.GONE);
         }
     }
-
     private void setupCombo(ProductDetailModel model) {
         if (model.getProductModels() != null && !model.getProductModels().isEmpty()) {
             binding.rvComboItems.setAdapter(new ProductDetailComboAdapter(model.getProductModels()));
@@ -222,6 +226,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private void updateTotalPrice() {
         double total = (activePrice + totalSaucesPrice) * quantity;
+        Log.d("UPDATE_MODE", "isUpdateMode = " + isUpdateMode);
         if (isUpdateMode) {
             binding.btnAddToCart.setText("Cập nhật giỏ hàng: " + fmt.format(total) + " đ");
         } else {
@@ -258,7 +263,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         Executor executor = Executors.newSingleThreadExecutor();
 
         binding.btnAddToCart.setOnClickListener(v -> {
-            // Kiểm tra đăng nhập trước khi cho phép thêm vào giỏ hàng
             if (!sessionManager.isLoggedIn()) {
                 Toast.makeText(this, "Vui lòng đăng nhập để thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
                 android.content.Intent intent = new android.content.Intent(this, LoginActivity.class);
@@ -281,9 +285,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                     double listPriceRaw = currentModel.getList_price();
 
                     StringBuilder productInfo = new StringBuilder();
-                    // Trong setupAddToCart()
                     String comboDetail = "";
-                    if (currentModel.isIs_combo()) {
+                    if (currentModel.isCombo()) {
                         for (ProductModel p : currentModel.getProductModels()) {
                             productInfo.append(p.getQuantity()).append(" x ").append(p.getName()).append(",");
                         }
@@ -293,8 +296,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                     }
 
 
-                    double finalSalePrice = (salePriceRaw + totalSaucesPrice) * quantity;
-                    double finalListPrice = (listPriceRaw + totalSaucesPrice) * quantity;
+                    double finalSalePrice = (salePriceRaw + totalSaucesPrice) ;
+                    double finalListPrice = (listPriceRaw + totalSaucesPrice) ;
 
                     CartDAO cartDAO = new CartDAO(this);
                     if (isUpdateMode) {
@@ -314,7 +317,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                     Log.d("CART_DEBUG", "Giá niêm yết: " + fmt.format(finalListPrice) + " đ");
                     Log.d("CART_DEBUG", "Giá sale:     " + fmt.format(finalSalePrice) + " đ");
                     Log.d("CART_DEBUG", "Số lượng: " + quantity);
-                    Log.d("DEBUG", "is_combo = " + currentModel.isIs_combo());
+                    Log.d("DEBUG", "is_combo = " + currentModel.isCombo());
 
                     runOnUiThread(() -> {
                         Toast.makeText(this, isUpdateMode ? "Cập nhật giỏ hàng thành công!" : "Đã thêm vào giỏ hàng!", Toast.LENGTH_SHORT).show();

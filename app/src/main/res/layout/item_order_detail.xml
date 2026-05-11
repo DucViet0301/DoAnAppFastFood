@@ -3,36 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <data>
-
-    </data>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="6dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="3dp"
-        app:cardBackgroundColor="#FFFFFF">
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginHorizontal="8dp"-->
+<!--        android:layout_marginVertical="6dp"-->
+<!--        app:cardCornerRadius="16dp"-->
+<!--        app:cardElevation="3dp"-->
+<!--        app:cardBackgroundColor="#FFFFFF">-->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="16dp"
+            android:background="@color/white"
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="8dp"
             android:gravity="top">
 
             <!-- Ảnh sản phẩm — load bằng Glide từ product.imageUrl -->
 
             <!-- Thông tin sản phẩm -->
+
             <ImageView
                 android:id="@+id/ivProductImage"
-                android:layout_width="88dp"
-                android:layout_height="88dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginEnd="14dp"
                 android:background="@drawable/bg_product_image_rounded"
-                android:scaleType="centerCrop"
+                android:scaleType="fitXY"
                 tools:src="@tools:sample/backgrounds/scenic" />
 
             <LinearLayout
@@ -40,17 +39,39 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <!-- Tên combo/sản phẩm — set từ product.name -->
-                <TextView
-                    android:id="@+id/tvProductName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#1A1A2E"
-                    android:textSize="17sp"
-                    android:textStyle="bold"
-                    android:lineSpacingExtra="2dp"
-                    tools:text="Tiện Lợi 2" />
+                    <TextView
+                        android:id="@+id/tvProductName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#1A1A2E"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:lineSpacingExtra="2dp"
+                        tools:text="Tiện Lợi 2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/tvQuantityOrder"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginEnd="8dp"/>
+
+                    <TextView
+                        android:id="@+id/tvQuantityOrder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="x1"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
                 <!-- Danh sách món trong combo — set động từ product.subItems -->
                 <LinearLayout
@@ -61,15 +82,23 @@
                     android:layout_marginTop="6dp" />
 
                 <TextView
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/tvProductDesc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="#565656"
                     android:textSize="14sp"
                     android:lineSpacingExtra="2dp"
                     android:layout_marginBottom="2dp"
-                    tools:text="1 x Pepsi (S)" />
+                    tools:text="1 x Tiện Lợi 1 (gà thường)\n1 x Pepsi (S)" />
+                <TextView
+                    android:id="@+id/tvSaucesDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#565656"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="2dp"
+                    android:layout_marginBottom="2dp"
+                    tools:text="1 x Xot HS\n1 x Xot Pho Mai" />
 
                 <!-- Giá — set từ product.price, căn phải -->
                 <TextView
@@ -85,5 +114,5 @@
 
             </LinearLayout>
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+<!--    </androidx.cardview.widget.CardView>-->
 </layout>

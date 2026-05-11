@@ -2,14 +2,20 @@ package com.example.doanappfood.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class MessModel {
-    // ── Field cho Order (COD) ────────────────────────────────────────
     private boolean success;
     private String message;
+    @SerializedName("order_id")
+    private int order_id;
 
-    // ── Field cho MoMo — server trả về ──────────────────────────────
+    public int getOrder_id() {
+        return order_id;
+    }
+
     @SerializedName("resultCode")
-    private Integer resultCode;   // Integer (có thể null nếu không phải response MoMo)
+    private Integer resultCode;  
 
     @SerializedName("payUrl")
     private String payUrl;

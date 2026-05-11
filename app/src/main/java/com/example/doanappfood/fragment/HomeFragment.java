@@ -88,12 +88,7 @@ public class HomeFragment extends Fragment {
         SeeAllProduct = view.findViewById(R.id.tvSeeALLUD);
         tvNamCustomer = view.findViewById(R.id.tvNameCustomer);
 
-        // Hiển thị tên người dùng nếu đã đăng nhập
-        if (sessionManager.isLoggedIn()) {
-            tvNamCustomer.setText(sessionManager.getUserName());
-        } else {
-            tvNamCustomer.setText("Quý Khách");
-        }
+        updateGreeting();
 
         CardViewGiftBox = view.findViewById(R.id.CardViewGiftBox);
         CardViewBestSeller = view.findViewById(R.id.CardViewBestSeller);
@@ -123,25 +118,17 @@ public class HomeFragment extends Fragment {
         setCardViewToStore(SeeAllProduct, 2);
         setCardViewToStore(CardViewBestSeller, 1);
         setCardViewToStore(CardViewChicken, 9);
-        CardViewLocationStore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity)getActivity()).findViewById(R.id.fab_chatbox)
-                        .setVisibility(View.GONE);
-                SlideEffect.changeFragment(requireActivity(), new MapFragment());
-            }
+        CardViewLocationStore.setOnClickListener(v -> {
+            ((MainActivity) requireActivity()).navigateToMap();
         });
-
         return view;
     }
 
     private void setCardViewToStore(View view, int categoryId) {
         view.setOnClickListener(v -> {
-            // Đổi tab bottom nav
             BottomNavigationView bottomNav = requireActivity().findViewById(R.id.bottomNavigationView);
             bottomNav.setSelectedItemId(R.id.store);
 
-            // ✅ Gọi MainActivity để dùng storeFragment có sẵn
             ((MainActivity) requireActivity()).openStoreWithCategory(categoryId);
         });
     }
@@ -162,7 +149,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void initViewModelBanner() {
-        bannerViewModel = new ViewModelProvider(this).get(BannerViewModel.class);
+        bannerViewModel = new ViewModelProvider(requireActivity()).get(BannerViewModel.class);
         bannerViewModel.getBannerList().observe(getViewLifecycleOwner(), bannerModels -> {
             if (bannerModels != null) {
                 bannerAdapter.updateList(bannerModels);
@@ -171,7 +158,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void initViewModelCombo() {
-        comboViewModel = new ViewModelProvider(this).get(ComboViewModel.class);
+        comboViewModel = new ViewModelProvider(requireActivity()).get(ComboViewModel.class);
         comboViewModel.getComboList().observe(getViewLifecycleOwner(), comboModels -> {
             if (comboModels != null) {
                 comboAdapter.setData(comboModels);
@@ -186,7 +173,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void initViewModelNew() {
-        newViewModel = new ViewModelProvider(this).get(NewViewModel.class);
+        newViewModel = new ViewModelProvider(requireActivity()).get(NewViewModel.class);
         newViewModel.getNewList().observe(getViewLifecycleOwner(), newModels -> {
             if (newModels != null) {
                 newAdapter.setData(newModels);
@@ -207,12 +194,6 @@ public class HomeFragment extends Fragment {
         );
         comboAdapter = new ComboAdapter(new ArrayList<>(), requireContext());
         recyclerViewCombo.setAdapter(comboAdapter);
-        comboAdapter.setOnComboClickListener((comboModel, position) -> {
-            // Xóa Toast, thay bằng:
-            Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
-            intent.putExtra("product_id", comboModel.getId());
-            startActivity(intent);
-        });
     }
 
 
@@ -246,9 +227,27 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        ((MainActivity) getActivity()).findViewById(R.id.fab_chatbox)
-                .setVisibility(View.VISIBLE);
+        updateGreeting();
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            // Khi hiện lại HomeFragment, tạo mới sessionManager để lấy dữ liệu mới nhất
+            sessionManager = new com.example.doanappfood.Utlis.SessionManager(requireContext());
+            updateGreeting();
+        }
+    }
+
+    private void updateGreeting() {
+        if (tvNamCustomer != null) {
+            if (sessionManager != null && sessionManager.isLoggedIn()) {
+                String userName = sessionManager.getUserName();
+                tvNamCustomer.setText(userName != null && !userName.isEmpty() ? userName : "Quý Khách");
+            } else {
+                tvNamCustomer.setText("Quý Khách");
+            }
+        }
+    }
 }

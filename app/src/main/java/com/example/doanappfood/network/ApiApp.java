@@ -3,19 +3,20 @@ package com.example.doanappfood.network;
 import com.example.doanappfood.model.AuthModel;
 import com.example.doanappfood.model.BannerModel;
 import com.example.doanappfood.model.CategoryModel;
+import com.example.doanappfood.model.ChangePassModel;
 import com.example.doanappfood.model.ComboModel;
 import com.example.doanappfood.model.DirectionModel;
 import com.example.doanappfood.model.LoginModel;
 import com.example.doanappfood.model.MessModel;
 import com.example.doanappfood.model.NewModel;
+import com.example.doanappfood.model.OrderDetailModel;
+import com.example.doanappfood.model.OrderModel;
 import com.example.doanappfood.model.ProductDetailModel;
 import com.example.doanappfood.model.ProductModel;
 import com.example.doanappfood.model.PromotionNewsModel;
 import com.example.doanappfood.model.RegisterModel;
-import com.example.doanappfood.model.StoreModel;
-import com.example.doanappfood.model.LoginRequest;
 import com.example.doanappfood.model.ResponseModel;
-import com.example.doanappfood.model.UserModel;
+import com.example.doanappfood.model.StoreModel;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,8 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiApp {
@@ -69,6 +72,7 @@ public interface ApiApp {
             @Query("toLat") double toLat,
             @Query("toLng") double toLng
     );
+
     @POST("orders")
     Call<MessModel> postOrder(@Body okhttp3.RequestBody detail);
 
@@ -77,6 +81,7 @@ public interface ApiApp {
 
     @POST("register")
     Call<AuthModel> register(@Body RegisterModel request);
+
     @FormUrlEncoded
     @POST("auth/refresh")
     Call<AuthModel> refreshToken(@Field("refresh_token") String refreshToken);
@@ -84,18 +89,13 @@ public interface ApiApp {
     @POST("chatbot")
     Call<Map<String, String>> sendMessage(@Body Map<String, String> body);
 
-    // THÊM 2 API MỚI CHO TÍNH NĂNG ĐỔI MẬT KHẨU
+    @POST("logout")
+    Call<AuthModel> logout();
 
-    @FormUrlEncoded
-    @POST("users/send-otp")
-    Call<ResponseModel> sendOtp(@Field("email") String email);
 
-    @FormUrlEncoded
-    @POST("users/change-password")
+    @POST("changepassword")
     Call<ResponseModel> changePassword(
-            @Field("email") String email,
-            @Field("otp") String otp,
-            @Field("newPassword") String newPassword
+            @Body ChangePassModel body
     );
     @FormUrlEncoded
     @POST("users/forgot-password-send-otp")
@@ -103,5 +103,12 @@ public interface ApiApp {
     // momo
     @POST("payment")
     Call<MessModel> createMomoPayment(@Body okhttp3.RequestBody body);
+    @GET("getOrder/{userId}")
+    Call<List<OrderModel>> getAllOrder(@Path("userId") int userId);
+
+    @PUT("getOrder/cancel/{orderId}")
+    Call<MessModel> cancelOrder(@Path("orderId") int orderId);
+    @GET("getOrder/detail/{orderId}")
+    Call<OrderDetailModel> getOrderDetail(@Path("orderId") int orderId);
 
 }

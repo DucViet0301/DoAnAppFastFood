@@ -9,11 +9,11 @@ public class UserModel {
     private String address;
     private String birth_date;
 
-    public UserModel(int id, String name, String email, String phone, String password, String address, String birth_date) {
+    public UserModel(int id, String name, String phone, String email, String password, String address, String birth_date) {
         this.id = id;
         this.name = name;
-        this.email = email;
         this.phone = phone;
+        this.email = email;
         this.password = password;
         this.address = address;
         this.birth_date = birth_date;
