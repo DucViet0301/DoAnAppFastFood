@@ -23,7 +23,6 @@ public class MessModel {
     @SerializedName("orderId")
     private String orderId;
 
-    // ── isSuccess() xử lý cả 2 trường hợp ──────────────────────────
     public boolean isSuccess() {
         // Nếu là response MoMo (có resultCode)
         if (resultCode != null) {

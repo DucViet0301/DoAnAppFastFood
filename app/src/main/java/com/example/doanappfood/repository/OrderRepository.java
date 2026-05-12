@@ -35,7 +35,7 @@ public class OrderRepository {
             public void onResponse(Call<MessModel> call, Response<MessModel> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Log.d("API_DEBUG", "Raw message: " + response.body().getMessage());
-                    Log.d("API_DEBUG", "Raw orderId: " + response.body().getOrder_id());
+                    Log.d("API_DEBUG", "Raw status " + response.body().getOrder_id());
                 }
                 if (response.code() == 201 || response.isSuccessful()) {
                     data.postValue(response.body());

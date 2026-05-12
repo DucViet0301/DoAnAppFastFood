@@ -75,8 +75,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             holder.tvStatusBadge.setText("Chưa Thanh Toán");
         }else if (order.getStatus().equals("cancelled")){
             holder.tvStatusBadge.setText("Đã hủy đơn hàng");
-        }else if (order.getStatus().equals("Đã Thanh Toán")){
+        }else if (order.getStatus().equals("Đã thanh toán")){
             holder.tvStatusBadge.setText("Đã Thanh Toán");
+        }
+        else {
+            holder.tvStatusBadge.setText("Đã giao hàng");
         }
 
         try {

@@ -114,7 +114,7 @@ public class OrderDetailActivity extends AppCompatActivity {
             } else if (order.getStatus().equals("cancelled")) {
                 tvStatus.setText("Đã hủy đơn hàng");
                 btnCancelOrder.setVisibility(View.GONE);
-            } else if (order.getStatus().equals("Đã Thanh Toán")) {
+            } else if (order.getStatus().equals("Đã thanh toán")) {
                 tvStatus.setText("Đã Thanh Toán");
             }
             tvOrderTime.setText(DateUtils.formatDate(order.getCreated_at()));

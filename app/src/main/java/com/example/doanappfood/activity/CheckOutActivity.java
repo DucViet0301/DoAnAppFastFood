@@ -340,7 +340,6 @@ public class CheckOutActivity extends AppCompatActivity {
         }
     }
 
-    // gọi api tạo đơn hàngI
     private void placeOrder(String paymentMethod) {
         placeOrder(paymentMethod, false);
     }
@@ -371,7 +370,7 @@ public class CheckOutActivity extends AppCompatActivity {
             public void onChanged(MessModel messModel) {
                 if (messModel.isSuccess()) {
                     int orderId = messModel.getOrder_id();
-                    Log.d("API_DEBUG", "OrderId thực tế: " + orderId);
+                    String statusPatment = (ppthanhtoan == 1) ? "Đã Thanh Toán" : "Chưa Thanh Toán";
                     String currentTime = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date());
                     NotificationModel newNotif = new NotificationModel(
                             orderId,
@@ -379,7 +378,7 @@ public class CheckOutActivity extends AppCompatActivity {
                             "Đơn hàng của bạn đã được đặt thành công. Chúng tôi đang xử lý!",
                             currentTime,
                             tvTotalPriceCheckOut.getText().toString(),
-                            "Đang xử lý",
+                            statusPatment,
                             "success"
                     );
                     NotificationManager.addNotification(getApplicationContext(), user_id, newNotif);
