@@ -95,8 +95,6 @@ public class HistoryFragment extends Fragment {
                     }
                 });
                 rvHistory.setAdapter(adapter);
-            } else {
-                Toast.makeText(getContext(), "Không có đơn hàng nào", Toast.LENGTH_SHORT).show();
             }
         });
     }

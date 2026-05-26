@@ -17,6 +17,7 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.activity.MainActivity;
 import com.example.doanappfood.activity.ProductDetailActivity;
 import com.example.doanappfood.adapter.CategoryAdapter;
 import com.example.doanappfood.adapter.ProductAdapter;
@@ -33,6 +34,7 @@ public class StoreFragment extends Fragment {
     CategoryViewModel categoryViewModel;
     ProductViewModel productViewModel;
     boolean isFirstLoad = true;
+    com.example.doanappfood.Utlis.SessionManager sessionManager;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,10 +42,12 @@ public class StoreFragment extends Fragment {
 
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
 
+        sessionManager = new com.example.doanappfood.Utlis.SessionManager(requireContext());
         int idCate = -1;
         if(getArguments() != null){
             idCate = getArguments().getInt("IdCate", -1);
         }
+
 
 
         initViewProduct(view);
@@ -90,13 +94,18 @@ public class StoreFragment extends Fragment {
     private void initViewProduct(View view) {
         recyclerViewProduct = view.findViewById(R.id.RecyclerViewProduct);
         recyclerViewProduct.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        productAdapter = new ProductAdapter(new ArrayList<>(), requireContext());
+        productAdapter = new ProductAdapter(new ArrayList<>(), requireContext(), sessionManager.getUserId());
         recyclerViewProduct.setAdapter(productAdapter);
         productAdapter.setOnProductClickListener((productModel, position) -> {
             Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
             intent.putExtra("product_id", productModel.getId());
             startActivity(intent);
             requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
+        productAdapter.setOnCartUpdatedListener(() -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).updateBadge();
+            }
         });
     }
 

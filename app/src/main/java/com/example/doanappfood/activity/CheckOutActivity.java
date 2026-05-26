@@ -404,7 +404,7 @@ public class CheckOutActivity extends AppCompatActivity {
         momoViewModel.messModelMutableLiveData().observe(this, messModel -> {
             resetCheckoutButton();
             if (messModel.isSuccess()) {
-                openMoMoWebView(messModel.getPayUrl(), messModel.getOrderId());
+                openMoMoWebView(messModel.getPayUrl(), Integer.toString(messModel.getOrder_id()));
             } else {
                 Toast.makeText(this,
                         messModel.getMessage() != null ? messModel.getMessage() : "Tạo đơn thất bại",

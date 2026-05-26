@@ -59,8 +59,7 @@ public class HomeFragment extends Fragment {
     private Runnable autoScrollRunnable;
     private static final long Auto_Scroll_Delay = 3000L;
 
-    // ĐÃ SỬA Ở ĐÂY: Khai báo thêm tvSeeAllNews ngay cạnh SeeAllProduct
-    TextView SeeAllProduct, tvSeeAllNews, tvNamCustomer;
+    TextView SeeAllProduct, tvSeeAllNews, tvNamCustomer, btnAdd;
     CardView CardViewGiftBox, CardViewBestSeller, CardViewChicken, CardViewLocationStore;
 
     com.example.doanappfood.Utlis.SessionManager sessionManager;
@@ -170,6 +169,11 @@ public class HomeFragment extends Fragment {
             intent.putExtra("product_id", comboModel.getId());
             startActivity(intent);
         });
+        comboAdapter.setOnCartUpdatedListener(() -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).updateBadge();
+            }
+        });
     }
 
     private void initViewModelNew() {
@@ -192,7 +196,7 @@ public class HomeFragment extends Fragment {
         recyclerViewCombo.setLayoutManager(
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false)
         );
-        comboAdapter = new ComboAdapter(new ArrayList<>(), requireContext());
+        comboAdapter = new ComboAdapter(new ArrayList<>(), requireContext(), sessionManager.getUserId());
         recyclerViewCombo.setAdapter(comboAdapter);
     }
 

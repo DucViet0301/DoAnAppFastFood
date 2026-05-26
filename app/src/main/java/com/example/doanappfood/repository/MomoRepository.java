@@ -50,11 +50,11 @@ public class MomoRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     MessModel result = response.body();
                     // LOG CHI TIẾT — xem server trả về gì
-                    Log.e("MOMO_BODY", "resultCode=" + result.getResultCode()
-                            + " | payUrl=" + result.getPayUrl()
-                            + " | orderId=" + result.getOrderId()
-                            + " | message=" + result.getMessage()
-                            + " | isSuccess=" + result.isSuccess());
+//                    Log.e("MOMO_BODY", "resultCode=" + result.getResultCode()
+//                            + " | payUrl=" + result.getPayUrl()
+//                            + " | orderId=" + result.getOrderId()
+//                            + " | message=" + result.getMessage()
+//                            + " | isSuccess=" + result.isSuccess());
                     data.postValue(result);
                 } else {
                     // Log raw response body khi lỗi

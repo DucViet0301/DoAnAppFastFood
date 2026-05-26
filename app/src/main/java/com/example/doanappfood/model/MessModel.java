@@ -20,9 +20,6 @@ public class MessModel {
     @SerializedName("payUrl")
     private String payUrl;
 
-    @SerializedName("orderId")
-    private String orderId;
-
     public boolean isSuccess() {
         // Nếu là response MoMo (có resultCode)
         if (resultCode != null) {
@@ -39,5 +36,4 @@ public class MessModel {
     public void setMessage(String m)      { this.message = m; }
     public Integer getResultCode()        { return resultCode; }
     public String getPayUrl()             { return payUrl; }
-    public String getOrderId()            { return orderId; }
 }
