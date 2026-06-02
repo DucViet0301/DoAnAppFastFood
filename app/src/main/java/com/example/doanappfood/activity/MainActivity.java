@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.doanappfood.R;
 import com.example.doanappfood.Utlis.BottomMenuManager;
@@ -26,6 +27,7 @@ import com.example.doanappfood.fragment.MapFragment;
 import com.example.doanappfood.fragment.NotifactionFragment;
 import com.example.doanappfood.fragment.ProfileFragment;
 import com.example.doanappfood.fragment.StoreFragment;
+import com.example.doanappfood.viewmodel.SSEViewModel;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -62,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
             w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
+        new ViewModelProvider(this).get(SSEViewModel.class);
+
         setupFragments();
         initViews();
         setupClick();

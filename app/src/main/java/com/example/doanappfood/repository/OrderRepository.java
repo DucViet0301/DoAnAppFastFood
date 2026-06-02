@@ -1,5 +1,6 @@
 package com.example.doanappfood.repository;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -8,6 +9,7 @@ import com.example.doanappfood.model.MessModel;
 import com.example.doanappfood.model.OrderModel;
 import com.example.doanappfood.network.ApiApp;
 import com.example.doanappfood.network.RetrofitInstance;
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -19,8 +21,8 @@ public class OrderRepository {
     private ApiApp apiApp;
     MutableLiveData<MessModel> data;
 
-    public OrderRepository() {
-        apiApp = RetrofitInstance.getRetrofit().create(ApiApp.class);
+    public OrderRepository(Context context) {
+        apiApp = RetrofitInstance.getRetrofit(context).create(ApiApp.class);
         data = new MutableLiveData<>();
     }
 
@@ -40,10 +42,16 @@ public class OrderRepository {
                 if (response.code() == 201 || response.isSuccessful()) {
                     data.postValue(response.body());
                 } else {
-                    MessModel error = new MessModel();
-                    error.setSuccess(false);
-                    error.setMessage("Đặt hàng thất bại!");
-                    data.postValue(error);
+                    try {
+                        String errorJson = response.errorBody().string();
+                        MessModel errorMess = new Gson().fromJson(errorJson, MessModel.class);
+                        data.postValue(errorMess);
+                    } catch (Exception e) {
+                        MessModel fallback = new MessModel();
+                        fallback.setSuccess(false);
+                        fallback.setMessage("Đặt hàng thất bại, thử lại sau");
+                        data.postValue(fallback);
+                    }
                 }
             }
 
@@ -67,13 +75,16 @@ public class OrderRepository {
         apiApp.getAllOrder(userId).enqueue(new Callback<List<OrderModel>>() {
             @Override
             public void onResponse(Call<List<OrderModel>> call, Response<List<OrderModel>> response) {
+                Log.d("HISTORY", "HTTP code = " + response.code());         // ← thêm
+                Log.d("HISTORY", "body = " + response.body());              // ← thêm
+                Log.d("HISTORY", "size = " + (response.body() != null ? response.body().size() : "null")); // ← thêm
                 data.setValue(response.body());
             }
 
             @Override
             public void onFailure(Call<List<OrderModel>> call, Throwable t) {
+                Log.e("HISTORY", "Lỗi: " + t.getMessage());                // ← thêm
                 data.setValue(null);
-                Log.d("logg", t.getMessage());
             }
         });
         return data;

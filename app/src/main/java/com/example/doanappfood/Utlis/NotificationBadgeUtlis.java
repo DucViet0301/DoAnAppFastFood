@@ -12,7 +12,7 @@ public class NotificationBadgeUtlis {
         BadgeDrawable badge = bottomNav.getOrCreateBadge(R.id.notification);
         badge.setVisible(true);
         badge.clearNumber();
-        badge.setBackgroundColor(Color.GREEN);
+        badge.setBackgroundColor(Color.RED);
     }
     public static void hideNotificationBadge(BottomNavigationView bottomNav) {
         bottomNav.removeBadge(R.id.notification);

@@ -47,7 +47,7 @@ public class CartDAO {
                 int cartId = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID));
                 int currentQuantity = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_QUANTITY));
                 ContentValues values = new ContentValues();
-                values.put(DatabaseHelper.COLUMN_QUANTITY, quantity);
+                values.put(DatabaseHelper.COLUMN_QUANTITY, quantity + currentQuantity);
                 db.update(DatabaseHelper.TABLE_CART, values,
                         DatabaseHelper.COLUMN_ID + " = ?",
                         new String[]{String.valueOf(cartId)});

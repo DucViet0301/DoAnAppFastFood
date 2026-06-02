@@ -70,6 +70,7 @@ public class HistoryFragment extends Fragment {
     );
 
     public void loadData() {
+        Log.d("HISTORY", "CURRENT_USER_ID = " + CURRENT_USER_ID);
 //        SessionManager sessionManager =
 //                new SessionManager(requireContext());
 //        if(!sessionManager.isLoggedIn()){

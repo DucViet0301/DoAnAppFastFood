@@ -1,9 +1,10 @@
 package com.example.doanappfood.activity;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,8 @@ import com.example.doanappfood.Utlis.SessionManager;
 import com.example.doanappfood.adapter.OrderDetailAdapter;
 import com.example.doanappfood.model.NotificationModel;
 import com.example.doanappfood.viewmodel.OrderDetailViewModel;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -154,46 +157,96 @@ public class OrderDetailActivity extends AppCompatActivity {
                     tvNoteDetail.setVisibility(View.GONE);
                 }
             }
-            btnCancelOrder.setOnClickListener(v -> {
-                new AlertDialog.Builder(this)
-                        .setTitle("Xác nhận hủy đơn")
-                        .setMessage("Bạn có chắc chắn muốn hủy đơn hàng này?")
-                        .setPositiveButton("Đồng ý", (dialog, which) -> {
-                            viewModel.cancel(orderId).observe(this, mess -> {
-                                if (mess != null && mess.isSuccess()) {
-                                    Toast.makeText(this, "Đã huỷ đơn hàng", Toast.LENGTH_SHORT).show();
-                                    String currentTime = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date());
-                                    NotificationModel newNotif = new NotificationModel(
-                                            orderId,
-                                            "Hủy đơn thành công",
-                                            "Đơn hàng #" + orderId + " của bạn đã được hủy thành công.",
-                                            currentTime,
-                                            tvTotalPrice.getText().toString(),
-                                            "Đã hủy",
-                                            "cancel"
-                                    );
-                                    NotificationManager.addNotification(this, userId, newNotif);
-                                    order.setStatus("cancelled");
-                                    getSharedPreferences("AppData", MODE_PRIVATE)
-                                            .edit()
-                                            .putBoolean("need_show_badge", true)
-                                            .apply();
-                                    tvStatus.setText("Đã huỷ đơn hàng");
-                                    btnCancelOrder.setVisibility(View.GONE);
-                                    Intent intent = new Intent();
-                                    intent.putExtra("updated", true);
-                                    setResult(RESULT_OK, intent);
-                                } else {
-                                    String msg = (mess != null) ? mess.getMessage() : "Huỷ đơn thất bại";
-                                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        })
-                        .setNegativeButton("Không", null)
-                        .show();
-            });
+            btnCancelOrder.setOnClickListener(v -> showCancelOrderDialog());
         });
 
+    }
+    private void showCancelOrderDialog() {
+        View dialogView = getLayoutInflater()
+                .inflate(R.layout.dialog_confirm, null);
+
+        ImageView imgAction = dialogView.findViewById(R.id.imgAction);
+        TextView tvTitle = dialogView.findViewById(R.id.tvTitle);
+        TextView tvMessage = dialogView.findViewById(R.id.tvMessage);
+        TextView tvInfoTitle = dialogView.findViewById(R.id.tvInfoTitle);
+        TextView tvInfoValue = dialogView.findViewById(R.id.tvInfoValue);
+        MaterialButton btnCancel = dialogView.findViewById(R.id.btnCancel);
+        MaterialButton btnConfirm = dialogView.findViewById(R.id.btnConfirm);
+
+        imgAction.setImageResource(R.drawable.ic_close);
+        tvTitle.setText("Hủy đơn hàng");
+        tvMessage.setText("Bạn có chắc chắn muốn hủy đơn hàng này không?");
+        tvInfoTitle.setText("Mã đơn hàng");
+        tvInfoValue.setText("#DV-" + orderId);
+        btnConfirm.setText("Hủy đơn");
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setView(dialogView)
+                .setCancelable(false)
+                .show();
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        btnConfirm.setOnClickListener(v -> {
+            btnConfirm.setEnabled(false);
+            btnCancel.setEnabled(false);
+
+            dialog.dismiss();
+
+            viewModel.cancel(orderId).observe(this, mess -> {
+                if (mess == null) {
+                    Toast.makeText(this, "Huỷ đơn thất bại", Toast.LENGTH_SHORT).show();
+                    btnConfirm.setEnabled(true);
+                    btnCancel.setEnabled(true);
+                    return;
+                }
+
+                if (mess.isSuccess()) {
+                    Toast.makeText(this, "Đã huỷ đơn hàng", Toast.LENGTH_SHORT).show();
+
+                    String currentTime = new SimpleDateFormat(
+                            "dd/MM/yyyy HH:mm", Locale.getDefault()
+                    ).format(new Date());
+
+                    String priceText = tvTotalPrice.getText() != null
+                            ? tvTotalPrice.getText().toString()
+                            : "0 đ";
+
+                    NotificationModel newNotif = new NotificationModel(
+                            orderId,
+                            "Hủy đơn thành công",
+                            "Đơn hàng #" + orderId + " của bạn đã được hủy thành công.",
+                            currentTime,
+                            priceText,
+                            "Đã hủy",
+                            "cancel"
+                    );
+
+                    NotificationManager.addNotification(this, userId, newNotif);
+
+                    getSharedPreferences("AppData", MODE_PRIVATE)
+                            .edit()
+                            .putBoolean("need_show_badge", true)
+                            .apply();
+
+                    tvStatus.setText("Đã huỷ đơn hàng");
+                    btnCancelOrder.setVisibility(View.GONE);
+
+                    Intent intent = new Intent();
+                    intent.putExtra("updated", true);
+                    setResult(RESULT_OK, intent);
+                    finish();
+
+                } else {
+                    String msg = mess.getMessage() != null
+                            ? mess.getMessage()
+                            : "Huỷ đơn thất bại";
+                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+                    btnConfirm.setEnabled(true);
+                    btnCancel.setEnabled(true);
+                }
+            });
+        });
     }
 
     private String formatPrice(double price) {

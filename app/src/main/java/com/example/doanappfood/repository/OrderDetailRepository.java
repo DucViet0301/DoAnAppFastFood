@@ -1,5 +1,6 @@
 package com.example.doanappfood.repository;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -18,8 +19,8 @@ import retrofit2.Response;
 public class OrderDetailRepository {
     private final ApiApp apiApp;
 
-    public OrderDetailRepository() {
-        apiApp = RetrofitInstance.getRetrofit().create(ApiApp.class);
+    public OrderDetailRepository(Context context) {
+        apiApp = RetrofitInstance.getRetrofit(context).create(ApiApp.class);
     }
 
     public LiveData<OrderDetailModel> getOrderDetail(int orderId) {

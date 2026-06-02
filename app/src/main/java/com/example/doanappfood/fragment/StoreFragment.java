@@ -22,7 +22,9 @@ import com.example.doanappfood.activity.ProductDetailActivity;
 import com.example.doanappfood.adapter.CategoryAdapter;
 import com.example.doanappfood.adapter.ProductAdapter;
 import com.example.doanappfood.viewmodel.CategoryViewModel;
+import com.example.doanappfood.viewmodel.ComboViewModel;
 import com.example.doanappfood.viewmodel.ProductViewModel;
+import com.example.doanappfood.viewmodel.SSEViewModel;
 
 import java.util.ArrayList;
 
@@ -33,14 +35,18 @@ public class StoreFragment extends Fragment {
     ProductAdapter productAdapter;
     CategoryViewModel categoryViewModel;
     ProductViewModel productViewModel;
+    private ComboViewModel comboViewModel;
     boolean isFirstLoad = true;
     com.example.doanappfood.Utlis.SessionManager sessionManager;
+    private  int currentCategoryId = -1;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_store, container, false);
 
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
+        comboViewModel = new ViewModelProvider(requireActivity()).get(ComboViewModel.class); // FIX: thêm dòng này
 
         sessionManager = new com.example.doanappfood.Utlis.SessionManager(requireContext());
         int idCate = -1;
@@ -48,11 +54,21 @@ public class StoreFragment extends Fragment {
             idCate = getArguments().getInt("IdCate", -1);
         }
 
-
-
         initViewProduct(view);
         initViewCategory(view);
         initViewModelCategory(idCate);
+
+        SSEViewModel sseViewModel = new ViewModelProvider(requireActivity()).get(SSEViewModel.class);
+        sseViewModel.getProductChanged().observe(getViewLifecycleOwner(), action -> {
+            if (action != null && currentCategoryId != -1) {
+                loadProduct(currentCategoryId);
+            }
+        });
+        sseViewModel.getComboChanged().observe(getViewLifecycleOwner(), action -> {
+            if (action != null && currentCategoryId != -1) {
+                loadProduct(currentCategoryId);
+            }
+        });
 
         return view;
     }
@@ -110,6 +126,7 @@ public class StoreFragment extends Fragment {
     }
 
     private void loadProduct(int idCate) {
+        currentCategoryId = idCate;
         productViewModel.getProducts(idCate).observe(getViewLifecycleOwner(), productModels -> {
             if (productModels != null) {
                 productAdapter.setData(productModels);

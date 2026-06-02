@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="80dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
@@ -66,6 +66,7 @@
         android:layout_marginBottom="30dp"
         app:elevation="10dp"
         app:layout_anchor="@id/bottomAppBar" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_chatbox"
         android:layout_width="wrap_content"
@@ -77,8 +78,8 @@
         android:contentDescription="chatbox"
         app:elevation="12dp"
         app:fabSize="normal"
-        app:tint="@null"
+        app:shapeAppearanceOverlay="@style/CircleShapeAppearance"
         app:srcCompat="@drawable/logo"
-        app:shapeAppearanceOverlay="@style/CircleShapeAppearance"/>
+        app:tint="@null" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

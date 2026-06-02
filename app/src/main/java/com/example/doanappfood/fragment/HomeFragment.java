@@ -33,6 +33,7 @@ import com.example.doanappfood.viewmodel.BannerViewModel;
 import com.example.doanappfood.viewmodel.ComboViewModel;
 import com.example.doanappfood.viewmodel.NewViewModel;
 import com.example.doanappfood.viewmodel.ProductViewModel;
+import com.example.doanappfood.viewmodel.SSEViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -46,8 +47,6 @@ public class HomeFragment extends Fragment {
     private BannerAdapter bannerAdapter;
     private ComboAdapter comboAdapter;
     private NewAdapter newAdapter;
-    private ProductAdapter productAdapter;
-
     //ViewModel
     private BannerViewModel bannerViewModel;
     private ComboViewModel comboViewModel;
@@ -119,6 +118,12 @@ public class HomeFragment extends Fragment {
         setCardViewToStore(CardViewChicken, 9);
         CardViewLocationStore.setOnClickListener(v -> {
             ((MainActivity) requireActivity()).navigateToMap();
+        });
+        SSEViewModel sseViewModel = new ViewModelProvider(requireActivity()).get(SSEViewModel.class);
+        sseViewModel.getComboChanged().observe(getViewLifecycleOwner(), action -> {
+            if (action != null) {
+                comboViewModel.refreshCombo();
+            }
         });
         return view;
     }
