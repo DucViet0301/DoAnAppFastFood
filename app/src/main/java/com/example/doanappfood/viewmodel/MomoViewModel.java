@@ -1,5 +1,7 @@
 package com.example.doanappfood.viewmodel;
 
+import android.app.Application;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -9,6 +11,7 @@ import com.example.doanappfood.repository.MomoRepository;
 public class MomoViewModel extends ViewModel {
     private MomoRepository momoRepository;
     private MutableLiveData<MessModel> data;
+
 
     public void init() {
         momoRepository = new MomoRepository();

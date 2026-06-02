@@ -20,4 +20,5 @@ public class OrderDetailViewModel extends ViewModel {
     public  MutableLiveData<MessModel> cancel(int orderId){
         return repository.cancel(orderId);
     }
+
 }

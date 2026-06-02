@@ -14,96 +14,84 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.doanappfood.R;
 import com.example.doanappfood.Utlis.Keyboard;
 import com.example.doanappfood.Utlis.SessionManager;
 import com.example.doanappfood.model.ResponseModel;
 import com.example.doanappfood.repository.AuthRepository;
+import com.example.doanappfood.viewmodel.ChangepasswordViewModel;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
     private ImageView btnBack;
     private AppCompatButton btnSubmitChange;
     private EditText edtOldPass, edtNewPass, edtConfirmPass;
-    private AuthRepository authRepository;
-    private SessionManager sessionManager;
+    private ChangepasswordViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
 
-        authRepository = new AuthRepository(this);
-        sessionManager = new SessionManager(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window w = getWindow();
             w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
 
-        initView();
-        setupListeners();
+        initViews();
+        setupViewModel();
+        setupClickListeners();
     }
-
-    private void initView() {
-        btnBack = findViewById(R.id.btnBackChange);
+    private void initViews() {
+        btnBack         = findViewById(R.id.btnBackChange);
         btnSubmitChange = findViewById(R.id.btnSubmitChange);
-        edtOldPass = findViewById(R.id.edtOldPass);
-        edtNewPass = findViewById(R.id.edtNewPass);
-        edtConfirmPass = findViewById(R.id.edtConfirmPass);
+        edtOldPass      = findViewById(R.id.edtOldPass);
+        edtNewPass      = findViewById(R.id.edtNewPass);
+        edtConfirmPass  = findViewById(R.id.edtConfirmPass);
     }
+    private void setupViewModel() {
+        viewModel = new ViewModelProvider(this).get(ChangepasswordViewModel.class);
 
-    private void setupListeners() {
-        btnBack.setOnClickListener(v -> finish());
+        viewModel.getIsLoading().observe(this, loading -> {
+            btnSubmitChange.setEnabled(!Boolean.TRUE.equals(loading));
+            btnSubmitChange.setText(Boolean.TRUE.equals(loading)
+                    ? "Đang xử lý..." : "Xác nhận Đổi mật khẩu");
+        });
 
-        // Xác nhận đổi mật khẩu
-        btnSubmitChange.setOnClickListener(v -> {
-            String oldPass = edtOldPass.getText().toString().trim();
-            String newPass = edtNewPass.getText().toString().trim();
-            String confirmPass = edtConfirmPass.getText().toString().trim();
+        viewModel.getChangeSuccess().observe(this, success -> {
+            if (Boolean.TRUE.equals(success)) {
+                Toast.makeText(this, "Đổi mật khẩu thành công!", Toast.LENGTH_LONG).show();
+                navigateToLogin();
+            }
+        });
 
-            if (validateInput(oldPass, newPass, confirmPass)) {
-                btnSubmitChange.setEnabled(false);
-                btnSubmitChange.setText("Đang xử lý...");
+        viewModel.getErrorMessage().observe(this, msg -> {
+            if (msg != null) Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        });
 
-                authRepository.changePassword(oldPass, newPass, new AuthRepository.ResponseCallback() {
-                    @Override
-                    public void onSuccess(ResponseModel response) {
-                        Toast.makeText(ChangePasswordActivity.this, "Đổi mật khẩu thành công!", Toast.LENGTH_LONG).show();
-                        performLogoutAndLogin();
-                    }
-
-                    @Override
-                    public void onFailure(String errorMessage) {
-                        btnSubmitChange.setEnabled(true);
-                        btnSubmitChange.setText("Xác nhận Đổi mật khẩu");
-                        Toast.makeText(ChangePasswordActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                });
+        viewModel.getFieldError().observe(this, field -> {
+            if (field == null) return;
+            switch (field) {
+                case "old":     edtOldPass.setError("Nhập mật khẩu cũ");              break;
+                case "new":     edtNewPass.setError("Nhập mật khẩu mới");             break;
+                case "confirm": edtConfirmPass.setError("Mật khẩu xác nhận không khớp"); break;
             }
         });
     }
+    private void setupClickListeners() {
+        btnBack.setOnClickListener(v -> finish());
 
-    private boolean validateInput(String oldPass, String newPass, String confirmPass) {
-        if (oldPass.isEmpty()) {
-            edtOldPass.setError("Nhập mật khẩu cũ");
-            return false;
-        }
-        if (newPass.isEmpty()) {
-            edtNewPass.setError("Nhập mật khẩu mới");
-            return false;
-        }
-        if (!newPass.equals(confirmPass)) {
-            edtConfirmPass.setError("Mật khẩu xác nhận không khớp");
-            return false;
-        }
-        return true;
+        btnSubmitChange.setOnClickListener(v -> viewModel.changePassword(
+                edtOldPass.getText().toString().trim(),
+                edtNewPass.getText().toString().trim(),
+                edtConfirmPass.getText().toString().trim()
+        ));
     }
-
-    private void performLogoutAndLogin() {
-        // Chỉ xóa session đăng nhập, giữ lại giỏ hàng trong DB
-        sessionManager.logout();
+    private void navigateToLogin() {
+        new SessionManager(this).logout();
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

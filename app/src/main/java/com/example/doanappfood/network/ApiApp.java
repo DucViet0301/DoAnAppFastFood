@@ -48,67 +48,57 @@ public interface ApiApp {
     @GET("category")
     Call<List<CategoryModel>> getCategory();
 
-    @FormUrlEncoded
-    @POST("products")
-    Call<List<ProductModel>> getProduct(@Field("idCate") int idCate);
 
-    @FormUrlEncoded
-    @POST("productdetails")
-    Call<List<ProductDetailModel>> getProductDetail(@Field("idProduct") int id);
+    @GET("products/{id}")
+    Call<List<ProductModel>> getProduct(@Path("id") int idCate);
 
-    @GET("stores")
+    @GET("products/detail/{id}")
+    Call<List<ProductDetailModel>> getProductDetail(@Path("id") int id);
+
+    @GET("store")
     Call<List<StoreModel>> getAllStores();
 
-    @GET("stores/nearest")
+    @GET("store/nearest")
     Call<StoreModel> getNearestStore(
             @Query("lat") double lat,
             @Query("lng") double lng
     );
 
-    @GET("stores/direction")
+    @GET("store/direction")
     Call<DirectionModel> getDirections(
             @Query("fromLat") double fromLat,
             @Query("fromLng") double fromLng,
             @Query("toLat") double toLat,
             @Query("toLng") double toLng
     );
-
-    @POST("orders")
-    Call<MessModel> postOrder(@Body okhttp3.RequestBody detail);
-
-    @POST("login")
-    Call<AuthModel> login(@Body LoginModel request);
-
-    @POST("register")
-    Call<AuthModel> register(@Body RegisterModel request);
-
-    @FormUrlEncoded
-    @POST("auth/refresh")
-    Call<AuthModel> refreshToken(@Field("refresh_token") String refreshToken);
-
     @POST("chatbot")
     Call<Map<String, String>> sendMessage(@Body Map<String, String> body);
 
-    @POST("logout")
+    @POST("auth/logout")
     Call<AuthModel> logout();
+    @POST("auth/login")
+    Call<AuthModel> login(@Body LoginModel request);
+    @POST("auth/register")
+    Call<AuthModel> register(@Body RegisterModel request);
 
-
-    @POST("changepassword")
+    @POST("auth/changepassword")
     Call<ResponseModel> changePassword(
             @Body ChangePassModel body
     );
     @FormUrlEncoded
-    @POST("users/forgot-password-send-otp")
-    Call<ResponseModel> forgotPasswordSendOtp(@Field("email") String email);
+    @POST("auth/refresh-token")
+    Call<AuthModel> refreshToken(@Field("refresh_token") String refreshToken);
     // momo
     @POST("payment")
     Call<MessModel> createMomoPayment(@Body okhttp3.RequestBody body);
-    @GET("getOrder/{userId}")
-    Call<List<OrderModel>> getAllOrder(@Path("userId") int userId);
+    @POST("order")
+    Call<MessModel> postOrder(@Body okhttp3.RequestBody detail);
+    @GET("order/{id}")
+    Call<List<OrderModel>> getAllOrder(@Path("id") int userId);
 
-    @PUT("getOrder/cancel/{orderId}")
-    Call<MessModel> cancelOrder(@Path("orderId") int orderId);
-    @GET("getOrder/detail/{orderId}")
-    Call<OrderDetailModel> getOrderDetail(@Path("orderId") int orderId);
+    @PUT("order/cancel/{id}")
+    Call<MessModel> cancelOrder(@Path("id") int orderId);
+    @GET("order/detail/{id}")
+    Call<OrderDetailModel> getOrderDetail(@Path("id") int orderId);
 
 }
