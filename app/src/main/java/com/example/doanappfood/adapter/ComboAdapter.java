@@ -1,6 +1,9 @@
 package com.example.doanappfood.adapter;
 
+import static com.example.doanappfood.Utlis.SlideEffect.startActivity;
+
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
@@ -8,12 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.doanappfood.R;
+import com.example.doanappfood.activity.LoginActivity;
+import com.example.doanappfood.data.CartDAO;
+import com.example.doanappfood.databinding.ItemComboBinding;
 import com.example.doanappfood.model.ComboItemModel;
 import com.example.doanappfood.model.ComboModel;
 
@@ -24,8 +31,20 @@ import java.util.Locale;
 public class ComboAdapter  extends RecyclerView.Adapter<ComboAdapter.ViewHolder> {
     private List<ComboModel> list;
     private Context context;
+    private  int userId;
     private  OnComboClickListner listner;
     private  int selectedPosition = 0;
+    // Thêm interface callback
+    public interface OnCartUpdatedListener {
+        void onCartUpdated();
+    }
+
+    private OnCartUpdatedListener cartListener;
+
+    public void setOnCartUpdatedListener(OnCartUpdatedListener listener) {
+        this.cartListener = listener;
+    }
+
     public  interface OnComboClickListner{
         void OnClick(ComboModel comboModel,int position);
     }
@@ -34,13 +53,14 @@ public class ComboAdapter  extends RecyclerView.Adapter<ComboAdapter.ViewHolder>
         this.listner = listener;
     }
 
-    public ComboAdapter(List<ComboModel> list, Context context) {
+    public ComboAdapter(List<ComboModel> list, Context context, int userId) {
         this.list = list;
         this.context = context;
+        this.userId = userId;
     }
     public  class ViewHolder extends RecyclerView.ViewHolder{
         ImageView imgCombo;
-        TextView tvComboName, tvComboItems, tvSalePrice, tvListPrice;
+        TextView tvComboName, tvComboItems, tvSalePrice, tvListPrice, btnAdd;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -49,6 +69,8 @@ public class ComboAdapter  extends RecyclerView.Adapter<ComboAdapter.ViewHolder>
             tvComboItems = itemView.findViewById(R.id.tvComboItems);
             tvSalePrice = itemView.findViewById(R.id.tvSalePrice);
             tvListPrice = itemView.findViewById(R.id.tvListPrice);
+            btnAdd = itemView.findViewById(R.id.btnAdd);
+
         }
     }
     public void setData(List<ComboModel> newList){
@@ -103,6 +125,44 @@ public class ComboAdapter  extends RecyclerView.Adapter<ComboAdapter.ViewHolder>
             if(listner != null){
                 listner.OnClick(item, selectedPosition);
             }
+        });
+        holder.btnAdd.setOnClickListener(v ->{
+            if(userId == -1){
+                Toast.makeText(context, "Vui lòng đăng nhập để thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+                return;
+            }
+
+            CartDAO cartDAO = new CartDAO(context);
+
+            StringBuilder comboDetail = new StringBuilder();
+
+            for(ComboItemModel ci : item.getItems()){
+                comboDetail.append(ci.getQuantity())
+                        .append(" x ")
+                        .append(ci.getName())
+                        .append("\n");
+            }
+
+            cartDAO.addItem(
+                    userId,
+                    item.getId(),
+                    item.getName(),
+                    item.getList_price(),
+                    item.getSale_price(),
+                    1,
+                    item.getImage(),
+                    null,
+                    comboDetail.toString()
+            );
+
+            if(cartListener != null){
+                cartListener.onCartUpdated();
+            }
+
+            Toast.makeText(context, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
         });
     }
 

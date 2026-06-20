@@ -1,6 +1,7 @@
 package com.example.doanappfood.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
@@ -8,12 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.doanappfood.R;
+import com.example.doanappfood.activity.LoginActivity;
+import com.example.doanappfood.data.CartDAO;
+import com.example.doanappfood.model.ComboItemModel;
 import com.example.doanappfood.model.ProductModel;
 
 import java.text.NumberFormat;
@@ -23,8 +28,16 @@ import java.util.Locale;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
     private List<ProductModel> list;
     private Context context;
-    private  OnProductClickListener listener;
+    private OnProductClickListener listener;
+    private  int userId;
     private  int selectedPosition = 0;
+    public  interface  OnCartUpdatedListener{
+        void onCartUpdated();
+    }
+    private  OnCartUpdatedListener cartListener;
+    public  void setOnCartUpdatedListener(OnCartUpdatedListener listener){
+        this.cartListener = listener;
+    }
 
     public  interface OnProductClickListener{
         void OnClick(ProductModel productModel, int position);
@@ -34,13 +47,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     }
 
 
-    public ProductAdapter(List<ProductModel> list, Context context) {
+    public ProductAdapter(List<ProductModel> list, Context context, int userId) {
         this.list = list;
         this.context = context;
+        this.userId = userId;
     }
     public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView imageProduct;
-        TextView tvProductName, tvSalePrice, tvListPrice;
+        TextView tvProductName, tvSalePrice, tvListPrice, btnAddProduct;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -48,6 +62,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvSalePrice = itemView.findViewById(R.id.tvSalePrice);
             tvListPrice = itemView.findViewById(R.id.tvListPrice);
+            btnAddProduct = itemView.findViewById(R.id.btnAddProduct);
         }
     }
     public  void setData(List<ProductModel> newlist){
@@ -95,6 +110,26 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             if(listener != null){
                 listener.OnClick(item, selectedPosition);
             }
+        });
+        holder.btnAddProduct.setOnClickListener(v -> {
+            if(userId == -1){
+                Toast.makeText(context, "Vui lòng đăng nhập để thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+                return;
+            }
+            CartDAO cartDAO = new CartDAO(context);
+            double effectivePrice = item.getSale_price() > 0
+                    ? item.getSale_price()
+                    : item.getList_price();
+
+            cartDAO.addItem(userId, item.getId(), item.getName(), item.getList_price(),
+                    effectivePrice, 1, item.getImage(), null, null);
+            if(cartListener != null){
+                cartListener.onCartUpdated();
+            }
+            Toast.makeText(context, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
         });
     }
 

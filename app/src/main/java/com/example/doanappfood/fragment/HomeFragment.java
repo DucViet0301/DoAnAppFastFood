@@ -16,19 +16,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.activity.AllNewsActivity;
+import com.example.doanappfood.activity.MainActivity;
+import com.example.doanappfood.activity.NewDetailActivity;
+import com.example.doanappfood.activity.ProductDetailActivity;
+import com.example.doanappfood.Utlis.SlideEffect;
+import com.example.doanappfood.activity.PromotionNewsActivity;
 import com.example.doanappfood.adapter.BannerAdapter;
 import com.example.doanappfood.adapter.ComboAdapter;
 import com.example.doanappfood.adapter.NewAdapter;
 import com.example.doanappfood.adapter.ProductAdapter;
-import com.example.doanappfood.model.ComboModel;
 import com.example.doanappfood.repository.BannerRepository;
 import com.example.doanappfood.viewmodel.BannerViewModel;
 import com.example.doanappfood.viewmodel.ComboViewModel;
 import com.example.doanappfood.viewmodel.NewViewModel;
 import com.example.doanappfood.viewmodel.ProductViewModel;
+import com.example.doanappfood.viewmodel.SSEViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -42,26 +47,28 @@ public class HomeFragment extends Fragment {
     private BannerAdapter bannerAdapter;
     private ComboAdapter comboAdapter;
     private NewAdapter newAdapter;
-    private ProductAdapter productAdapter;
-
-
     //ViewModel
     private BannerViewModel bannerViewModel;
     private ComboViewModel comboViewModel;
     private NewViewModel newViewModel;
     ProductViewModel productViewModel;
+
     //Auto-scroll
     private Handler autoScrollHandler;
-    private  Runnable autoScrollRunnable;
-    private  static  final  long Auto_Scroll_Delay = 3000L;
-    TextView SeeAllProduct;
+    private Runnable autoScrollRunnable;
+    private static final long Auto_Scroll_Delay = 3000L;
+
+    TextView SeeAllProduct, tvSeeAllNews, tvNamCustomer, btnAdd;
     CardView CardViewGiftBox, CardViewBestSeller, CardViewChicken, CardViewLocationStore;
 
-    BannerRepository bannerRepository;
+    com.example.doanappfood.Utlis.SessionManager sessionManager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        sessionManager = new com.example.doanappfood.Utlis.SessionManager(requireContext());
 
         //Banner
         initViewBanner(view);
@@ -77,62 +84,56 @@ public class HomeFragment extends Fragment {
         initViewModelNew();
 
         SeeAllProduct = view.findViewById(R.id.tvSeeALLUD);
+        tvNamCustomer = view.findViewById(R.id.tvNameCustomer);
+
+        updateGreeting();
+
         CardViewGiftBox = view.findViewById(R.id.CardViewGiftBox);
         CardViewBestSeller = view.findViewById(R.id.CardViewBestSeller);
         CardViewChicken = view.findViewById(R.id.CardViewChicken);
-        CardViewLocationStore= view.findViewById(R.id.CardViewLoactionStore);
+        CardViewLocationStore = view.findViewById(R.id.CardViewLoactionStore);
 
-        setCardView(SeeAllProduct, 2);
-        setCardView(CardViewBestSeller, 1);
-        setCardView(CardViewChicken , 9);
-        CardViewLocationStore.setOnClickListener(new View.OnClickListener() {
+
+        tvSeeAllNews = view.findViewById(R.id.tvSeeALLNEW);
+        if (tvSeeAllNews != null) {
+            tvSeeAllNews.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), AllNewsActivity.class);
+                    startActivity(intent);
+                    requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
+            });
+        }
+        CardViewGiftBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment mapFragment = new MapFragment();
-
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(
-                                R.anim.slide_in_right,
-                                R.anim.slide_out_left,
-                                R.anim.slide_in_left,
-                                R.anim.slide_out_right
-                        )
-                        .replace(R.id.fragment_container, mapFragment)
-                        .addToBackStack(null)
-                        .commit();
-
+                Intent intent = new Intent(requireActivity(), PromotionNewsActivity.class);
+                startActivity(intent);
             }
         });
 
-
-        return  view;
-    }
-    private  void setCardView(View view , int categoryId){
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView);
-                bottomNavigationView.setSelectedItemId(R.id.store);
-
-                Bundle bundle = new Bundle();
-                bundle.putInt("IdCate", categoryId);
-
-                Fragment storeFragment = new StoreFragment();
-                storeFragment.setArguments(bundle);
-
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(
-                                R.anim.slide_in_right,
-                                R.anim.slide_out_left,
-                                R.anim.slide_in_left,
-                                R.anim.slide_out_right
-                        )
-                        .replace(R.id.fragment_container, storeFragment)
-                        .addToBackStack(null)
-                        .commit();
+        setCardViewToStore(SeeAllProduct, 2);
+        setCardViewToStore(CardViewBestSeller, 1);
+        setCardViewToStore(CardViewChicken, 9);
+        CardViewLocationStore.setOnClickListener(v -> {
+            ((MainActivity) requireActivity()).navigateToMap();
+        });
+        SSEViewModel sseViewModel = new ViewModelProvider(requireActivity()).get(SSEViewModel.class);
+        sseViewModel.getComboChanged().observe(getViewLifecycleOwner(), action -> {
+            if (action != null) {
+                comboViewModel.refreshCombo();
             }
+        });
+        return view;
+    }
+
+    private void setCardViewToStore(View view, int categoryId) {
+        view.setOnClickListener(v -> {
+            BottomNavigationView bottomNav = requireActivity().findViewById(R.id.bottomNavigationView);
+            bottomNav.setSelectedItemId(R.id.store);
+
+            ((MainActivity) requireActivity()).openStoreWithCategory(categoryId);
         });
     }
 
@@ -152,25 +153,36 @@ public class HomeFragment extends Fragment {
     }
 
     private void initViewModelBanner() {
-        bannerViewModel = new ViewModelProvider(this).get(BannerViewModel.class);
-        bannerViewModel.getBannerList().observe(getViewLifecycleOwner(),bannerModels ->{
-            if (bannerModels != null){
+        bannerViewModel = new ViewModelProvider(requireActivity()).get(BannerViewModel.class);
+        bannerViewModel.getBannerList().observe(getViewLifecycleOwner(), bannerModels -> {
+            if (bannerModels != null) {
                 bannerAdapter.updateList(bannerModels);
             }
         });
     }
-    private void initViewModelCombo() {
-        comboViewModel = new ViewModelProvider(this).get(ComboViewModel.class);
 
+    private void initViewModelCombo() {
+        comboViewModel = new ViewModelProvider(requireActivity()).get(ComboViewModel.class);
         comboViewModel.getComboList().observe(getViewLifecycleOwner(), comboModels -> {
             if (comboModels != null) {
                 comboAdapter.setData(comboModels);
             }
         });
+        comboAdapter.setOnComboClickListener((comboModel, position) -> {
+            // Xóa Toast, thay bằng:
+            Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
+            intent.putExtra("product_id", comboModel.getId());
+            startActivity(intent);
+        });
+        comboAdapter.setOnCartUpdatedListener(() -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).updateBadge();
+            }
+        });
     }
-    private void initViewModelNew() {
-        newViewModel = new ViewModelProvider(this).get(NewViewModel.class);
 
+    private void initViewModelNew() {
+        newViewModel = new ViewModelProvider(requireActivity()).get(NewViewModel.class);
         newViewModel.getNewList().observe(getViewLifecycleOwner(), newModels -> {
             if (newModels != null) {
                 newAdapter.setData(newModels);
@@ -178,31 +190,41 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void  initViewBanner(View view){
+    private void initViewBanner(View view) {
         viewPager2 = view.findViewById(R.id.viewPager2);
         bannerAdapter = new BannerAdapter(new ArrayList<>(), requireContext());
         viewPager2.setAdapter(bannerAdapter);
     }
-    private void initViewCombo(View view){
+
+    private void initViewCombo(View view) {
         recyclerViewCombo = view.findViewById(R.id.RecyclerViewCombo);
         recyclerViewCombo.setLayoutManager(
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false)
         );
-        comboAdapter = new ComboAdapter(new ArrayList<>(), requireContext());
+        comboAdapter = new ComboAdapter(new ArrayList<>(), requireContext(), sessionManager.getUserId());
         recyclerViewCombo.setAdapter(comboAdapter);
     }
-    private void initViewNew(View view){
+
+
+    private void initViewNew(View view) {
         recyclerViewNew = view.findViewById(R.id.RecyclerViewNew);
         recyclerViewNew.setLayoutManager(
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false)
         );
         newAdapter = new NewAdapter(new ArrayList<>(), requireContext());
         recyclerViewNew.setAdapter(newAdapter);
-        comboAdapter.setOnComboClickListener((ComboModel, position) -> {
-            String message = "ID" + ComboModel.getId() + "\nTen " + ComboModel.getName();
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+
+        newAdapter.setOnNewClickListener((newModel, position) -> {
+            Intent intent = new Intent(getActivity(), NewDetailActivity.class);
+            intent.putExtra("new_id", newModel.getId());
+            intent.putExtra("title", newModel.getTitle());
+            intent.putExtra("description", newModel.getDescription());
+            intent.putExtra("image", newModel.getImage());
+            startActivity(intent);
+            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -211,4 +233,30 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateGreeting();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            // Khi hiện lại HomeFragment, tạo mới sessionManager để lấy dữ liệu mới nhất
+            sessionManager = new com.example.doanappfood.Utlis.SessionManager(requireContext());
+            updateGreeting();
+        }
+    }
+
+    private void updateGreeting() {
+        if (tvNamCustomer != null) {
+            if (sessionManager != null && sessionManager.isLoggedIn()) {
+                String userName = sessionManager.getUserName();
+                tvNamCustomer.setText(userName != null && !userName.isEmpty() ? userName : "Quý Khách");
+            } else {
+                tvNamCustomer.setText("Quý Khách");
+            }
+        }
+    }
 }

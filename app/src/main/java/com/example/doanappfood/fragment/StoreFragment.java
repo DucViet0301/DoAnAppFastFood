@@ -1,5 +1,6 @@
 package com.example.doanappfood.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -16,13 +17,14 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
 import com.example.doanappfood.R;
+import com.example.doanappfood.activity.MainActivity;
+import com.example.doanappfood.activity.ProductDetailActivity;
 import com.example.doanappfood.adapter.CategoryAdapter;
 import com.example.doanappfood.adapter.ProductAdapter;
-import com.example.doanappfood.model.CategoryModel;
-import com.example.doanappfood.repository.CategoryRepository;
-import com.example.doanappfood.repository.ProductRepository;
 import com.example.doanappfood.viewmodel.CategoryViewModel;
+import com.example.doanappfood.viewmodel.ComboViewModel;
 import com.example.doanappfood.viewmodel.ProductViewModel;
+import com.example.doanappfood.viewmodel.SSEViewModel;
 
 import java.util.ArrayList;
 
@@ -33,23 +35,40 @@ public class StoreFragment extends Fragment {
     ProductAdapter productAdapter;
     CategoryViewModel categoryViewModel;
     ProductViewModel productViewModel;
+    private ComboViewModel comboViewModel;
     boolean isFirstLoad = true;
+    com.example.doanappfood.Utlis.SessionManager sessionManager;
+    private  int currentCategoryId = -1;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_store, container, false);
 
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
+        comboViewModel = new ViewModelProvider(requireActivity()).get(ComboViewModel.class); // FIX: thêm dòng này
 
+        sessionManager = new com.example.doanappfood.Utlis.SessionManager(requireContext());
         int idCate = -1;
         if(getArguments() != null){
             idCate = getArguments().getInt("IdCate", -1);
         }
 
-
         initViewProduct(view);
         initViewCategory(view);
         initViewModelCategory(idCate);
+
+        SSEViewModel sseViewModel = new ViewModelProvider(requireActivity()).get(SSEViewModel.class);
+        sseViewModel.getProductChanged().observe(getViewLifecycleOwner(), action -> {
+            if (action != null && currentCategoryId != -1) {
+                loadProduct(currentCategoryId);
+            }
+        });
+        sseViewModel.getComboChanged().observe(getViewLifecycleOwner(), action -> {
+            if (action != null && currentCategoryId != -1) {
+                loadProduct(currentCategoryId);
+            }
+        });
 
         return view;
     }
@@ -91,15 +110,23 @@ public class StoreFragment extends Fragment {
     private void initViewProduct(View view) {
         recyclerViewProduct = view.findViewById(R.id.RecyclerViewProduct);
         recyclerViewProduct.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        productAdapter = new ProductAdapter(new ArrayList<>(), requireContext());
+        productAdapter = new ProductAdapter(new ArrayList<>(), requireContext(), sessionManager.getUserId());
         recyclerViewProduct.setAdapter(productAdapter);
         productAdapter.setOnProductClickListener((productModel, position) -> {
-            String message = "ID" + productModel.getId() + "\nTen " + productModel.getName();
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(requireContext(), ProductDetailActivity.class);
+            intent.putExtra("product_id", productModel.getId());
+            startActivity(intent);
+            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
+        productAdapter.setOnCartUpdatedListener(() -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).updateBadge();
+            }
         });
     }
 
     private void loadProduct(int idCate) {
+        currentCategoryId = idCate;
         productViewModel.getProducts(idCate).observe(getViewLifecycleOwner(), productModels -> {
             if (productModels != null) {
                 productAdapter.setData(productModels);
@@ -109,5 +136,11 @@ public class StoreFragment extends Fragment {
                 recyclerViewProduct.scheduleLayoutAnimation();
             }
         });
+    }
+    public void loadCategoryFromHome(int categoryId) {
+        if (categoryAdapter != null) {
+            categoryAdapter.setSelectedCategory(categoryId);
+        }
+        loadProduct(categoryId);
     }
 }
