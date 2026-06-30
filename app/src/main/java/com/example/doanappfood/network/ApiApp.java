@@ -21,6 +21,7 @@ import com.example.doanappfood.model.StoreModel;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
@@ -100,5 +101,8 @@ public interface ApiApp {
     Call<MessModel> cancelOrder(@Path("id") int orderId);
     @GET("order/detail/{id}")
     Call<OrderDetailModel> getOrderDetail(@Path("id") int orderId);
+
+    @POST("order/check-cart")
+    Call<MessModel> checkCartValid(@Body RequestBody body);
 
 }
