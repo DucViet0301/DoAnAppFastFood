@@ -1,10 +1,13 @@
 package com.example.doanappfood.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class CartItem {
     public int id;
     public  int userId;
+    @SerializedName("product_id")
     public int productId;
     public String name;
     public double list_price, sale_price;

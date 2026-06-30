@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -90,6 +91,8 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         viewModel.getProduct().observe(this, this::bindProduct);
 
+        viewModel.getQuantityLiveData().observe(this, qty ->
+                binding.tvQuantity.setText(String.valueOf(qty)));
 
         viewModel.getTotalPriceText().observe(this, text ->
                 binding.btnAddToCart.setText(text));
@@ -134,6 +137,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         int productId    = getIntent().getIntExtra("product_id", -1);
         int oldQuantity  = getIntent().getIntExtra("current_quantity", 1);
+//        Log.d("Quantity ", String.valueOf(oldQuantity));
         ArrayList<String> oldSauces = getIntent().getStringArrayListExtra("selected_sauces");
 
         if (productId != -1) {

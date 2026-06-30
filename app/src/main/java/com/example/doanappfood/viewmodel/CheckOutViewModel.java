@@ -99,6 +99,44 @@ public class CheckOutViewModel extends AndroidViewModel {
         isLoading.setValue(true);
 
         try {
+            JSONObject cartBody = new JSONObject();
+            cartBody.put("cart_items", new org.json.JSONArray(cartJson));
+
+            RequestBody checkBody = RequestBody.create(
+                    MediaType.parse("application/json"),
+                    cartBody.toString()
+            );
+
+            apiApp.checkCartValid(checkBody).enqueue(new Callback<MessModel>() {
+                @Override
+                public void onResponse(Call<MessModel> call, Response<MessModel> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                        // Giỏ hàng hợp lệ -> tiến hành tạo thanh toán MoMo
+                        createMomoPayment();
+                    } else {
+                        isLoading.postValue(false);
+                        String msg = (response.body() != null && response.body().getMessage() != null)
+                                ? response.body().getMessage()
+                                : "Một số sản phẩm trong giỏ hàng không còn khả dụng";
+                        errorMessage.postValue(msg);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<MessModel> call, Throwable t) {
+                    isLoading.postValue(false);
+                    errorMessage.postValue("Lỗi kiểm tra giỏ hàng: " + t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            isLoading.postValue(false);
+            errorMessage.postValue("Lỗi xử lý giỏ hàng");
+        }
+    }
+
+    // Tách phần tạo thanh toán MoMo cũ ra hàm riêng
+    private void createMomoPayment() {
+        try {
             JSONObject body = new JSONObject();
             body.put("amount",      (long) saleTotal);
             body.put("orderInfo",   "Thanh toán đơn hàng FastFoodFour");
@@ -116,16 +154,13 @@ public class CheckOutViewModel extends AndroidViewModel {
                     if (response.isSuccessful() && response.body() != null) {
                         MessModel mess = response.body();
                         if (mess.isSuccess() && mess.getPayUrl() != null) {
-                            // Trigger Activity mở WebView
                             momoPayEvent.postValue(
                                     new MomoPayData(mess.getPayUrl(),
                                             Integer.toString(mess.getOrder_id()))
                             );
                         } else {
                             errorMessage.postValue(
-                                    mess.getMessage() != null
-                                            ? mess.getMessage()
-                                            : "Tạo đơn MoMo thất bại"
+                                    mess.getMessage() != null ? mess.getMessage() : "Tạo đơn MoMo thất bại"
                             );
                         }
                     } else {
@@ -144,7 +179,6 @@ public class CheckOutViewModel extends AndroidViewModel {
             errorMessage.postValue("Lỗi tạo đơn MoMo");
         }
     }
-
     public void fetchLocation(com.example.doanappfood.Utlis.FusedLocationHelper locationHelper) {
         locationHelper.fetchAddress(
                 new com.example.doanappfood.Utlis.FusedLocationHelper.OnAddressCallback() {

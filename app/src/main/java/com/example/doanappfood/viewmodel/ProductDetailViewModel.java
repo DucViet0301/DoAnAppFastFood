@@ -43,6 +43,9 @@ public class ProductDetailViewModel extends AndroidViewModel {
     private  final List<SaucesModel> salectSauces = new ArrayList<>();
     private final CartDAO cartDAO;
     private  final Executor executor = Executors.newSingleThreadExecutor();
+    private final MutableLiveData<Integer> quantityLiveData = new MutableLiveData<>(1);
+
+    public LiveData<Integer> getQuantityLiveData() { return quantityLiveData; }
 
     public ProductDetailViewModel(@NonNull Application application) {
         super(application);
@@ -73,15 +76,17 @@ public class ProductDetailViewModel extends AndroidViewModel {
                 }
 
                 ProductDetailModel model = response.body().get(0);
-                product.setValue(model);
 
                 double list = model.getList_price();
                 Double sale = model.getSale_price();
                 boolean hasDiscount = sale != null && sale > 0 && sale < list;
                 activePrice = hasDiscount ? sale : list;
 
-                updateQuantity(oldQuantity);
+                quantity = Math.max(1, oldQuantity);
+                quantityLiveData.postValue(quantity);
                 restoreOldSauces(model, oldSauces);
+
+                product.setValue(model);
                 recalcTotalInternal();
 
                 if (hasDiscount) updateSaveText(list, sale);
@@ -96,6 +101,7 @@ public class ProductDetailViewModel extends AndroidViewModel {
     }
     public void updateQuantity(int newQty) {
         quantity = Math.max(1, newQty);
+        quantityLiveData.postValue(quantity);   // ← thêm dòng này
         recalcTotalInternal();
         ProductDetailModel m = product.getValue();
         if (m != null && m.getSale_price() != null) {
